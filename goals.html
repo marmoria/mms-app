@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Цели</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #1b2a4a;
+  --surface:  #152238;
+  --surface2: #1e3052;
+  --card:     #f5f0e8;
+  --card2:    #ede8de;
+  --border:   #243060;
+  --border2:  #2e3d70;
+  --border-c: rgba(27,42,74,.1);
+  --text:     #f0ece4;
+  --dim:      #b8bcd0;
+  --muted:    #6878a0;
+  --on-card:  #1b2a4a;
+  --on-dim:   #384068;
+  --on-muted: #788098;
+  --gold:     #c49a52;
+  --gold-d:   #9a7230;
+  --gold-bg:  rgba(196,154,82,.1);
+  --crimson:  #6b2233;
+  --crimson-bg:rgba(107,34,51,.2);
+  --green:    #3d7a55;
+  --green-bg: rgba(61,122,85,.15);
+  --red:      #9e4040;
+  --bureau:   #c49a52;
+  --aparts:   #3d7a55;
+  --personal: #6b4aaa;
+  --font-s:   'Cormorant Garamond', serif;
+  --font-m:   var(--font-m), sans-serif;
+  --r:        10px;
+  --nav-h:    72px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:var(--font-d);font-size:13px;min-height:100vh;}
+
+/* HEADER */
+.header{display:flex;align-items:flex-start;justify-content:space-between;padding:22px 28px 18px;border-bottom:1px solid var(--border);gap:16px;flex-wrap:wrap;}
+.header-title{font-family:var(--font-s);font-size:28px;font-weight:300;line-height:1.1;}
+.header-title em{font-style:italic;color:var(--gold);}
+.header-sub{font-size:11px;color:var(--text-muted);letter-spacing:2px;text-transform:uppercase;margin-top:4px;}
+.back-btn{font-size:10px;color:var(--text-muted);text-decoration:none;letter-spacing:2px;text-transform:uppercase;opacity:.4;transition:opacity .15s;white-space:nowrap;padding-top:4px;}
+.back-btn:hover{opacity:1;color:var(--gold);}
+
+/* NAV TABS */
+.nav-tabs{display:flex;border-bottom:1px solid var(--border);overflow-x:auto;}
+.nav-tab{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);padding:12px 20px;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s;flex-shrink:0;}
+.nav-tab:hover{color:var(--text-dim);}
+.nav-tab.active{color:var(--gold);border-bottom-color:var(--gold);}
+
+/* VIEWS */
+.view{display:none;}
+.view.active{display:block;}
+
+/* ALERT BANNER */
+.lag-banner{display:none;margin:16px 24px;padding:14px 18px;background:var(--red-bg);border:1px solid var(--red-dim);border-radius:3px;}
+.lag-banner.show{display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap;}
+.lag-banner-text{flex:1;}
+.lag-title{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--red);margin-bottom:4px;}
+.lag-desc{font-size:13px;color:var(--text-dim);line-height:1.5;}
+.lag-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
+.lag-btn{padding:8px 14px;font-family:var(--font-d);font-size:11px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;border-radius:2px;transition:all .15s;}
+.lag-btn-push{background:transparent;border:1px solid var(--gold-dim);color:var(--gold);}
+.lag-btn-push:hover{background:var(--gold-dim);}
+.lag-btn-extend{background:transparent;border:1px solid var(--border);color:var(--text-muted);}
+.lag-btn-extend:hover{background:var(--surface);color:var(--text-dim);}
+
+/* GOAL CARDS */
+.goals-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:1px;background:var(--border);}
+.goal-card{background:var(--bg);padding:22px 24px;cursor:pointer;transition:background .15s;position:relative;}
+.goal-card:hover{background:var(--surface);}
+.goal-card.selected{background:var(--surface);box-shadow:inset 3px 0 0 var(--gold);}
+.gc-area{font-size:10px;letter-spacing:3px;text-transform:uppercase;margin-bottom:6px;}
+.gc-title{font-family:var(--font-s);font-size:22px;font-weight:300;line-height:1.2;margin-bottom:10px;}
+.gc-deadline{font-size:11px;color:var(--text-muted);margin-bottom:10px;}
+.gc-deadline span{color:var(--text-dim);}
+.progress-bar{height:3px;background:var(--surface2);border-radius:2px;overflow:hidden;margin-bottom:6px;}
+.progress-fill{height:100%;border-radius:2px;transition:width .4s;}
+.progress-labels{display:flex;justify-content:space-between;font-size:10px;color:var(--text-muted);}
+.progress-labels .behind{color:var(--red);}
+.gc-add{border:1px dashed var(--border);background:transparent;display:flex;align-items:center;justify-content:center;gap:8px;font-family:var(--font-d);font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);cursor:pointer;transition:all .15s;padding:22px 24px;min-height:120px;}
+.gc-add:hover{border-color:var(--gold-dim);color:var(--gold);}
+
+/* GOAL DETAIL — RIGHT PANEL / FULL */
+.detail-wrap{display:grid;grid-template-columns:320px 1fr;min-height:calc(100vh - 160px);}
+.detail-list{border-right:1px solid var(--border);overflow-y:auto;}
+.detail-main{padding:0;}
+
+/* MILESTONES */
+.ms-list{padding:0;}
+.ms-item{display:flex;align-items:flex-start;gap:12px;padding:14px 22px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;position:relative;}
+.ms-item:hover{background:var(--surface);}
+.ms-item.done{opacity:.45;}
+.ms-item.done .ms-title{text-decoration:line-through;}
+.ms-check{width:16px;height:16px;border:1px solid var(--border);border-radius:50%;flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;font-size:10px;transition:all .15s;}
+.ms-item:not(.done):hover .ms-check{border-color:var(--gold-dim);}
+.ms-item.done .ms-check{background:var(--green-dim);border-color:var(--green);color:var(--green);}
+.ms-body{flex:1;}
+.ms-title{font-size:14px;color:var(--text-dim);line-height:1.4;margin-bottom:3px;}
+.ms-date{font-size:11px;color:var(--text-muted);}
+.ms-date.overdue{color:var(--red);}
+.ms-lag{font-size:10px;color:var(--red);margin-top:2px;}
+
+/* STEPS */
+.steps-header{padding:14px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.steps-header-title{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--text-muted);flex:1;}
+.week-nav-btn{background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:14px;padding:0 4px;transition:color .15s;}
+.week-nav-btn:hover{color:var(--gold);}
+.week-label{font-size:12px;color:var(--text-dim);}
+
+.step-block{border-bottom:1px solid var(--border);}
+.step-block-header{display:flex;align-items:center;gap:10px;padding:10px 22px 6px;cursor:pointer;}
+.step-block-ms{font-size:10px;letter-spacing:2px;text-transform:uppercase;flex:1;}
+.step-block-cnt{font-size:11px;color:var(--text-muted);}
+.step-items{padding:0 22px 10px;}
+.step-item{display:flex;align-items:flex-start;gap:8px;padding:7px 10px;background:var(--surface);border-radius:2px;margin-bottom:3px;border-left:2px solid transparent;cursor:pointer;transition:all .1s;}
+.step-item:hover{background:var(--surface2);}
+.step-item.done{opacity:.38;border-left-color:var(--green);}
+.step-item.done .si-txt{text-decoration:line-through;}
+.step-item.overdue{border-left-color:var(--red);}
+.si-check{width:13px;height:13px;border:1px solid var(--border);border-radius:2px;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:8px;color:transparent;transition:all .1s;}
+.step-item:hover .si-check{color:var(--text-muted);}
+.step-item.done .si-check{background:var(--green-dim);border-color:var(--green);color:var(--green);}
+.si-txt{font-size:13px;color:var(--text-dim);flex:1;line-height:1.4;}
+.si-del{font-size:11px;color:var(--text-muted);opacity:0;cursor:pointer;padding:0 4px;transition:opacity .15s;}
+.step-item:hover .si-del{opacity:1;}
+.si-del:hover{color:var(--red);}
+
+/* ADD STEP */
+.add-step-row{display:flex;gap:6px;padding:8px 22px 12px;}
+.add-step-input{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:2px;color:var(--text);font-family:var(--font-d);font-size:13px;padding:8px 10px;outline:none;transition:border-color .15s;}
+.add-step-input:focus{border-color:var(--gold-dim);}
+.add-step-btn{padding:8px 14px;background:transparent;border:1px solid var(--gold-dim);color:var(--gold);font-family:var(--font-d);font-size:11px;letter-spacing:2px;cursor:pointer;border-radius:2px;transition:all .15s;white-space:nowrap;}
+.add-step-btn:hover{background:var(--gold-dim);}
+
+/* STATS VIEW */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1px;background:var(--border);}
+.stat-panel{background:var(--bg);padding:22px 26px;}
+.stat-lbl{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--text-muted);margin-bottom:12px;}
+.stat-big{font-family:var(--font-s);font-size:42px;font-weight:300;line-height:1;}
+.stat-sub{font-size:12px;color:var(--text-muted);margin-top:4px;}
+.timeline{padding:4px 0;}
+.tl-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);}
+.tl-row:last-child{border-bottom:none;}
+.tl-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.tl-body{flex:1;}
+.tl-ms{font-size:13px;color:var(--text-dim);}
+.tl-date{font-size:11px;color:var(--text-muted);}
+.tl-status{font-size:10px;letter-spacing:1px;text-transform:uppercase;padding:2px 6px;border-radius:2px;}
+.tl-done{background:var(--green-dim);color:var(--green);}
+.tl-current{background:var(--gold-bg);color:var(--gold);}
+.tl-future{background:var(--surface2);color:var(--text-muted);}
+.tl-late{background:var(--red-dim);color:var(--red);}
+
+/* FORMS */
+.form-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:100;align-items:center;justify-content:center;padding:20px;}
+.form-overlay.open{display:flex;}
+.form-box{background:var(--surface);border:1px solid var(--border);border-radius:3px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;}
+.form-header{display:flex;align-items:center;padding:18px 22px;border-bottom:1px solid var(--border);}
+.form-title{font-size:11px;letter-spacing:3px;text-transform:uppercase;flex:1;}
+.form-close{background:none;border:none;color:var(--text-muted);font-size:18px;cursor:pointer;padding:0 4px;line-height:1;}
+.form-body{padding:22px;}
+.form-field{margin-bottom:16px;}
+.form-label{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px;display:block;}
+.form-input,.form-textarea,.form-select{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:2px;color:var(--text);font-family:var(--font-d);font-size:13px;padding:10px 12px;outline:none;transition:border-color .15s;}
+.form-input:focus,.form-textarea:focus,.form-select:focus{border-color:var(--gold-dim);}
+.form-textarea{resize:vertical;min-height:70px;line-height:1.5;}
+.form-select option{background:var(--surface);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.ms-form-list{display:flex;flex-direction:column;gap:6px;margin-top:8px;}
+.ms-form-item{display:flex;gap:6px;align-items:center;}
+.ms-form-item input{flex:1;}
+.ms-form-item input[type="date"]{width:140px;flex:none;}
+.form-footer{display:flex;justify-content:flex-end;gap:8px;padding:14px 22px;border-top:1px solid var(--border);}
+.btn-cancel{padding:10px 16px;background:transparent;border:1px solid var(--border);color:var(--text-muted);font-family:var(--font-d);font-size:11px;letter-spacing:2px;cursor:pointer;border-radius:2px;transition:all .15s;}
+.btn-cancel:hover{color:var(--text-dim);}
+.btn-save{padding:10px 18px;background:transparent;border:1px solid var(--gold-dim);color:var(--gold);font-family:var(--font-d);font-size:11px;letter-spacing:2px;cursor:pointer;border-radius:2px;transition:all .15s;}
+.btn-save:hover{background:var(--gold-dim);}
+
+/* MISC */
+.empty{padding:28px 22px;font-size:12px;color:var(--text-muted);letter-spacing:1px;}
+.section-label{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--text-muted);padding:14px 22px 8px;}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(8px);background:var(--surface);border:1px solid var(--border);padding:10px 18px;font-size:12px;letter-spacing:1px;opacity:0;transition:all .3s;pointer-events:none;z-index:200;border-radius:2px;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* AREA COLORS */
+.area-bureau{color:var(--bureau);}
+.area-aparts{color:var(--aparts);}
+.area-personal{color:var(--personal);}
+.area-body{color:var(--body);}
+.area-finance{color:var(--gold);}
+.area-inner{color:var(--violet);}
+.area-other{color:var(--blue);}
+
+/* WEEK SCHEDULE */
+.week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:var(--border);margin:0;}
+.day-col{background:var(--bg);padding:10px 8px;}
+.day-col.today{background:var(--surface);}
+.day-name{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px;}
+.day-num{font-size:18px;font-family:var(--font-s);font-weight:300;color:var(--text-dim);margin-bottom:8px;line-height:1;}
+.day-col.today .day-num{color:var(--gold);}
+.day-step{font-size:11px;color:var(--text-dim);padding:4px 6px;background:var(--surface2);border-radius:2px;margin-bottom:3px;line-height:1.35;border-left:2px solid transparent;cursor:pointer;transition:all .1s;}
+.day-step:hover{background:var(--surface);}
+.day-step.done{opacity:.35;text-decoration:line-through;}
+</style>
+</head>
+<body>
+<div class="header">
+  <div>
+    <div class="header-title">Цели <em>и вехи</em></div>
+    <div class="header-sub">6 месяцев — измеримый результат</div>
+  </div>
+  <a class="back-btn" href="http://marymoro.ru/core">&larr; Главная</a>
+</div>
+
+<div class="nav-tabs">
+  <div class="nav-tab active" onclick="switchView('goals',this)">Мои цели</div>
+  <div class="nav-tab" onclick="switchView('week',this)">Эта неделя</div>
+  <div class="nav-tab" onclick="switchView('track',this)">Отставание</div>
+</div>
+
+<!-- LAG BANNER -->
+<div class="lag-banner" id="lagBanner">
+  <div class="lag-banner-text">
+    <div class="lag-title">Отставание от плана</div>
+    <div class="lag-desc" id="lagDesc"></div>
+    <div class="lag-actions">
+      <button class="lag-btn lag-btn-push" onclick="chooseStrategy('push')">Поднажать — успеть в срок</button>
+      <button class="lag-btn lag-btn-extend" onclick="chooseStrategy('extend')">Перенести срок</button>
+    </div>
+  </div>
+</div>
+
+<!-- GOALS VIEW -->
+<div class="view active" id="view-goals">
+  <div class="goals-grid" id="goalsGrid"></div>
+</div>
+
+<!-- WEEK VIEW -->
+<div class="view" id="view-week">
+  <div style="padding:14px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;">
+    <button class="week-nav-btn" onclick="navWeek(-1)">&lt;</button>
+    <div class="week-label" id="weekLabel"></div>
+    <button class="week-nav-btn" onclick="navWeek(1)">&gt;</button>
+    <div style="margin-left:auto;font-size:11px;color:var(--text-muted)" id="weekProgress"></div>
+  </div>
+  <div class="week-grid" id="weekGrid"></div>
+  <div style="padding:18px 22px;border-top:1px solid var(--border);">
+    <div class="section-label" style="padding:0 0 10px;">Задачи недели по целям</div>
+    <div id="weekStepsList"></div>
+  </div>
+</div>
+
+<!-- TRACK VIEW -->
+<div class="view" id="view-track">
+  <div class="stats-grid" id="trackStats"></div>
+  <div style="padding:22px 26px;border-top:1px solid var(--border);">
+    <div class="section-label" style="padding:0 0 14px;">Временная шкала</div>
+    <div class="timeline" id="trackTimeline"></div>
+  </div>
+</div>
+
+<!-- GOAL FORM -->
+<div class="form-overlay" id="goalForm">
+  <div class="form-box">
+    <div class="form-header">
+      <div class="form-title" id="goalFormTitle">Новая цель</div>
+      <button class="form-close" onclick="closeGoalForm()">x</button>
+    </div>
+    <div class="form-body">
+      <div class="form-field">
+        <label class="form-label">Название цели</label>
+        <input class="form-input" id="gf-title" placeholder="Что именно хочу достичь...">
+      </div>
+      <div class="form-row">
+        <div class="form-field">
+          <label class="form-label">Направление</label>
+          <select class="form-select" id="gf-area">
+            <option value="bureau">Бюро</option>
+            <option value="aparts">Апарты</option>
+            <option value="personal">Личный бренд</option>
+            <option value="body">Тело</option>
+            <option value="finance">Финансы</option>
+            <option value="inner">Внутреннее</option>
+            <option value="other">Другое</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label class="form-label">Дедлайн</label>
+          <input class="form-input" id="gf-deadline" type="date">
+        </div>
+      </div>
+      <div class="form-field">
+        <label class="form-label">Как пойму что достигла</label>
+        <textarea class="form-textarea" id="gf-measure" placeholder="Измеримый результат..."></textarea>
+      </div>
+      <div id="aiSuggestBlock" style="margin-bottom:16px;">
+        <button type="button" id="aiSuggestBtn" onclick="aiSuggest()" style="width:100%;padding:11px;background:var(--gold-bg);border:1px solid var(--gold-dim);color:var(--gold);font-family:var(--font-d);font-size:11px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;border-radius:2px;transition:all .15s;" onmouseover="this.style.background='var(--gold-dim)'" onmouseout="this.style.background='var(--gold-bg)'">
+          Предложить вехи и шаги — Claude
+        </button>
+        <div id="aiStatus" style="font-size:11px;color:var(--text-muted);margin-top:6px;display:none;"></div>
+        <div id="aiApiKeyBlock" style="margin-top:8px;display:none;">
+          <input class="form-input" id="aiApiKey" type="password" placeholder="sk-ant-... (API ключ Anthropic)" style="margin-bottom:6px;">
+          <button onclick="saveApiKey()" style="background:transparent;border:1px solid var(--gold-dim);color:var(--gold);font-family:var(--font-d);font-size:11px;letter-spacing:2px;padding:8px 14px;cursor:pointer;border-radius:2px;">Сохранить ключ</button>
+          <div style="font-size:10px;color:var(--text-muted);margin-top:4px;">Ключ хранится только в браузере (localStorage).</div>
+        </div>
+      </div>
+      <div class="form-field">
+        <label class="form-label">Вехи (промежуточные результаты)</label>
+        <div class="ms-form-list" id="msFormList"></div>
+        <button onclick="addMsFormRow()" style="margin-top:8px;background:transparent;border:1px dashed var(--border);color:var(--text-muted);font-family:var(--font-d);font-size:11px;letter-spacing:2px;padding:8px 14px;cursor:pointer;border-radius:2px;width:100%;transition:all .15s;" onmouseover="this.style.borderColor='var(--gold-dim)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-muted)'">+ Добавить веху</button>
+      </div>
+    </div>
+    <div class="form-footer">
+      <button class="btn-cancel" onclick="closeGoalForm()">Отмена</button>
+      <button class="btn-save" onclick="saveGoal()">Сохранить</button>
+    </div>
+  </div>
+</div>
+
+<!-- STEP FORM (add step to milestone) -->
+<div class="form-overlay" id="stepForm">
+  <div class="form-box" style="max-width:420px;">
+    <div class="form-header">
+      <div class="form-title">Добавить шаг</div>
+      <button class="form-close" onclick="closeStepForm()">x</button>
+    </div>
+    <div class="form-body">
+      <div class="form-field">
+        <label class="form-label">Что нужно сделать</label>
+        <input class="form-input" id="sf-text" placeholder="Конкретное действие...">
+      </div>
+      <div class="form-row">
+        <div class="form-field">
+          <label class="form-label">Дата</label>
+          <input class="form-input" id="sf-date" type="date">
+        </div>
+        <div class="form-field">
+          <label class="form-label">Приоритет</label>
+          <select class="form-select" id="sf-priority">
+            <option value="normal">Обычный</option>
+            <option value="high">Высокий</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="form-footer">
+      <button class="btn-cancel" onclick="closeStepForm()">Отмена</button>
+      <button class="btn-save" onclick="saveStep()">Добавить</button>
+    </div>
+  </div>
+</div>
+
+<!-- GOAL DETAIL OVERLAY -->
+<div class="form-overlay" id="goalDetail" style="align-items:stretch;padding:0;">
+  <div style="background:var(--bg);width:100%;max-width:780px;margin:0 auto;display:flex;flex-direction:column;max-height:100vh;overflow:hidden;">
+    <div class="form-header" style="flex-shrink:0;">
+      <div>
+        <div class="form-title" id="detailTitle"></div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:3px;" id="detailDeadline"></div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button onclick="openStepFormFor()" style="background:transparent;border:1px solid var(--gold-dim);color:var(--gold);font-family:var(--font-d);font-size:11px;letter-spacing:2px;padding:7px 12px;cursor:pointer;border-radius:2px;">+ Шаг</button>
+        <button class="form-close" onclick="closeDetail()">x</button>
+      </div>
+    </div>
+    <div style="flex:1;overflow-y:auto;">
+      <div id="detailMilestones"></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════════════
+
+const AREA_LABEL = {
+  bureau:'Бюро', aparts:'Апарты', personal:'Личный бренд',
+  body:'Тело', finance:'Финансы', inner:'Внутреннее', other:'Другое'
+};
+const AREA_COLOR = {
+  bureau:'var(--bureau)', aparts:'var(--aparts)', personal:'var(--personal)',
+  body:'var(--body)', finance:'var(--gold)', inner:'var(--violet)', other:'var(--blue)'
+};
+const DAYS_RU = ['вс','пн','вт','ср','чт','пт','сб'];
+const MONTHS = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+const MONTHS_S = ['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'];
+
+function ls(k){return localStorage.getItem(k);}
+function lsj(k,d){try{const s=ls(k);return s?JSON.parse(s):d;}catch(e){return d;}}
+function save(){localStorage.setItem('goals_v2',JSON.stringify(goals));}
+
+// goals_v2: [{id, title, area, deadline(ISO), measure, milestones:[{id,title,deadline,done,donedDate}], steps:[{id,msId,text,date,done,doneDate,priority}]}]
+let goals = lsj('goals_v2', []);
+
+// ═══════════════════════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════════════════════
+
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
+function today(){const d=new Date();d.setHours(0,0,0,0);return d;}
+function parseDate(s){if(!s)return null;const d=new Date(s+'T00:00:00');return isNaN(d)?null:d;}
+function fmtDate(d){if(!d)return '';return `${d.getDate()} ${MONTHS[d.getMonth()]} ${d.getFullYear()}`;}
+function fmtShort(d){if(!d)return '';return `${d.getDate()} ${MONTHS_S[d.getMonth()]}`;}
+function daysDiff(a,b){return Math.round((b-a)/86400000);}
+
+function getWeekStart(offset=0){
+  const d=today();
+  const dow=d.getDay();
+  const mon=new Date(d);
+  mon.setDate(d.getDate()-(dow===0?6:dow-1)+offset*7);
+  return mon;
+}
+
+function toast(msg){
+  const el=document.getElementById('toast');
+  el.textContent=msg;el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),1800);
+}
+
+// ═══════════════════════════════════════════════════════
+// LAG CALCULATION
+// ═══════════════════════════════════════════════════════
+
+function calcLag(goal){
+  const now=today();
+  const start=parseDate(goal.created||goal.deadline); // fallback
+  const end=parseDate(goal.deadline);
+  if(!end) return null;
+
+  const totalSteps=goal.steps.length;
+  if(!totalSteps) return null;
+
+  const doneSteps=goal.steps.filter(s=>s.done).length;
+  const pctDone=doneSteps/totalSteps;
+
+  // Time elapsed fraction
+  const createdDate=goal.created?parseDate(goal.created):new Date(end.getTime()-180*86400000);
+  const totalDays=daysDiff(createdDate,end);
+  const elapsed=daysDiff(createdDate,now);
+  const pctTime=Math.max(0,Math.min(1,elapsed/totalDays));
+
+  const lag=pctTime-pctDone; // positive = behind
+  const lagDays=Math.round(lag*totalDays);
+
+  return {pctDone:Math.round(pctDone*100), pctTime:Math.round(pctTime*100), lagDays, behind:lag>0.05};
+}
+
+function showLagBanner(){
+  const lagging=goals.filter(g=>!g.done).map(g=>({g,lag:calcLag(g)})).filter(x=>x.lag&&x.lag.behind);
+  const banner=document.getElementById('lagBanner');
+  const desc=document.getElementById('lagDesc');
+  if(!lagging.length){banner.classList.remove('show');return;}
+  banner.classList.add('show');
+  const msgs=lagging.map(x=>`${x.g.title}: отстаёшь на ${x.lag.lagDays} дн. (сделано ${x.lag.pctDone}%, прошло ${x.lag.pctTime}% времени)`);
+  desc.textContent=msgs.join(' · ');
+}
+
+let _lagGoalId=null;
+function chooseStrategy(mode){
+  const lagging=goals.filter(g=>!g.done).filter(g=>{const l=calcLag(g);return l&&l.behind;});
+  lagging.forEach(g=>{
+    if(mode==='push'){
+      // redistribute undone steps to remaining days
+      const end=parseDate(g.deadline);
+      const now=today();
+      const remaining=g.steps.filter(s=>!s.done);
+      const daysLeft=Math.max(1,daysDiff(now,end));
+      const perDay=Math.ceil(remaining.length/daysLeft);
+      let day=new Date(now);
+      remaining.forEach((s,i)=>{
+        if(i>0&&i%perDay===0){day=new Date(day);day.setDate(day.getDate()+1);}
+        s.date=day.toISOString().slice(0,10);
+      });
+      toast('Шаги перераспределены — поднажимаем!');
+    } else {
+      // extend deadline by lag days
+      const lag=calcLag(g);
+      if(!lag)return;
+      const end=parseDate(g.deadline);
+      end.setDate(end.getDate()+lag.lagDays+3);
+      g.deadline=end.toISOString().slice(0,10);
+      toast('Срок перенесён.');
+    }
+  });
+  save();
+  renderAll();
+  document.getElementById('lagBanner').classList.remove('show');
+}
+
+// ═══════════════════════════════════════════════════════
+// GOAL FORM
+// ═══════════════════════════════════════════════════════
+
+let editingGoalId=null;
+let _msRows=[];
+
+function openGoalForm(id=null){
+  editingGoalId=id;
+  _msRows=[];
+  const g=id?goals.find(x=>x.id===id):null;
+  document.getElementById('goalFormTitle').textContent=id?'Редактировать цель':'Новая цель';
+  document.getElementById('gf-title').value=g?g.title:'';
+  document.getElementById('gf-area').value=g?g.area:'bureau';
+  document.getElementById('gf-deadline').value=g?g.deadline:'';
+  document.getElementById('gf-measure').value=g?g.measure:'';
+  const list=document.getElementById('msFormList');
+  list.innerHTML='';
+  if(g&&g.milestones.length){
+    g.milestones.forEach(ms=>addMsFormRow(ms.title,ms.deadline));
+  } else {
+    addMsFormRow();addMsFormRow();addMsFormRow();
+  }
+  document.getElementById('goalForm').classList.add('open');
+  document.getElementById('gf-title').focus();
+}
+
+function addMsFormRow(title='',deadline=''){
+  const id='ms_'+uid();
+  _msRows.push(id);
+  const row=document.createElement('div');
+  row.className='ms-form-item';
+  row.id=id;
+  row.innerHTML=`<input class="form-input" placeholder="Веха ${_msRows.length}..." value="${title}" style="flex:1;">
+    <input class="form-input" type="date" value="${deadline}" style="width:150px;flex:none;">
+    <button onclick="removeMsRow('${id}')" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:16px;padding:0 4px;line-height:1;" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--text-muted)'">x</button>`;
+  document.getElementById('msFormList').appendChild(row);
+}
+
+function removeMsRow(id){
+  document.getElementById(id)?.remove();
+  _msRows=_msRows.filter(r=>r!==id);
+}
+
+function closeGoalForm(){document.getElementById('goalForm').classList.remove('open');}
+
+function saveGoal(){
+  const title=document.getElementById('gf-title').value.trim();
+  const deadline=document.getElementById('gf-deadline').value;
+  if(!title||!deadline){toast('Укажи название и дедлайн');return;}
+
+  const area=document.getElementById('gf-area').value;
+  const measure=document.getElementById('gf-measure').value.trim();
+
+  // Collect milestones from form rows
+  const msItems=document.querySelectorAll('#msFormList .ms-form-item');
+  const newMs=[];
+  msItems.forEach(row=>{
+    const inputs=row.querySelectorAll('input');
+    const t=inputs[0].value.trim();
+    const d=inputs[1].value;
+    if(t) newMs.push({id:uid(),title:t,deadline:d,done:false,doneDate:null});
+  });
+
+  if(editingGoalId){
+    const g=goals.find(x=>x.id===editingGoalId);
+    g.title=title;g.area=area;g.deadline=deadline;g.measure=measure;
+    // Merge milestones — keep existing steps linkage
+    const existIds=new Set(g.milestones.map(m=>m.id));
+    g.milestones=newMs.map(nm=>{
+      const ex=g.milestones.find(em=>em.title===nm.title);
+      return ex?{...ex,...nm}:nm;
+    });
+  } else {
+    goals.push({id:uid(),title,area,deadline,measure,milestones:newMs,steps:[],created:today().toISOString().slice(0,10),done:false});
+  }
+  save();closeGoalForm();renderAll();toast('Цель сохранена');
+}
+
+function deleteGoal(id){
+  if(!confirm('Удалить цель и все шаги?'))return;
+  goals=goals.filter(g=>g.id!==id);
+  save();renderAll();toast('Удалено');
+}
+
+// ═══════════════════════════════════════════════════════
+// STEP FORM
+// ═══════════════════════════════════════════════════════
+
+let _stepContext={goalId:null,msId:null};
+
+function openStepFormFor(goalId=null,msId=null){
+  _stepContext={goalId:goalId||_detailGoalId,msId};
+  document.getElementById('sf-text').value='';
+  document.getElementById('sf-date').value=today().toISOString().slice(0,10);
+  document.getElementById('sf-priority').value='normal';
+  document.getElementById('stepForm').classList.add('open');
+  setTimeout(()=>document.getElementById('sf-text').focus(),100);
+}
+
+function closeStepForm(){document.getElementById('stepForm').classList.remove('open');}
+
+function saveStep(){
+  const text=document.getElementById('sf-text').value.trim();
+  if(!text){toast('Введи текст шага');return;}
+  const date=document.getElementById('sf-date').value;
+  const priority=document.getElementById('sf-priority').value;
+  const g=goals.find(x=>x.id===_stepContext.goalId);
+  if(!g)return;
+  g.steps.push({id:uid(),msId:_stepContext.msId,text,date,priority,done:false,doneDate:null});
+  save();closeStepForm();
+  renderDetail(_detailGoalId);
+  renderWeekView();
+  showLagBanner();
+  toast('Шаг добавлен');
+}
+
+function toggleStep(goalId,stepId){
+  const g=goals.find(x=>x.id===goalId);
+  if(!g)return;
+  const s=g.steps.find(x=>x.id===stepId);
+  if(!s)return;
+  s.done=!s.done;
+  s.doneDate=s.done?today().toISOString().slice(0,10):null;
+  save();
+  renderDetail(goalId);
+  renderWeekView();
+  renderTrackView();
+  showLagBanner();
+  // Push to dashboard plan
+  syncToDashboard();
+}
+
+function deleteStep(goalId,stepId){
+  const g=goals.find(x=>x.id===goalId);
+  if(!g)return;
+  g.steps=g.steps.filter(s=>s.id!==stepId);
+  save();renderDetail(goalId);renderWeekView();toast('Удалено');
+}
+
+function toggleMilestone(goalId,msId){
+  const g=goals.find(x=>x.id===goalId);
+  if(!g)return;
+  const ms=g.milestones.find(x=>x.id===msId);
+  if(!ms)return;
+  ms.done=!ms.done;
+  ms.doneDate=ms.done?today().toISOString().slice(0,10):null;
+  save();renderDetail(goalId);renderGoalsView();renderTrackView();showLagBanner();
+  toast(ms.done?'Веха достигнута!':'Веха открыта');
+}
+
+// ═══════════════════════════════════════════════════════
+// SYNC TO DASHBOARD
+// ═══════════════════════════════════════════════════════
+
+function syncToDashboard(){
+  // Write today's undone goal steps into dashboard plan as custom tasks
+  const now=today();
+  const todayStr=now.toISOString().slice(0,10);
+  const dk=`plan_${now.getFullYear()}_${now.getMonth()}_${now.getDate()}`;
+
+  let plan;
+  try{plan=JSON.parse(ls(dk)||'{}');}catch(e){plan={};}
+  if(!plan.tasks)plan.tasks=[];
+
+  // Remove old auto-injected goal tasks
+  plan.tasks=plan.tasks.filter(t=>!t._fromGoals);
+
+  // Add today's undone steps from all goals
+  goals.forEach(g=>{
+    g.steps.filter(s=>!s.done&&s.date===todayStr).forEach(s=>{
+      plan.tasks.push({id:'g_'+s.id,txt:`[${AREA_LABEL[g.area]||g.area}] ${s.text}`,done:false,_fromGoals:true});
+    });
+  });
+
+  localStorage.setItem(dk,JSON.stringify(plan));
+}
+
+// ═══════════════════════════════════════════════════════
+// RENDER — GOALS VIEW
+// ═══════════════════════════════════════════════════════
+
+function renderGoalsView(){
+  const grid=document.getElementById('goalsGrid');
+  grid.innerHTML='';
+  const now=today();
+
+  goals.filter(g=>!g.done).forEach(g=>{
+    const end=parseDate(g.deadline);
+    const lag=calcLag(g);
+    const daysLeft=end?daysDiff(now,end):null;
+
+    const card=document.createElement('div');
+    card.className='goal-card';
+    card.onclick=()=>openDetail(g.id);
+
+    const timePct=lag?lag.pctTime:0;
+    const donePct=lag?lag.pctDone:0;
+    const color=AREA_COLOR[g.area]||'var(--text-dim)';
+
+    card.innerHTML=`
+      <div class="gc-area area-${g.area}">${AREA_LABEL[g.area]||g.area}</div>
+      <div class="gc-title">${g.title}</div>
+      <div class="gc-deadline">Дедлайн: <span>${end?fmtDate(end):'не задан'}</span>${daysLeft!==null?` &nbsp;·&nbsp; ${daysLeft>0?daysLeft+' дн. осталось':daysLeft===0?'сегодня':'просрочено на '+Math.abs(daysLeft)+' дн.'}`:''}</div>
+      <div class="progress-bar">
+        <div class="progress-fill" style="width:${donePct}%;background:${color};"></div>
+      </div>
+      <div class="progress-labels">
+        <span class="${lag&&lag.behind?'behind':''}">Сделано: ${donePct}%</span>
+        <span>Время: ${timePct}%</span>
+      </div>
+      <div style="position:absolute;top:10px;right:12px;display:flex;gap:6px;">
+        <button onclick="event.stopPropagation();openGoalForm('${g.id}')" style="background:none;border:none;color:var(--text-muted);font-size:11px;cursor:pointer;letter-spacing:1px;padding:4px;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--text-muted)'">ред.</button>
+        <button onclick="event.stopPropagation();deleteGoal('${g.id}')" style="background:none;border:none;color:var(--text-muted);font-size:11px;cursor:pointer;padding:4px;" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--text-muted)'">x</button>
+      </div>`;
+    grid.appendChild(card);
+  });
+
+  // Add button
+  const addBtn=document.createElement('button');
+  addBtn.className='gc-add';
+  addBtn.onclick=()=>openGoalForm();
+  addBtn.innerHTML='+ Новая цель';
+  grid.appendChild(addBtn);
+}
+
+// ═══════════════════════════════════════════════════════
+// RENDER — DETAIL
+// ═══════════════════════════════════════════════════════
+
+let _detailGoalId=null;
+
+function openDetail(id){
+  _detailGoalId=id;
+  renderDetail(id);
+  document.getElementById('goalDetail').classList.add('open');
+}
+
+function closeDetail(){
+  document.getElementById('goalDetail').classList.remove('open');
+  _detailGoalId=null;
+}
+
+function renderDetail(id){
+  const g=goals.find(x=>x.id===id);
+  if(!g)return;
+  const end=parseDate(g.deadline);
+  document.getElementById('detailTitle').textContent=g.title;
+  document.getElementById('detailDeadline').textContent=`${AREA_LABEL[g.area]||g.area} · дедлайн ${end?fmtDate(end):'не задан'}`;
+
+  const cont=document.getElementById('detailMilestones');
+  cont.innerHTML='';
+  const now=today();
+
+  // Group steps by milestone
+  const msMap={};
+  g.steps.forEach(s=>{
+    const k=s.msId||'none';
+    if(!msMap[k])msMap[k]=[];
+    msMap[k].push(s);
+  });
+
+  // Milestones
+  g.milestones.forEach(ms=>{
+    const msEnd=parseDate(ms.deadline);
+    const overdue=msEnd&&!ms.done&&msEnd<now;
+    const steps=msMap[ms.id]||[];
+    const doneCnt=steps.filter(s=>s.done).length;
+
+    const block=document.createElement('div');
+    block.className='step-block';
+    block.innerHTML=`
+      <div class="ms-item${ms.done?' done':''}" onclick="toggleMilestone('${g.id}','${ms.id}')">
+        <div class="ms-check">${ms.done?'+':''}</div>
+        <div class="ms-body">
+          <div class="ms-title">${ms.title}</div>
+          <div class="ms-date${overdue?' overdue':''}">${msEnd?fmtDate(msEnd):'без даты'}${overdue?' — просрочена':''}</div>
+          ${steps.length?`<div class="ms-lag">${doneCnt}/${steps.length} шагов</div>`:''}
+        </div>
+      </div>
+      <div class="step-items" id="steps_${ms.id}"></div>
+      <div class="add-step-row">
+        <input class="add-step-input" id="inp_${ms.id}" placeholder="Новый шаг..." onkeydown="if(event.key==='Enter')quickAddStep('${g.id}','${ms.id}')">
+        <button class="add-step-btn" onclick="quickAddStep('${g.id}','${ms.id}')">+ Шаг</button>
+      </div>`;
+    cont.appendChild(block);
+
+    const stepsEl=document.getElementById(`steps_${ms.id}`);
+    steps.sort((a,b)=>(a.date||'zzz').localeCompare(b.date||'zzz')).forEach(s=>{
+      const sDate=parseDate(s.date);
+      const stepOverdue=sDate&&!s.done&&sDate<now;
+      const el=document.createElement('div');
+      el.className=`step-item${s.done?' done':''}${stepOverdue?' overdue':''}`;
+      el.onclick=()=>toggleStep(g.id,s.id);
+      el.innerHTML=`<div class="si-check">${s.done?'+':''}</div>
+        <div class="si-txt">${s.text}${sDate?`<span style="font-size:10px;color:var(--text-muted);margin-left:8px;">${fmtShort(sDate)}</span>`:''}</div>
+        <span class="si-del" onclick="event.stopPropagation();deleteStep('${g.id}','${s.id}')">x</span>`;
+      stepsEl.appendChild(el);
+    });
+  });
+
+  // Steps without milestone
+  const free=msMap['none']||[];
+  if(free.length||true){
+    const block=document.createElement('div');
+    block.className='step-block';
+    block.innerHTML=`
+      <div class="step-block-header">
+        <div class="step-block-ms" style="color:var(--text-muted)">Без вехи</div>
+      </div>
+      <div class="step-items" id="steps_none"></div>
+      <div class="add-step-row">
+        <input class="add-step-input" id="inp_none" placeholder="Добавить шаг..." onkeydown="if(event.key==='Enter')quickAddStep('${g.id}',null)">
+        <button class="add-step-btn" onclick="quickAddStep('${g.id}',null)">+ Шаг</button>
+      </div>`;
+    cont.appendChild(block);
+    const stepsEl=document.getElementById('steps_none');
+    free.sort((a,b)=>(a.date||'zzz').localeCompare(b.date||'zzz')).forEach(s=>{
+      const sDate=parseDate(s.date);
+      const now2=today();
+      const stepOverdue=sDate&&!s.done&&sDate<now2;
+      const el=document.createElement('div');
+      el.className=`step-item${s.done?' done':''}${stepOverdue?' overdue':''}`;
+      el.onclick=()=>toggleStep(g.id,s.id);
+      el.innerHTML=`<div class="si-check">${s.done?'+':''}</div>
+        <div class="si-txt">${s.text}${sDate?`<span style="font-size:10px;color:var(--text-muted);margin-left:8px;">${fmtShort(sDate)}</span>`:''}</div>
+        <span class="si-del" onclick="event.stopPropagation();deleteStep('${g.id}','${s.id}')">x</span>`;
+      stepsEl.appendChild(el);
+    });
+  }
+}
+
+function quickAddStep(goalId,msId){
+  const inpId=msId?`inp_${msId}`:'inp_none';
+  const text=document.getElementById(inpId)?.value.trim();
+  if(!text)return;
+  const g=goals.find(x=>x.id===goalId);
+  if(!g)return;
+  g.steps.push({id:uid(),msId:msId||null,text,date:today().toISOString().slice(0,10),priority:'normal',done:false,doneDate:null});
+  save();
+  document.getElementById(inpId).value='';
+  renderDetail(goalId);
+  renderWeekView();
+  syncToDashboard();
+  toast('Шаг добавлен');
+}
+
+// ═══════════════════════════════════════════════════════
+// RENDER — WEEK VIEW
+// ═══════════════════════════════════════════════════════
+
+let weekOffset=0;
+
+function navWeek(d){weekOffset+=d;renderWeekView();}
+
+function renderWeekView(){
+  const wStart=getWeekStart(weekOffset);
+  const wEnd=new Date(wStart);wEnd.setDate(wStart.getDate()+6);
+  const now=today();
+
+  document.getElementById('weekLabel').textContent=
+    `${fmtShort(wStart)} — ${fmtShort(wEnd)}`;
+
+  // Collect all steps this week
+  const allSteps=[];
+  goals.forEach(g=>{
+    g.steps.forEach(s=>{
+      const d=parseDate(s.date);
+      if(d&&d>=wStart&&d<=wEnd) allSteps.push({...s,goalId:g.id,goalTitle:g.title,area:g.area});
+    });
+  });
+
+  const done=allSteps.filter(s=>s.done).length;
+  document.getElementById('weekProgress').textContent=
+    allSteps.length?`${done}/${allSteps.length} шагов выполнено`:'Шагов нет';
+
+  // Week grid
+  const grid=document.getElementById('weekGrid');
+  grid.innerHTML='';
+  const DNAMES=['пн','вт','ср','чт','пт','сб','вс'];
+  for(let i=0;i<7;i++){
+    const d=new Date(wStart);d.setDate(wStart.getDate()+i);
+    const isToday=daysDiff(now,d)===0;
+    const dStr=d.toISOString().slice(0,10);
+    const daySteps=allSteps.filter(s=>s.date===dStr);
+
+    const col=document.createElement('div');
+    col.className=`day-col${isToday?' today':''}`;
+    col.innerHTML=`<div class="day-name">${DNAMES[i]}</div><div class="day-num">${d.getDate()}</div>`;
+    daySteps.slice(0,4).forEach(s=>{
+      const el=document.createElement('div');
+      el.className=`day-step${s.done?' done':''}`;
+      el.style.borderLeftColor=AREA_COLOR[s.area]||'transparent';
+      el.textContent=s.text.length>30?s.text.slice(0,28)+'...':s.text;
+      el.onclick=()=>toggleStep(s.goalId,s.id);
+      col.appendChild(el);
+    });
+    if(daySteps.length>4){
+      const more=document.createElement('div');
+      more.style.cssText='font-size:10px;color:var(--text-muted);padding:2px 4px;';
+      more.textContent=`+${daySteps.length-4} ещё`;
+      col.appendChild(more);
+    }
+    grid.appendChild(col);
+  }
+
+  // Steps list grouped by goal
+  const list=document.getElementById('weekStepsList');
+  list.innerHTML='';
+  const byGoal={};
+  allSteps.forEach(s=>{
+    if(!byGoal[s.goalId])byGoal[s.goalId]=[];
+    byGoal[s.goalId].push(s);
+  });
+  if(!allSteps.length){
+    list.innerHTML='<div class="empty">На эту неделю шагов нет. Открой цель и добавь шаги с датами.</div>';
+    return;
+  }
+  Object.entries(byGoal).forEach(([gid,steps])=>{
+    const g=goals.find(x=>x.id===gid);
+    if(!g)return;
+    const sec=document.createElement('div');
+    sec.style.cssText='margin-bottom:16px;';
+    sec.innerHTML=`<div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:${AREA_COLOR[g.area]||'var(--text-muted)'};margin-bottom:8px;">${g.title}</div>`;
+    steps.sort((a,b)=>(a.date||'').localeCompare(b.date||'')).forEach(s=>{
+      const el=document.createElement('div');
+      el.className=`step-item${s.done?' done':''}`;
+      el.onclick=()=>{toggleStep(s.goalId,s.id);};
+      el.innerHTML=`<div class="si-check" style="border-radius:50%;">${s.done?'+':''}</div>
+        <div class="si-txt">${s.text} <span style="font-size:10px;color:var(--text-muted);">${s.date?fmtShort(parseDate(s.date)):''}</span></div>`;
+      sec.appendChild(el);
+    });
+    list.appendChild(sec);
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+// RENDER — TRACK VIEW
+// ═══════════════════════════════════════════════════════
+
+function renderTrackView(){
+  const now=today();
+  const statsEl=document.getElementById('trackStats');
+  const tlEl=document.getElementById('trackTimeline');
+  statsEl.innerHTML='';tlEl.innerHTML='';
+
+  if(!goals.length){
+    statsEl.innerHTML='<div class="stat-panel"><div class="empty">Целей пока нет</div></div>';
+    return;
+  }
+
+  goals.filter(g=>!g.done).forEach(g=>{
+    const lag=calcLag(g);
+    const end=parseDate(g.deadline);
+    const daysLeft=end?daysDiff(now,end):null;
+    const color=lag&&lag.behind?'var(--red)':lag&&lag.pctDone>=lag.pctTime?'var(--green)':'var(--gold)';
+
+    const panel=document.createElement('div');
+    panel.className='stat-panel';
+    panel.style.cursor='pointer';
+    panel.onclick=()=>openDetail(g.id);
+    panel.innerHTML=`
+      <div class="stat-lbl area-${g.area}">${AREA_LABEL[g.area]||g.area}</div>
+      <div style="font-family:var(--font-s);font-size:20px;font-weight:300;margin-bottom:4px;">${g.title}</div>
+      <div class="progress-bar" style="margin:10px 0 4px;"><div class="progress-fill" style="width:${lag?lag.pctDone:0}%;background:${color};"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted);margin-bottom:10px;">
+        <span>Сделано: <b style="color:${color}">${lag?lag.pctDone:0}%</b></span>
+        <span>Время: ${lag?lag.pctTime:0}%</span>
+      </div>
+      ${lag&&lag.behind?`<div style="font-size:12px;color:var(--red);margin-bottom:6px;">Отстаёшь на ${lag.lagDays} дн.</div>`:''}
+      ${daysLeft!==null?`<div style="font-size:11px;color:var(--text-muted);">Осталось: <span style="color:var(--text-dim)">${daysLeft>0?daysLeft+' дн.':daysLeft===0?'сегодня':'просрочено'}</span></div>`:''}
+      <div style="font-size:10px;color:var(--text-muted);margin-top:6px;">${g.steps.filter(s=>s.done).length}/${g.steps.length} шагов</div>`;
+    statsEl.appendChild(panel);
+  });
+
+  // Timeline — all milestones across all goals sorted by date
+  const allMs=[];
+  goals.forEach(g=>{
+    g.milestones.forEach(ms=>{
+      allMs.push({...ms,goalTitle:g.title,area:g.area,goalId:g.id});
+    });
+  });
+  allMs.sort((a,b)=>(a.deadline||'zzz').localeCompare(b.deadline||'zzz'));
+
+  if(!allMs.length){tlEl.innerHTML='<div class="empty">Вехи не заданы</div>';return;}
+
+  allMs.forEach(ms=>{
+    const end=parseDate(ms.deadline);
+    const overdue=end&&!ms.done&&end<now;
+    const isCurrent=end&&!ms.done&&end>=now&&daysDiff(now,end)<=14;
+    let statusClass='tl-future',statusText='предстоит';
+    if(ms.done){statusClass='tl-done';statusText='выполнено';}
+    else if(overdue){statusClass='tl-late';statusText='просрочена';}
+    else if(isCurrent){statusClass='tl-current';statusText='в ближайшие 2 нед.';}
+
+    const row=document.createElement('div');
+    row.className='tl-row';
+    row.innerHTML=`<div class="tl-dot" style="background:${AREA_COLOR[ms.area]||'var(--text-muted)'}"></div>
+      <div class="tl-body">
+        <div class="tl-ms">${ms.goalTitle} — ${ms.title}</div>
+        <div class="tl-date">${end?fmtDate(end):'дата не задана'}</div>
+      </div>
+      <div class="tl-status ${statusClass}">${statusText}</div>`;
+    tlEl.appendChild(row);
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+// VIEW SWITCHING
+// ═══════════════════════════════════════════════════════
+
+function switchView(name,el){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('view-'+name).classList.add('active');
+  el.classList.add('active');
+  if(name==='week')renderWeekView();
+  if(name==='track')renderTrackView();
+}
+
+// ═══════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════
+
+function renderAll(){
+  renderGoalsView();
+  renderWeekView();
+  renderTrackView();
+  showLagBanner();
+  syncToDashboard();
+}
+
+renderAll();
+
+// ═══════════════════════════════════════════════════════
+// AI SUGGEST (Claude API)
+// ═══════════════════════════════════════════════════════
+
+function getApiKey(){return localStorage.getItem('anthropic_api_key')||'';}
+function saveApiKey(){
+  const k=document.getElementById('aiApiKey').value.trim();
+  if(!k){toast('Введи ключ');return;}
+  localStorage.setItem('anthropic_api_key',k);
+  document.getElementById('aiApiKeyBlock').style.display='none';
+  toast('Ключ сохранён');
+  aiSuggest();
+}
+
+async function aiSuggest(){
+  const title=document.getElementById('gf-title').value.trim();
+  const deadline=document.getElementById('gf-deadline').value;
+  const measure=document.getElementById('gf-measure').value.trim();
+  const area=document.getElementById('gf-area').value;
+
+  if(!title||!deadline){
+    toast('Сначала укажи название и дедлайн');return;
+  }
+
+  const key=getApiKey();
+  if(!key){
+    document.getElementById('aiApiKeyBlock').style.display='block';
+    return;
+  }
+
+  const btn=document.getElementById('aiSuggestBtn');
+  const status=document.getElementById('aiStatus');
+  btn.textContent='Думаю...';
+  btn.disabled=true;
+  status.style.display='block';
+  status.textContent='Claude анализирует цель...';
+
+  const deadlineDate=parseDate(deadline);
+  const daysTotal=deadlineDate?daysDiff(today(),deadlineDate):180;
+  const months=Math.round(daysTotal/30);
+
+  const now=today();
+  const prompt=`Ты помощник по личному планированию. Пользователь поставил цель.
+
+Цель: ${title}
+Направление: ${AREA_LABEL[area]||area}
+Дедлайн: ${deadline} (через ~${months} мес.)
+${measure?'Критерий достижения: '+measure:''}
+
+Задача: предложи конкретный план достижения этой цели.
+
+Ответь ТОЛЬКО в формате JSON (без markdown, без пояснений вне JSON):
+{
+  "milestones": [
+    {"title": "название вехи", "deadline": "YYYY-MM-DD", "description": "что конкретно достигнуто"}
+  ],
+  "steps": [
+    {"text": "конкретное действие", "date": "YYYY-MM-DD", "msIndex": 0, "priority": "normal|high"}
+  ],
+  "habits": [
+    {"name": "привычка", "category": "category", "frequency": "daily|weekly"}
+  ],
+  "reasoning": "1-2 предложения почему такой план"
+}
+
+Правила:
+- Вех от 3 до 6, равномерно по времени до дедлайна
+- Шагов от 15 до 30, конкретных и выполнимых за 1 день
+- Распредели шаги по датам начиная с ${now.toISOString().slice(0,10)}
+- msIndex — индекс вехи (0,1,2...) к которой относится шаг
+- Привычек не более 4, только те что реально помогут этой цели
+- category для привычек: одно из bureau, aparts, personal, body, finance, inner
+- Все тексты на русском языке`;
+
+  try{
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'x-api-key':key,
+        'anthropic-version':'2023-06-01',
+        'anthropic-dangerous-direct-browser-access':'true'
+      },
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:2000,
+        messages:[{role:'user',content:prompt}]
+      })
+    });
+
+    if(!resp.ok){
+      const err=await resp.json().catch(()=>({}));
+      if(resp.status===401){
+        status.textContent='Неверный API ключ.';
+        document.getElementById('aiApiKeyBlock').style.display='block';
+      } else {
+        status.textContent='Ошибка API: '+(err.error?.message||resp.status);
+      }
+      btn.textContent='Предложить вехи и шаги — Claude';
+      btn.disabled=false;
+      return;
+    }
+
+    const data=await resp.json();
+    const text=data.content?.[0]?.text||'';
+
+    // Parse JSON from response
+    let plan;
+    try{
+      const clean=text.replace(/^```json\s*/,'').replace(/```\s*$/,'').trim();
+      plan=JSON.parse(clean);
+    }catch(e){
+      status.textContent='Не удалось разобрать ответ. Попробуй ещё раз.';
+      console.error('parse error',e,text);
+      btn.textContent='Предложить вехи и шаги — Claude';
+      btn.disabled=false;
+      return;
+    }
+
+    // Apply milestones to form
+    const msListEl=document.getElementById('msFormList');
+    msListEl.innerHTML='';
+    _msRows=[];
+    (plan.milestones||[]).forEach(ms=>{
+      addMsFormRow(ms.title, ms.deadline||'');
+    });
+
+    // Store steps & habits for saving later
+    window._aiPlan=plan;
+
+    // Show reasoning
+    status.textContent=plan.reasoning||'';
+    status.style.color='var(--text-muted)';
+
+    // Show habits preview
+    if(plan.habits&&plan.habits.length){
+      const hList=plan.habits.map(h=>h.name).join(', ');
+      status.textContent+=(status.textContent?' · ':'')+`Привычки: ${hList}`;
+    }
+
+    btn.textContent='Обновить предложение';
+    btn.disabled=false;
+    toast('Claude предложил план — проверь и скорректируй');
+
+  }catch(e){
+    status.textContent='Ошибка соединения: '+e.message;
+    btn.textContent='Предложить вехи и шаги — Claude';
+    btn.disabled=false;
+  }
+}
+
+// Override saveGoal to also apply AI steps & habits
+const _origSaveGoal=saveGoal;
+function saveGoal(){
+  _origSaveGoal();
+  // After goal saved, apply AI steps if available
+  if(window._aiPlan){
+    const plan=window._aiPlan;
+    window._aiPlan=null;
+
+    // Find the newly saved/edited goal
+    const g=editingGoalId?goals.find(x=>x.id===editingGoalId):goals[goals.length-1];
+    if(!g)return;
+
+    // Add steps mapped to milestone ids
+    (plan.steps||[]).forEach(s=>{
+      const ms=g.milestones[s.msIndex||0];
+      g.steps.push({
+        id:uid(),
+        msId:ms?ms.id:null,
+        text:s.text,
+        date:s.date||today().toISOString().slice(0,10),
+        priority:s.priority||'normal',
+        done:false,
+        doneDate:null
+      });
+    });
+
+    // Add habits to dashboard
+    if(plan.habits&&plan.habits.length){
+      let habits=lsj('my_habits',[]);
+      plan.habits.forEach(h=>{
+        if(!habits.find(ex=>ex.name===h.name)){
+          habits.push({id:uid(),name:h.name,cat:h.category||'personal'});
+        }
+      });
+      localStorage.setItem('my_habits',JSON.stringify(habits));
+    }
+
+    save();
+    syncToDashboard();
+    toast('Шаги и привычки добавлены!');
+    renderAll();
+  }
+}
+
+</script>
+
+<nav style="position:fixed;bottom:0;left:0;right:0;height:72px;background:#152238;border-top:1px solid #243060;display:flex;align-items:center;justify-content:space-around;padding:0 8px 8px;z-index:100;">
+  <a href="today.html" style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 12px;text-decoration:none;flex:1;">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6878a0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+    <span style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#6878a0;font-weight:500;">Сегодня</span>
+  </a>
+  <a href="calendar.html" style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 12px;text-decoration:none;flex:1;">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6878a0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+    <span style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#6878a0;font-weight:500;">Календарь</span>
+  </a>
+  <a href="goals.html" class="nav-active" style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 12px;text-decoration:none;flex:1;">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c49a52" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+    <span style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#c49a52;font-weight:500;">Проекты</span>
+    <div style="width:20px;height:2px;background:#c49a52;border-radius:1px;"></div>
+  </a>
+  <a href="inbox.html" style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 12px;text-decoration:none;flex:1;">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6878a0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+    <span style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#6878a0;font-weight:500;">Поток</span>
+  </a>
+  <a href="index.html" style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 12px;text-decoration:none;flex:1;">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6878a0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    <span style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#6878a0;font-weight:500;">Я</span>
+  </a>
+</nav>
+</body>
+</html>

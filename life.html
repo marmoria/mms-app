@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Яркость жизни</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+  --bg:       #1b2a4a;
+  --surface:  #152238;
+  --surface2: #1e3052;
+  --card:     #f5f0e8;
+  --card2:    #ede8de;
+  --border:   #243060;
+  --border2:  #2e3d70;
+  --border-c: rgba(27,42,74,.1);
+  --text:     #f0ece4;
+  --dim:      #b8bcd0;
+  --muted:    #6878a0;
+  --on-card:  #1b2a4a;
+  --on-dim:   #384068;
+  --on-muted: #788098;
+  --gold:     #c49a52;
+  --gold-d:   #9a7230;
+  --gold-bg:  rgba(196,154,82,.1);
+  --crimson:  #6b2233;
+  --crimson-bg:rgba(107,34,51,.2);
+  --green:    #3d7a55;
+  --green-bg: rgba(61,122,85,.15);
+  --red:      #9e4040;
+  --bureau:   #c49a52;
+  --aparts:   #3d7a55;
+  --personal: #6b4aaa;
+  --font-s:   'Cormorant Garamond', serif;
+  --font-m:   'Manrope', sans-serif;
+  --r:        10px;
+  --nav-h:    72px;
+}
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+  padding-bottom: 80px; background: var(--bg); color: var(--text); font-family: var(--font-b,'Manrope',sans-serif); font-size: 16px; min-height: 100vh; }
+
+  /* ── HEADER ── */
+  .header {
+    padding: 36px 40px 28px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+  .header-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 44px;
+    font-weight: 300;
+    line-height: 1.05;
+  }
+  .header-title em { font-style: italic; color: var(--amber); }
+  .header-sub {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17px;
+    font-weight: 300;
+    color: var(--text-dim);
+    font-style: italic;
+    margin-top: 8px;
+    max-width: 500px;
+    line-height: 1.5;
+  }
+  .header-right { text-align: right; }
+  .count-big {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 52px;
+    font-weight: 300;
+    color: var(--amber);
+    line-height: 1;
+  }
+  .count-sub { font-size: 11px; color: var(--text-muted); letter-spacing: 2px; text-transform: uppercase; margin-top: 4px; }
+
+  /* ── ADD FORM ── */
+  .add-panel {
+    padding: 24px 40px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .add-row-1 { display: flex; gap: 10px; margin-bottom: 10px; }
+  .add-row-2 { display: flex; gap: 10px; }
+
+  .main-input {
+    flex: 1;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    color: var(--text);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 300;
+    font-style: italic;
+    padding: 12px 18px;
+    outline: none;
+    transition: border-color .15s;
+  }
+  .main-input:focus { border-color: var(--amber-dim); }
+  .main-input::placeholder { color: var(--text-muted); }
+
+  .detail-input {
+    flex: 1;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    color: var(--text-dim);
+    font-family: var(--font-b,'Manrope',sans-serif);
+    font-size: 14px;
+    padding: 10px 14px;
+    outline: none;
+    transition: border-color .15s;
+  }
+  .detail-input:focus { border-color: var(--amber-dim); }
+  .detail-input::placeholder { color: var(--text-muted); }
+
+  .cat-btn {
+    padding: 10px 16px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    cursor: pointer;
+    font-family: var(--font-b,'Manrope',sans-serif);
+    font-size: 12px;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: all .15s;
+    white-space: nowrap;
+  }
+  .cat-btn:hover { background: var(--surface2); }
+  .cat-btn.active { color: var(--bg); }
+
+  .rating-wrap { display: flex; gap: 4px; align-items: center; }
+  .star {
+    width: 32px; height: 32px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--text-muted);
+    display: flex; align-items: center; justify-content: center;
+    transition: all .15s;
+    font-family: var(--font-b,'Manrope',sans-serif);
+  }
+  .star.active { background: var(--amber-dim); border-color: var(--amber); color: var(--text); }
+
+  .submit-btn {
+    padding: 10px 28px;
+    background: transparent;
+    border: 1px solid var(--amber-dim);
+    color: var(--amber);
+    font-family: var(--font-b,'Manrope',sans-serif);
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: all .2s;
+    white-space: nowrap;
+  }
+  .submit-btn:hover { background: var(--amber-dim); color: var(--bg); }
+
+  /* ── FILTER BAR ── */
+  .filter-bar {
+    display: flex;
+    gap: 8px;
+    padding: 16px 40px;
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .filter-label { font-size: 11px; color: var(--text-muted); letter-spacing: 2px; text-transform: uppercase; margin-right: 4px; }
+  .filter-btn {
+    padding: 6px 14px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    cursor: pointer;
+    font-family: var(--font-b,'Manrope',sans-serif);
+    font-size: 12px;
+    color: var(--text-muted);
+    transition: all .15s;
+  }
+  .filter-btn:hover { color: var(--text-dim); border-color: var(--text-muted); }
+  .filter-btn.active { color: var(--bg); border-color: transparent; }
+
+  /* ── MAIN LAYOUT ── */
+  .main-layout { display: grid; grid-template-columns: 1fr 320px; gap: 1px; background: var(--border); min-height: 60vh; }
+
+  /* ── FEED ── */
+  .feed-panel { background: var(--bg); padding: 0; }
+  .feed-empty {
+    padding: 60px 40px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--text-muted);
+    text-align: center;
+    line-height: 1.7;
+  }
+
+  .entry-card {
+    padding: 22px 32px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    transition: background .15s;
+  }
+  .entry-card:hover { background: var(--surface); }
+
+  .entry-accent {
+    width: 3px;
+    border-radius: 2px;
+    flex-shrink: 0;
+    align-self: stretch;
+    min-height: 40px;
+  }
+
+  .entry-body { flex: 1; min-width: 0; }
+  .entry-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 300;
+    color: var(--text);
+    line-height: 1.3;
+    margin-bottom: 4px;
+  }
+  .entry-detail { font-size: 14px; color: var(--text-dim); margin-bottom: 8px; line-height: 1.5; }
+  .entry-meta { display: flex; gap: 12px; align-items: center; }
+  .entry-date { font-size: 12px; color: var(--text-muted); }
+  .entry-cat { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; padding: 3px 8px; border-radius: 2px; }
+  .entry-stars { font-size: 13px; color: var(--amber); letter-spacing: 1px; }
+  .entry-del { color: var(--text-muted); font-size: 14px; cursor: pointer; padding: 2px 8px; opacity: 0; transition: opacity .15s; margin-left: auto; }
+  .entry-card:hover .entry-del { opacity: 1; }
+  .entry-del:hover { color: var(--red, #9e6b6b); }
+
+  /* ── SIDEBAR ── */
+  .sidebar { background: var(--bg); }
+
+  .sidebar-block { padding: 24px 24px; border-bottom: 1px solid var(--border); }
+  .sidebar-label { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 16px; }
+
+  /* stats */
+  .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .stat-tile { background: var(--surface); border-radius: 3px; padding: 14px 12px; text-align: center; }
+  .stat-tile-num { font-family: 'Cormorant Garamond', serif; font-size: 30px; font-weight: 300; color: var(--amber); line-height: 1; }
+  .stat-tile-lbl { font-size: 11px; color: var(--text-muted); margin-top: 3px; }
+
+  /* category breakdown */
+  .cat-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .cat-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .cat-name { font-size: 13px; color: var(--text-dim); flex: 1; }
+  .cat-count { font-size: 13px; color: var(--text-muted); }
+
+  /* heat map */
+  .heatmap { display: flex; gap: 3px; flex-wrap: wrap; }
+  .heat-dot {
+    width: 10px; height: 10px;
+    border-radius: 2px;
+    background: var(--border);
+    transition: background .2s;
+  }
+  .heat-dot.l1 { background: var(--amber-dim); opacity: .4; }
+  .heat-dot.l2 { background: var(--amber-dim); opacity: .7; }
+  .heat-dot.l3 { background: var(--amber); }
+
+  /* wishlist */
+  .wish-item { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--border); }
+  .wish-check { width: 16px; height: 16px; border: 1px solid var(--border); border-radius: 2px; flex-shrink: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 10px; transition: all .15s; }
+  .wish-check.done { background: var(--amber-dim); border-color: var(--amber-dim); color: var(--bg); }
+  .wish-text { flex: 1; font-size: 14px; color: var(--text-dim); }
+  .wish-item.done .wish-text { text-decoration: line-through; color: var(--text-muted); }
+  .wish-del { color: var(--text-muted); font-size: 13px; cursor: pointer; opacity: 0; transition: opacity .15s; padding: 0 4px; }
+  .wish-item:hover .wish-del { opacity: 1; }
+
+  .wish-add-row { display: flex; gap: 8px; margin-top: 12px; }
+  .wish-input { flex: 1; background: var(--surface); border: 1px solid var(--border); border-radius: 3px; color: var(--text); font-family: var(--font-b,'Manrope',sans-serif); font-size: 13px; padding: 8px 12px; outline: none; }
+  .wish-input:focus { border-color: var(--amber-dim); }
+  .wish-input::placeholder { color: var(--text-muted); }
+  .wish-add-btn { padding: 8px 14px; background: transparent; border: 1px solid var(--border); color: var(--text-muted); font-family: var(--font-b,'Manrope',sans-serif); font-size: 12px; cursor: pointer; border-radius: 3px; transition: all .15s; }
+  .wish-add-btn:hover { border-color: var(--amber-dim); color: var(--amber); }
+
+  /* quote */
+  .monthly-q {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17px;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--text-dim);
+    line-height: 1.65;
+    border-left: 2px solid var(--amber-dim);
+    padding-left: 16px;
+  }
+</style>
+</head>
+<body>
+
+
+<div class="header">
+  <div>
+    <div class="header-title"><em>Яркость</em> жизни</div>
+    <div class="header-sub">Победы, культура, путешествия, радость — всё что наполняет. Жизнь больше чем задачи.</div>
+  </div>
+  <div class="header-right">
+    <div class="count-big" id="totalCount">0</div>
+    <div class="count-sub">событий в жизни</div>
+  </div>
+<a href="http://marymoro.ru/core" style="font-size:11px;color:var(--text-muted);text-decoration:none;letter-spacing:1px;opacity:.5;transition:opacity .15s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.5">← Главная</a></div>
+
+<!-- ADD FORM -->
+<div class="add-panel">
+  <div class="add-row-1">
+    <input class="main-input" id="mainInput" placeholder="что произошло, что почувствовала..." onkeydown="if(event.key==='Enter')addEntry()">
+    <div class="rating-wrap" id="ratingWrap"></div>
+    <button class="submit-btn" onclick="addEntry()">Записать</button>
+  </div>
+  <div class="add-row-2">
+    <input class="detail-input" id="detailInput" placeholder="подробнее, детали, с кем, где...">
+    <div style="display:flex;gap:6px;flex-wrap:wrap;" id="catBtns"></div>
+  </div>
+</div>
+
+<!-- FILTER BAR -->
+<div class="filter-bar">
+  <span class="filter-label">Фильтр</span>
+  <button class="filter-btn active" data-filter="all" onclick="setFilter('all',this)" style="background:var(--amber-dim);border-color:var(--amber-dim);">Все</button>
+  <button class="filter-btn" data-filter="win"     onclick="setFilter('win',this)">Победы</button>
+  <button class="filter-btn" data-filter="culture" onclick="setFilter('culture',this)">Культура</button>
+  <button class="filter-btn" data-filter="travel"  onclick="setFilter('travel',this)">Путешествия</button>
+  <button class="filter-btn" data-filter="body"    onclick="setFilter('body',this)">Тело</button>
+  <button class="filter-btn" data-filter="connect" onclick="setFilter('connect',this)">Люди</button>
+  <button class="filter-btn" data-filter="idea"    onclick="setFilter('idea',this)">Идеи</button>
+  <button class="filter-btn" data-filter="joy"     onclick="setFilter('joy',this)">Просто радость</button>
+  <div style="margin-left:auto;display:flex;align-items:center;gap:8px;">
+    <span style="font-size:12px;color:var(--text-muted);">Сортировка</span>
+    <button class="filter-btn active" id="sort-new" onclick="setSort('new')" style="background:var(--surface2);border-color:var(--border);color:var(--text-dim);">Новые</button>
+    <button class="filter-btn" id="sort-stars" onclick="setSort('stars')" style="color:var(--text-muted);">По яркости</button>
+  </div>
+</div>
+
+<div class="main-layout">
+  <!-- FEED -->
+  <div class="feed-panel" id="feedPanel"></div>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <!-- STATS -->
+    <div class="sidebar-block">
+      <div class="sidebar-label">Статистика</div>
+      <div class="stat-grid">
+        <div class="stat-tile"><div class="stat-tile-num" id="statMonth">0</div><div class="stat-tile-lbl">в этом месяце</div></div>
+        <div class="stat-tile"><div class="stat-tile-num" id="statStreak">0</div><div class="stat-tile-lbl">недель подряд</div></div>
+        <div class="stat-tile"><div class="stat-tile-num" id="statStars">—</div><div class="stat-tile-lbl">средняя яркость</div></div>
+        <div class="stat-tile"><div class="stat-tile-num" id="statTop">—</div><div class="stat-tile-lbl">главная сфера</div></div>
+      </div>
+    </div>
+
+    <!-- BY CATEGORY -->
+    <div class="sidebar-block">
+      <div class="sidebar-label">По сферам</div>
+      <div id="catBreakdown"></div>
+    </div>
+
+    <!-- HEATMAP -->
+    <div class="sidebar-block">
+      <div class="sidebar-label">Активность (90 дней)</div>
+      <div class="heatmap" id="heatmap"></div>
+    </div>
+
+    <!-- BUCKET LIST -->
+    <div class="sidebar-block">
+      <div class="sidebar-label">Хочу сделать</div>
+      <div id="wishList"></div>
+      <div class="wish-add-row">
+        <input class="wish-input" id="wishInput" placeholder="мечта, план, хочу..." onkeydown="if(event.key==='Enter')addWish()">
+        <button class="wish-add-btn" onclick="addWish()">+</button>
+      </div>
+    </div>
+
+    <!-- MONTHLY INTENTION -->
+    <div class="sidebar-block">
+      <div class="sidebar-label">Намерение месяца</div>
+      <div class="monthly-q" contenteditable="true" id="monthlyQ" style="outline:none;min-height:50px;" oninput="saveWishes()" placeholder="в этом месяце я хочу больше...">в этом месяце я хочу больше...</div>
+    </div>
+  </div>
+</div>
+
+<script>
+const CATS = [
+  { id: 'win',     label: 'Победа',      color: 'var(--c-win)' },
+  { id: 'culture', label: 'Культура',    color: 'var(--c-culture)' },
+  { id: 'travel',  label: 'Путешествие', color: 'var(--c-travel)' },
+  { id: 'body',    label: 'Тело',        color: 'var(--c-body)' },
+  { id: 'connect', label: 'Люди',        color: 'var(--c-connect)' },
+  { id: 'idea',    label: 'Идея',        color: 'var(--c-idea)' },
+  { id: 'joy',     label: 'Радость',     color: 'var(--c-joy)' },
+];
+
+let entries  = JSON.parse(localStorage.getItem('life_entries') || '[]');
+let wishes   = JSON.parse(localStorage.getItem('life_wishes')  || '[]');
+let monthlyQ = localStorage.getItem('life_monthly_q') || 'в этом месяце я хочу больше...';
+
+let selectedCat    = 'win';
+let selectedRating = 3;
+let currentFilter  = 'all';
+let currentSort    = 'new';
+
+const MONTHS_RU = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+
+// ── CAT BUTTONS ──
+function renderCatBtns() {
+  const wrap = document.getElementById('catBtns');
+  wrap.innerHTML = '';
+  CATS.forEach(c => {
+    const btn = document.createElement('button');
+    btn.className = 'cat-btn' + (c.id === selectedCat ? ' active' : '');
+    btn.textContent = c.label;
+    if (c.id === selectedCat) btn.style.background = c.color;
+    btn.onclick = () => { selectedCat = c.id; renderCatBtns(); };
+    wrap.appendChild(btn);
+  });
+}
+
+// ── RATING ──
+function renderRating() {
+  const wrap = document.getElementById('ratingWrap');
+  wrap.innerHTML = '';
+  for (let i = 1; i <= 5; i++) {
+    const s = document.createElement('div');
+    s.className = 'star' + (i <= selectedRating ? ' active' : '');
+    s.textContent = i;
+    s.onclick = () => { selectedRating = i; renderRating(); };
+    wrap.appendChild(s);
+  }
+}
+
+// ── ADD ENTRY ──
+function addEntry() {
+  const title = document.getElementById('mainInput').value.trim();
+  if (!title) return;
+  const detail = document.getElementById('detailInput').value.trim();
+  entries.unshift({
+    id: Date.now(),
+    title,
+    detail,
+    cat: selectedCat,
+    rating: selectedRating,
+    date: new Date().toISOString(),
+  });
+  localStorage.setItem('life_entries', JSON.stringify(entries));
+  document.getElementById('mainInput').value = '';
+  document.getElementById('detailInput').value = '';
+  selectedRating = 3;
+  renderRating();
+  renderAll();
+}
+
+function deleteEntry(id) {
+  entries = entries.filter(e => e.id !== id);
+  localStorage.setItem('life_entries', JSON.stringify(entries));
+  renderAll();
+}
+
+// ── FILTER / SORT ──
+function setFilter(f, el) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn[data-filter]').forEach(b => {
+    b.classList.remove('active');
+    b.style.background = '';
+    b.style.borderColor = '';
+    b.style.color = '';
+  });
+  el.classList.add('active');
+  el.style.background = 'var(--amber-dim)';
+  el.style.borderColor = 'var(--amber-dim)';
+  el.style.color = 'var(--text)';
+  renderFeed();
+}
+
+function setSort(s) {
+  currentSort = s;
+  ['new','stars'].forEach(x => {
+    const btn = document.getElementById(`sort-${x}`);
+    btn.style.background = x === s ? 'var(--surface2)' : '';
+    btn.style.color = x === s ? 'var(--text-dim)' : 'var(--text-muted)';
+    btn.style.borderColor = x === s ? 'var(--border)' : '';
+  });
+  renderFeed();
+}
+
+// ── FEED ──
+function renderFeed() {
+  const panel = document.getElementById('feedPanel');
+  let list = currentFilter === 'all' ? [...entries] : entries.filter(e => e.cat === currentFilter);
+  if (currentSort === 'stars') list.sort((a, b) => b.rating - a.rating);
+
+  if (!list.length) {
+    panel.innerHTML = `<div class="feed-empty">Здесь будут жить твои яркие моменты.<br>Победы, спектакли, путешествия, открытия.<br><br>Начни с первой записи.</div>`;
+    return;
+  }
+  panel.innerHTML = '';
+  list.forEach(e => {
+    const cat = CATS.find(c => c.id === e.cat) || CATS[0];
+    const d = new Date(e.date);
+    const dateStr = `${d.getDate()} ${MONTHS_RU[d.getMonth()]} ${d.getFullYear()}`;
+    const stars = '*'.repeat(e.rating) + ''.repeat(5 - e.rating);
+    const card = document.createElement('div');
+    card.className = 'entry-card';
+    card.innerHTML = `
+      <div class="entry-accent" style="background:${cat.color}"></div>
+      <div class="entry-body">
+        <div class="entry-title">${e.title}</div>
+        ${e.detail ? `<div class="entry-detail">${e.detail}</div>` : ''}
+        <div class="entry-meta">
+          <span class="entry-date">${dateStr}</span>
+          <span class="entry-cat" style="background:${cat.color}22;color:${cat.color}">${cat.label}</span>
+          <span class="entry-stars">${stars}</span>
+          <span class="entry-del" onclick="deleteEntry(${e.id})">×</span>
+        </div>
+      </div>
+    `;
+    panel.appendChild(card);
+  });
+}
+
+// ── SIDEBAR STATS ──
+function renderStats() {
+  document.getElementById('totalCount').textContent = entries.length;
+
+  const now = new Date();
+  const thisMonth = entries.filter(e => {
+    const d = new Date(e.date);
+    return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+  });
+  document.getElementById('statMonth').textContent = thisMonth.length;
+
+  const avgRating = entries.length
+    ? (entries.reduce((s, e) => s + e.rating, 0) / entries.length).toFixed(1)
+    : '—';
+  document.getElementById('statStars').textContent = avgRating;
+
+  // top category
+  const catCounts = {};
+  CATS.forEach(c => { catCounts[c.id] = entries.filter(e => e.cat === c.id).length; });
+  const topCat = Object.entries(catCounts).sort((a, b) => b[1] - a[1])[0];
+  const topCatName = topCat && topCat[1] > 0
+    ? (CATS.find(c => c.id === topCat[0]) || {}).label || '—'
+    : '—';
+  document.getElementById('statTop').textContent = topCatName;
+
+  // streak (weeks with at least 1 entry)
+  let streak = 0;
+  for (let i = 0; i < 52; i++) {
+    const weekStart = new Date(now);
+    weekStart.setDate(now.getDate() - now.getDay() - i * 7);
+    const weekEnd = new Date(weekStart);
+    weekEnd.setDate(weekStart.getDate() + 7);
+    const hasEntry = entries.some(e => {
+      const d = new Date(e.date);
+      return d >= weekStart && d < weekEnd;
+    });
+    if (hasEntry) streak++;
+    else if (i > 0) break;
+  }
+  document.getElementById('statStreak').textContent = streak;
+}
+
+function renderCatBreakdown() {
+  const el = document.getElementById('catBreakdown');
+  el.innerHTML = '';
+  CATS.forEach(c => {
+    const count = entries.filter(e => e.cat === c.id).length;
+    const row = document.createElement('div');
+    row.className = 'cat-row';
+    row.innerHTML = `
+      <div class="cat-dot" style="background:${c.color}"></div>
+      <div class="cat-name">${c.label}</div>
+      <div class="cat-count">${count}</div>
+    `;
+    el.appendChild(row);
+  });
+}
+
+// ── HEATMAP ──
+function renderHeatmap() {
+  const el = document.getElementById('heatmap');
+  el.innerHTML = '';
+  const now = new Date();
+  for (let i = 89; i >= 0; i--) {
+    const d = new Date(now);
+    d.setDate(now.getDate() - i);
+    const dayStart = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    const dayEnd   = new Date(dayStart); dayEnd.setDate(dayStart.getDate() + 1);
+    const count = entries.filter(e => {
+      const ed = new Date(e.date);
+      return ed >= dayStart && ed < dayEnd;
+    }).length;
+    const dot = document.createElement('div');
+    dot.className = 'heat-dot' + (count >= 3 ? ' l3' : count === 2 ? ' l2' : count === 1 ? ' l1' : '');
+    dot.title = `${d.getDate()}.${d.getMonth()+1}: ${count} событий`;
+    el.appendChild(dot);
+  }
+}
+
+// ── WISHES ──
+function renderWishes() {
+  const el = document.getElementById('wishList');
+  el.innerHTML = '';
+  wishes.forEach((w, i) => {
+    const row = document.createElement('div');
+    row.className = 'wish-item' + (w.done ? ' done' : '');
+    row.innerHTML = `
+      <div class="wish-check${w.done?' done':''}" onclick="toggleWish(${i})">${w.done?'+':''}</div>
+      <div class="wish-text">${w.text}</div>
+      <div class="wish-del" onclick="deleteWish(${i})">×</div>
+    `;
+    el.appendChild(row);
+  });
+}
+
+function addWish() {
+  const input = document.getElementById('wishInput');
+  const text = input.value.trim();
+  if (!text) return;
+  wishes.push({ text, done: false });
+  input.value = '';
+  saveWishes();
+  renderWishes();
+}
+
+function toggleWish(i) {
+  wishes[i].done = !wishes[i].done;
+  saveWishes();
+  renderWishes();
+}
+
+function deleteWish(i) {
+  wishes.splice(i, 1);
+  saveWishes();
+  renderWishes();
+}
+
+function saveWishes() {
+  localStorage.setItem('life_wishes', JSON.stringify(wishes));
+  const q = document.getElementById('monthlyQ');
+  if (q) localStorage.setItem('life_monthly_q', q.textContent);
+}
+
+function renderAll() {
+  renderFeed();
+  renderStats();
+  renderCatBreakdown();
+  renderHeatmap();
+  renderWishes();
+}
+
+// ── INIT ──
+renderCatBtns();
+renderRating();
+renderAll();
+
+// restore monthly intention
+const mqEl = document.getElementById('monthlyQ');
+if (monthlyQ) mqEl.textContent = monthlyQ;
+</script>
+<nav style="position:fixed;bottom:0;left:0;right:0;height:72px;background:#152238;border-top:1px solid #243060;display:flex;align-items:center;justify-content:space-around;padding:0 8px 8px;z-index:100;"><a href="today.html" style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 12px;text-decoration:none;flex:1;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c49a52" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#c49a52;font-weight:500;">Сегодня</span><div style="width:20px;height:2px;background:#c49a52;border-radius:1px;"></div></a><a href="calendar.html" style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 12px;text-decoration:none;flex:1;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6878a0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#6878a0;font-weight:500;">Календарь</span></a><a href="goals.html" style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 12px;text-decoration:none;flex:1;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6878a0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg><span style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#6878a0;font-weight:500;">Проекты</span></a><a href="inbox.html" style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 12px;text-decoration:none;flex:1;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6878a0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><span style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#6878a0;font-weight:500;">Поток</span></a><a href="index.html" style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 12px;text-decoration:none;flex:1;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6878a0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#6878a0;font-weight:500;">Я</span></a></nav>
+</body>
+</html>

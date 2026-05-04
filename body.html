@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Тело и энергия</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+  --bg:       #1b2a4a;
+  --surface:  #152238;
+  --surface2: #1e3052;
+  --card:     #f5f0e8;
+  --card2:    #ede8de;
+  --border:   #243060;
+  --border2:  #2e3d70;
+  --border-c: rgba(27,42,74,.1);
+  --text:     #f0ece4;
+  --dim:      #b8bcd0;
+  --muted:    #6878a0;
+  --on-card:  #1b2a4a;
+  --on-dim:   #384068;
+  --on-muted: #788098;
+  --gold:     #c49a52;
+  --gold-d:   #9a7230;
+  --gold-bg:  rgba(196,154,82,.1);
+  --crimson:  #6b2233;
+  --crimson-bg:rgba(107,34,51,.2);
+  --green:    #3d7a55;
+  --green-bg: rgba(61,122,85,.15);
+  --red:      #9e4040;
+  --bureau:   #c49a52;
+  --aparts:   #3d7a55;
+  --personal: #6b4aaa;
+  --font-s:   'Cormorant Garamond', serif;
+  --font-m:   'Manrope', sans-serif;
+  --r:        10px;
+  --nav-h:    72px;
+}
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+  padding-bottom: 80px; background: var(--bg); color: var(--text); font-family: var(--font-b,'Manrope',sans-serif); font-size: 16px; min-height: 100vh; }
+
+  .header { padding: 32px 40px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: flex-end; }
+  .header-title { font-family: 'Cormorant Garamond', serif; font-size: 40px; font-weight: 300; }
+  .header-title span { color: var(--pink); font-style: italic; }
+  .header-sub { color: var(--text-dim); font-size: 14px; margin-top: 6px; font-family: 'Cormorant Garamond', serif; font-style: italic; }
+
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1px; background: var(--border); border-bottom: 1px solid var(--border); }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); border-bottom: 1px solid var(--border); }
+  .panel { background: var(--bg); padding: 24px 28px; }
+  .panel-label { font-size: 12px; letter-spacing: 3px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 16px; }
+
+  .sleep-label { font-size: 13px; color: var(--text-muted); margin-bottom: 6px; }
+  .time-input { background: var(--surface); border: 1px solid var(--border); border-radius: 3px; color: var(--text); font-family: var(--font-b,'Manrope',sans-serif); font-size: 22px; padding: 10px 14px; width: 100px; outline: none; text-align: center; transition: border-color .15s; }
+  .time-input:focus { border-color: var(--pink-dim); }
+  .sleep-hours { font-family: 'Cormorant Garamond', serif; font-size: 40px; font-weight: 300; color: var(--pink); line-height: 1; margin: 12px 0 4px; }
+
+  .sq-wrap { display: flex; gap: 6px; margin-top: 12px; }
+  .sq-btn { flex: 1; padding: 12px 4px; background: var(--surface); border: 1px solid var(--border); border-radius: 3px; cursor: pointer; text-align: center; transition: all .15s; font-family: 'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif; }
+  .sq-btn:hover { background: var(--surface2); }
+  .sq-btn.active { background: var(--surface2); border-color: var(--pink-dim); }
+  .sq-icon { font-size: 20px; display: block; line-height: 1.3; letter-spacing: 2px; color: var(--pink); font-weight: 300; font-family: var(--font-b,'Manrope',sans-serif); }
+  .sq-label { display: block; font-size: 12px; color: var(--text-muted); margin-top: 6px; font-family: var(--font-b,'Manrope',sans-serif); }
+
+  .metric-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .metric-name { width: 80px; font-size: 14px; color: var(--text-dim); }
+  .metric-input { flex: 1; background: var(--surface); border: 1px solid var(--border); border-radius: 3px; color: var(--text); font-family: var(--font-b,'Manrope',sans-serif); font-size: 16px; padding: 9px 12px; outline: none; transition: border-color .15s; }
+  .metric-input:focus { border-color: var(--pink-dim); }
+  .metric-unit { font-size: 14px; color: var(--text-dim); width: 30px; }
+
+  .slider-row { margin-bottom: 16px; }
+  .slider-header { display: flex; justify-content: space-between; margin-bottom: 8px; }
+  .slider-name { font-size: 14px; color: var(--text-dim); }
+  .slider-val { font-family: 'Cormorant Garamond', serif; font-size: 20px; color: var(--pink); }
+  .slider-desc { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; }
+  input[type=range] { width: 100%; -webkit-appearance: none; height: 4px; background: var(--surface2); border-radius: 2px; outline: none; cursor: pointer; }
+  input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: var(--pink); cursor: pointer; }
+
+  .activity-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
+  .act-btn { padding: 14px 8px; background: var(--surface); border: 1px solid var(--border); border-radius: 3px; cursor: pointer; text-align: center; transition: all .15s; font-family: 'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif; }
+  .act-btn:hover { background: var(--surface2); }
+  .act-btn.active { border-color: var(--pink-dim); background: var(--surface2); }
+  .act-emoji { font-size: 24px; display: block; line-height: 1.3; letter-spacing: 2px; color: var(--pink); font-weight: 400; }
+  .act-label { font-size: 12px; color: var(--text-dim); margin-top: 6px; letter-spacing: 0.5px; text-transform: uppercase; font-family: var(--font-b,'Manrope',sans-serif); }
+
+  .chart-row { display: flex; gap: 8px; align-items: flex-end; }
+  .chart-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .chart-bar-wrap { width: 100%; height: 52px; display: flex; align-items: flex-end; }
+  .chart-bar { width: 100%; border-radius: 2px 2px 0 0; background: var(--pink-dim); opacity: 0.7; transition: height .3s; min-height: 2px; }
+  .chart-bar.today { background: var(--pink); opacity: 1; }
+  .chart-day { font-size: 12px; color: var(--text-muted); }
+
+  .body-note { width: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: 3px; color: var(--text); font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 300; padding: 14px 16px; resize: none; height: 100px; outline: none; line-height: 1.65; }
+  .body-note:focus { border-color: var(--pink-dim); }
+  .body-note::placeholder { color: var(--text-muted); font-style: italic; }
+
+  .symptom-btn { padding: 8px 14px; background: var(--surface); border: 1px solid var(--border); border-radius: 3px; cursor: pointer; font-size: 13px; color: var(--text-dim); transition: all .15s; }
+  .symptom-btn:hover { background: var(--surface2); }
+  .symptom-btn.active { border-color: var(--pink-dim); background: var(--surface2); color: var(--text); }
+
+  .save-btn { display: block; margin: 24px 32px; padding: 14px; background: transparent; border: 1px solid var(--pink-dim); color: var(--pink); font-family: var(--font-b,'Manrope',sans-serif); font-size: 13px; letter-spacing: 3px; text-transform: uppercase; cursor: pointer; border-radius: 2px; transition: all .2s; width: calc(100% - 64px); }
+  .save-btn:hover { background: var(--pink-dim); color: var(--bg); }
+  .save-btn.saved { border-color: var(--green); color: var(--green); }
+</style>
+</head>
+<body>
+
+
+<div class="header">
+  <div>
+    <div class="header-title"><span>Тело</span> — не враг, а отражение</div>
+    <div class="header-sub">Регулярность важнее интенсивности</div>
+  </div>
+  <div style="display:flex;align-items:center;gap:16px;"><div style="color:var(--text-dim);font-size:13px;" id="todayDate" style="display:flex;align-items:center;gap:4px;"></div><a href="http://marymoro.ru/core" style="font-size:10px;color:var(--text-muted);text-decoration:none;letter-spacing:2px;text-transform:uppercase;opacity:.4;transition:opacity .15s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.4">← Главная</a></div>
+</div>
+
+
+<!-- GOAL PROGRESS -->
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border-bottom:1px solid var(--border);" id="goalBar"></div>
+
+<div class="grid3">
+  <div class="panel">
+    <div class="panel-label">Сон</div>
+    <div class="sleep-label">Легла спать</div>
+    <input class="time-input" type="time" id="sleepTime" value="23:00">
+    <div class="sleep-label" style="margin-top:12px;">Проснулась</div>
+    <input class="time-input" type="time" id="wakeTime" value="07:00">
+    <div style="display:flex;align-items:center;gap:10px;margin-top:14px;">
+      <div class="sleep-hours" id="sleepHours">8.0</div>
+      <div style="font-size:14px;color:var(--text-muted);">часов</div>
+    </div>
+    <div class="sq-wrap">
+      <div class="sq-btn" data-q="1" onclick="setSleepQ(1)"><span class="sq-icon"></span><span class="sq-label">плохо</span></div>
+      <div class="sq-btn" data-q="2" onclick="setSleepQ(2)"><span class="sq-icon"></span><span class="sq-label">средне</span></div>
+      <div class="sq-btn" data-q="3" onclick="setSleepQ(3)"><span class="sq-icon">**</span><span class="sq-label">хорошо</span></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-label">Тело сегодня</div>
+    <div class="metric-row"><div class="metric-name">Вес</div><input class="metric-input" type="number" id="weight" placeholder="58.0" step="0.1"><div class="metric-unit">кг</div></div>
+    <div class="metric-row"><div class="metric-name">Вода</div><input class="metric-input" type="number" id="water" placeholder="1.5" step="0.1"><div class="metric-unit">л</div></div>
+    <div class="metric-row"><div class="metric-name">Шаги</div><input class="metric-input" type="number" id="steps" placeholder="5000"><div class="metric-unit" style="font-size:12px;">шаг</div></div>
+
+    <div class="panel-label" style="margin-top:18px;">Самочувствие</div>
+    <div class="slider-row">
+      <div class="slider-header"><span class="slider-name">Энергия</span><span class="slider-val" id="energyVal">5</span></div>
+      <input type="range" min="1" max="10" value="5" id="energySlider" oninput="document.getElementById('energyVal').textContent=this.value">
+    </div>
+    <div class="slider-row">
+      <div class="slider-header"><span class="slider-name">Напряжение тела</span><span class="slider-val" id="tensionVal">5</span></div>
+      <input type="range" min="1" max="10" value="5" id="tensionSlider" oninput="document.getElementById('tensionVal').textContent=this.value">
+    </div>
+    <div class="slider-row">
+      <div class="slider-header"><span class="slider-name">Голод / аппетит</span><span class="slider-val" id="hungerVal">5</span></div>
+      <input type="range" min="1" max="10" value="5" id="hungerSlider" oninput="document.getElementById('hungerVal').textContent=this.value">
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-label">Активность</div>
+    <div class="activity-grid" id="actGrid"></div>
+  </div>
+</div>
+
+
+<!-- КБЖУ + УХОД ROW -->
+<div class="grid2" style="margin-top:1px;">
+  <!-- КБЖУ -->
+  <div class="panel">
+    <div class="panel-label" style="display:flex;justify-content:space-between;align-items:center;">
+      <span>КБЖУ сегодня</span>
+      <span style="font-size:10px;color:var(--text-muted);">норма 1400 ккал</span>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">
+      <div>
+        <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px;">Ккал</div>
+        <input class="metric-input" type="number" id="kkal" placeholder="0" style="width:100%;font-size:18px;" oninput="updateKBZU()">
+        <div style="height:3px;background:var(--surface2);border-radius:1px;margin-top:5px;overflow:hidden;"><div id="kkal-bar" style="height:100%;background:var(--pink);border-radius:1px;width:0%;transition:width .3s;"></div></div>
+      </div>
+      <div>
+        <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px;">Белок</div>
+        <input class="metric-input" type="number" id="protein_g" placeholder="0г" style="width:100%;font-size:18px;" oninput="updateKBZU()">
+        <div style="height:3px;background:var(--surface2);border-radius:1px;margin-top:5px;overflow:hidden;"><div id="protein-bar" style="height:100%;background:var(--green);border-radius:1px;width:0%;transition:width .3s;"></div></div>
+      </div>
+      <div>
+        <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px;">Жиры</div>
+        <input class="metric-input" type="number" id="fat_g" placeholder="0г" style="width:100%;font-size:18px;" oninput="updateKBZU()">
+        <div style="height:3px;background:var(--surface2);border-radius:1px;margin-top:5px;overflow:hidden;"><div id="fat-bar" style="height:100%;background:var(--gold);border-radius:1px;width:0%;transition:width .3s;"></div></div>
+      </div>
+      <div>
+        <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px;">Углеводы</div>
+        <input class="metric-input" type="number" id="carb_g" placeholder="0г" style="width:100%;font-size:18px;" oninput="updateKBZU()">
+        <div style="height:3px;background:var(--surface2);border-radius:1px;margin-top:5px;overflow:hidden;"><div id="carb-bar" style="height:100%;background:var(--gold-dim);border-radius:1px;width:0%;transition:width .3s;"></div></div>
+      </div>
+    </div>
+    <div style="font-size:11px;color:var(--text-muted);" id="kbzu-hint">Б: 70г &nbsp;·&nbsp; Ж: 50г &nbsp;·&nbsp; У: 150г</div>
+  </div>
+
+  <!-- УХОД + ВИТАМИНЫ -->
+  <div class="panel">
+    <div class="panel-label">Ритуал ухода</div>
+    <div style="display:flex;flex-direction:column;gap:3px;margin-bottom:14px;" id="careList"></div>
+    <div class="panel-label" style="margin-top:4px;">Витамины</div>
+    <div style="display:flex;flex-direction:column;gap:3px;" id="vitList"></div>
+  </div>
+</div>
+
+<div class="grid2">
+  <div class="panel">
+    <div class="panel-label">Сон за неделю</div>
+    <div class="chart-row" id="sleepChart"></div>
+  </div>
+  <div class="panel">
+    <div class="panel-label">Заметки о теле</div>
+    <textarea class="body-note" id="bodyNote" placeholder="как себя чувствую сегодня..."></textarea>
+    <div class="panel-label" style="margin-top:18px;">Симптомы / наблюдения</div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;" id="symptomBtns"></div>
+  </div>
+</div>
+
+
+<!-- WEIGHT CHART (30 days) -->
+<div style="border-bottom:1px solid var(--border);">
+  <div class="panel">
+    <div class="panel-label" style="display:flex;justify-content:space-between;align-items:center;">
+      <span>Вес за 30 дней</span>
+      <span style="font-family:'Cormorant Garamond',serif;font-size:13px;color:var(--text-muted);" id="weightGoalLabel">цель: 53 кг</span>
+    </div>
+    <div style="display:flex;align-items:flex-end;gap:3px;height:70px;" id="weightChart"></div>
+    <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-muted);margin-top:6px;">
+      <span id="weightMin">—</span><span id="weightCurrent">—</span><span id="weightMax">—</span>
+    </div>
+  </div>
+</div>
+
+<button class="save-btn" id="saveBtn" onclick="saveDay()">Сохранить</button>
+
+<script>
+
+// ── GOAL BAR ──
+const GOALS = {weight:{start:58,target:53,label:'Вес',unit:'кг',color:'var(--pink)'},fat:{start:38,target:30,label:'Жир',unit:'%',color:'var(--gold)'},sleep:{start:6,target:7.5,label:'Сон',unit:'ч',color:'var(--green)'},steps:{start:6000,target:10000,label:'Шаги',unit:'k',color:'var(--green)'}};
+function renderGoalBar(){
+  const el=document.getElementById('goalBar'); if(!el) return;
+  el.innerHTML='';
+  const today=new Date(), allKeys=[];
+  for(let i=0;i<30;i++){const d=new Date(today);d.setDate(today.getDate()-i);allKeys.push(`body_${d.getFullYear()}_${d.getMonth()}_${d.getDate()}`);}
+  const weights=allKeys.map(k=>{const s=localStorage.getItem(k);return s?parseFloat(JSON.parse(s).weight)||null:null;}).filter(Boolean);
+  const curWeight=state.weight?parseFloat(state.weight):(weights[0]||58);
+  const curSleep=state.sleepTime&&state.wakeTime?parseFloat(calcSleepHours(state.sleepTime,state.wakeTime)):0;
+  const curSteps=state.steps?parseFloat(state.steps):0;
+  const items=[
+    {label:'Вес',current:curWeight,target:53,start:58,unit:'кг',color:'var(--pink)',lower:true},
+    {label:'Сон',current:curSleep,target:7.5,start:6,unit:'ч',color:'var(--green)',lower:false},
+    {label:'Вода',current:parseFloat(state.water)||0,target:1.5,start:0,unit:'л',color:'var(--green)',lower:false},
+    {label:'Шаги',current:curSteps,target:10000,start:0,unit:'',color:'var(--gold)',lower:false},
+  ];
+  items.forEach(it=>{
+    const pct=it.lower
+      ? Math.min(100,Math.max(0,Math.round((it.start-it.current)/(it.start-it.target)*100)))
+      : Math.min(100,Math.max(0,Math.round(it.current/it.target*100)));
+    const cell=document.createElement('div');
+    cell.style.cssText='background:var(--bg);padding:14px 18px;';
+    const valStr=it.unit===''&&it.current>=1000?(it.current/1000).toFixed(1)+'k':it.current>0?it.current+(it.unit||''):'—';
+    cell.innerHTML=`
+      <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin-bottom:5px;">${it.label}</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:300;color:${it.color};line-height:1;margin-bottom:6px;">${valStr}</div>
+      <div style="height:3px;background:var(--surface2);border-radius:1px;overflow:hidden;margin-bottom:3px;"><div style="height:100%;background:${it.color};width:${pct}%;border-radius:1px;transition:width .5s;"></div></div>
+      <div style="font-size:9px;color:var(--text-muted);">${pct}% · цель ${it.target}${it.unit||''}</div>
+    `;
+    el.appendChild(cell);
+  });
+}
+
+// ── KBZU ──
+const KBZU_NORMS={kkal:1400,protein:70,fat:50,carb:150};
+function updateKBZU(){
+  const fields={kkal:{id:'kkal',bar:'kkal-bar',norm:1400},protein:{id:'protein_g',bar:'protein-bar',norm:70},fat:{id:'fat_g',bar:'fat-bar',norm:50},carb:{id:'carb_g',bar:'carb-bar',norm:150}};
+  Object.values(fields).forEach(f=>{
+    const val=parseFloat(document.getElementById(f.id).value)||0;
+    const pct=Math.min(120,Math.round(val/f.norm*100));
+    const bar=document.getElementById(f.bar);
+    if(bar){bar.style.width=pct+'%'; bar.style.background=pct>110?'var(--red)':bar.style.background;}
+  });
+}
+function loadKBZU(){
+  const k={kkal:'kkal',protein:'protein_g',fat:'fat_g',carb:'carb_g'};
+  Object.entries(k).forEach(([field,id])=>{if(state[field]){const el=document.getElementById(id);if(el)el.value=state[field];}});
+  updateKBZU();
+}
+
+// ── CARE CHECKLIST ──
+const CARE_ITEMS=[
+  {id:'face_m',   label:'Очищение + крем утром',  when:'у'},
+  {id:'face_e',   label:'Очищение + крем вечером', when:'в'},
+  {id:'brush',    label:'Сухая щётка',             when:'в'},
+  {id:'body_cr',  label:'Увлажнение тела',         when:'в'},
+  {id:'face_mask',label:'Маска для лица',          when:'н'},
+  {id:'posture',  label:'Осанка 3×1 мин',          when:'у'},
+  {id:'facefit',  label:'Фейсфитнес 5 мин',        when:'у'},
+];
+const WHEN_LABEL={у:'утро',в:'вечер',н:'по плану'};
+function renderCare(){
+  const el=document.getElementById('careList'); if(!el) return;
+  el.innerHTML='';
+  CARE_ITEMS.forEach(item=>{
+    const done=!!(state.care&&state.care[item.id]);
+    const row=document.createElement('div');
+    row.style.cssText=`display:flex;align-items:center;gap:8px;padding:5px 8px;background:var(--surface);border-radius:2px;cursor:pointer;transition:background .1s;${done?'opacity:.4':''}`;
+    row.innerHTML=`
+      <div style="width:13px;height:13px;border:1px solid var(--border);border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:8px;color:${done?'var(--bg)':'transparent'};background:${done?'var(--pink)':'transparent'};border-color:${done?'var(--pink)':'var(--border)'};flex-shrink:0;transition:all .1s;">${done?'+':''}</div>
+      <div style="font-size:12px;color:var(--text-dim);flex:1;">${item.label}</div>
+      <div style="font-size:9px;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;">${WHEN_LABEL[item.when]}</div>
+    `;
+    row.onclick=()=>{if(!state.care)state.care={};state.care[item.id]=!state.care[item.id];renderCare();};
+    el.appendChild(row);
+  });
+}
+
+// ── VITAMINS ──
+const VITS=[
+  {id:'d3',    label:'Д3 2000 МЕ',    when:'утро с едой'},
+  {id:'omega', label:'Омега-3 1000мг',when:'утро с едой'},
+  {id:'calc',  label:'Кальций+Д3',    when:'обед с едой'},
+  {id:'mag',   label:'Магний B6',     when:'вечер'},
+  {id:'coll',  label:'Коллаген 5г',   when:'утро в кофе'},
+];
+function renderVits(){
+  const el=document.getElementById('vitList'); if(!el) return;
+  el.innerHTML='';
+  VITS.forEach(v=>{
+    const done=!!(state.vits&&state.vits[v.id]);
+    const row=document.createElement('div');
+    row.style.cssText=`display:flex;align-items:center;gap:8px;padding:5px 8px;background:var(--surface);border-radius:2px;cursor:pointer;transition:background .1s;${done?'opacity:.4':''}`;
+    row.innerHTML=`
+      <div style="width:13px;height:13px;border:1px solid var(--border);border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:8px;color:${done?'var(--bg)':'transparent'};background:${done?'var(--gold)':'transparent'};border-color:${done?'var(--gold)':'var(--border)'};flex-shrink:0;transition:all .1s;">${done?'+':''}</div>
+      <div style="font-size:12px;color:var(--text-dim);flex:1;">${v.label}</div>
+      <div style="font-size:9px;color:var(--text-muted);">${v.when}</div>
+    `;
+    row.onclick=()=>{if(!state.vits)state.vits={};state.vits[v.id]=!state.vits[v.id];renderVits();};
+    el.appendChild(row);
+  });
+}
+
+// ── WEIGHT CHART (30 days) ──
+function renderWeightChart(){
+  const el=document.getElementById('weightChart'); if(!el) return;
+  el.innerHTML='';
+  const today=new Date();
+  const points=[];
+  for(let i=29;i>=0;i--){
+    const d=new Date(today);d.setDate(today.getDate()-i);
+    const k=`body_${d.getFullYear()}_${d.getMonth()}_${d.getDate()}`;
+    const sv=localStorage.getItem(k);
+    const w=sv?parseFloat(JSON.parse(sv).weight)||null:null;
+    points.push({w,isToday:i===0,d});
+  }
+  // today's live value
+  if(state.weight) points[points.length-1].w=parseFloat(state.weight);
+  const vals=points.map(p=>p.w).filter(Boolean);
+  if(!vals.length){el.innerHTML='<div style="font-size:11px;color:var(--text-muted);font-style:italic;padding:4px 0;">Начни вводить вес каждый день — появится график</div>';return;}
+  const mn=Math.min(...vals)-0.5, mx=Math.max(Math.max(...vals)+0.5, 59);
+  document.getElementById('weightMin').textContent=mn.toFixed(1)+'кг';
+  document.getElementById('weightMax').textContent=mx.toFixed(1)+'кг';
+  document.getElementById('weightCurrent').textContent=vals[vals.length-1].toFixed(1)+'кг сейчас';
+  const TARGET=53;
+  points.forEach(p=>{
+    const bar=document.createElement('div');
+    bar.style.cssText='flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%;';
+    if(p.w){
+      const h=Math.round((p.w-mn)/(mx-mn)*60+4);
+      const isGood=p.w<=TARGET+1;
+      bar.innerHTML=`<div style="width:100%;height:${h}px;background:${p.isToday?'var(--pink)':isGood?'var(--green)':'var(--gold-dim)'};border-radius:2px 2px 0 0;transition:height .3s;" title="${p.w}кг"></div>`;
+    } else {
+      bar.innerHTML='<div style="width:100%;height:3px;background:var(--border);border-radius:1px;"></div>';
+    }
+    el.appendChild(bar);
+  });
+}
+
+const ACTIVITIES=[
+  {id:'walk',emoji:'→',label:'прогулка'},
+  {id:'yoga',emoji:'inf',label:'йога'},
+  {id:'gym',emoji:'^^',label:'зал'},
+  {id:'swim',emoji:'~~',label:'плавание'},
+  {id:'dance',emoji:'',label:'танцы'},
+  {id:'other',emoji:'',label:'другое'},
+];
+const SYMPTOMS=['усталость','головная боль','боль в спине','вздутие','перепады настроения','тревога','приливы','нет жалоб'];
+const DAYS_RU=['Вс','Пн','Вт','Ср','Чт','Пт','Сб'];
+
+let state={sleepTime:'23:00',wakeTime:'07:00',sleepQ:null,weight:null,water:null,steps:null,energy:5,tension:5,hunger:5,activities:[],note:'',symptoms:[]};
+
+// ── ACTIVE DAY ──
+let activeDay = new Date();
+function AD(){return activeDay;}
+function navDay(delta){
+  activeDay = new Date(activeDay);
+  activeDay.setDate(activeDay.getDate()+delta);
+  loadState();
+  document.getElementById('todayDate').innerHTML = renderDateNav(AD());
+  // refill form fields
+  document.getElementById('sleepTime').value = state.sleepTime||'23:00';
+  document.getElementById('wakeTime').value = state.wakeTime||'07:00';
+  document.getElementById('weight').value = state.weight||'';
+  document.getElementById('water').value = state.water||'';
+  document.getElementById('steps').value = state.steps||'';
+  document.getElementById('kkal').value = state.kkal||'';
+  document.getElementById('protein').value = state.protein||'';
+  document.getElementById('fat').value = state.fat||'';
+  document.getElementById('carb').value = state.carb||'';
+  document.getElementById('bodyNote').value = state.note||'';
+  renderSymptoms(); renderActivities(); renderCareVits(); renderSleepChart();
+}
+function renderDateNav(d){
+  const today = new Date();
+  const diff = Math.round((new Date(d.getFullYear(),d.getMonth(),d.getDate()) - new Date(today.getFullYear(),today.getMonth(),today.getDate()))/86400000);
+  let lbl = '';
+  if(diff===0) lbl = ' — сегодня';
+  else if(diff===-1) lbl = ' — вчера';
+  else if(diff===-2) lbl = ' — позавчера';
+  else if(diff<0) lbl = ` — ${Math.abs(diff)} дн. назад`;
+  else if(diff===1) lbl = ' — завтра';
+  const mn = ['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'];
+  const nextOp = diff>=0 ? 'opacity:.25;pointer-events:none;' : '';
+  return `<button onclick="navDay(-1)" style="background:none;border:none;color:var(--text-muted);font-size:16px;cursor:pointer;padding:0 6px;">&lt;</button><span style="font-size:13px;color:var(--text-dim);letter-spacing:1px;">${d.getDate()} ${mn[d.getMonth()]}${lbl}</span><button onclick="navDay(1)" style="background:none;border:none;color:var(--text-muted);font-size:16px;cursor:pointer;padding:0 6px;${nextOp}">&gt;</button>`;
+}
+
+function todayKey(){const d=AD();return `body_${d.getFullYear()}_${d.getMonth()}_${d.getDate()}`;}
+function loadState(){const s=localStorage.getItem(todayKey());if(s)state={...state,...JSON.parse(s)};}
+
+function calcSleepHours(sleep,wake){
+  const[sh,sm]=sleep.split(':').map(Number);
+  const[wh,wm]=wake.split(':').map(Number);
+  let mins=(wh*60+wm)-(sh*60+sm);
+  if(mins<0)mins+=24*60;
+  return(mins/60).toFixed(1);
+}
+
+function setSleepQ(q){
+  state.sleepQ=q;
+  document.querySelectorAll('.sq-btn').forEach((b,i)=>b.classList.toggle('active',i+1===q));
+}
+
+function updateSleepDisplay(){
+  const h=calcSleepHours(document.getElementById('sleepTime').value,document.getElementById('wakeTime').value);
+  document.getElementById('sleepHours').textContent=h;
+  document.getElementById('sleepHours').style.color=parseFloat(h)>=7?'var(--pink)':parseFloat(h)>=6?'var(--gold)':'var(--red)';
+}
+
+function renderActivities(){
+  const grid=document.getElementById('actGrid');grid.innerHTML='';
+  ACTIVITIES.forEach(a=>{
+    const active=state.activities.includes(a.id);
+    const btn=document.createElement('div');
+    btn.className='act-btn'+(active?' active':'');
+    btn.innerHTML=`<span class="act-emoji">${a.emoji}</span><div class="act-label">${a.label}</div>`;
+    btn.onclick=()=>{
+      if(state.activities.includes(a.id))state.activities=state.activities.filter(x=>x!==a.id);
+      else state.activities.push(a.id);
+      renderActivities();
+    };
+    grid.appendChild(btn);
+  });
+}
+
+function renderSymptoms(){
+  const el=document.getElementById('symptomBtns');el.innerHTML='';
+  SYMPTOMS.forEach(s=>{
+    const active=state.symptoms.includes(s);
+    const btn=document.createElement('div');
+    btn.className='symptom-btn'+(active?' active':'');
+    btn.textContent=s;
+    btn.onclick=()=>{
+      if(state.symptoms.includes(s))state.symptoms=state.symptoms.filter(x=>x!==s);
+      else state.symptoms.push(s);
+      renderSymptoms();
+    };
+    el.appendChild(btn);
+  });
+}
+
+function renderSleepChart(){
+  const chart=document.getElementById('sleepChart');chart.innerHTML='';
+  for(let i=6;i>=0;i--){
+    const d=new Date();d.setDate(d.getDate()-i);
+    const key=`body_${d.getFullYear()}_${d.getMonth()}_${d.getDate()}`;
+    const saved=localStorage.getItem(key);
+    let hours=0;
+    if(saved){const s=JSON.parse(saved);if(s.sleepTime&&s.wakeTime)hours=parseFloat(calcSleepHours(s.sleepTime,s.wakeTime));}
+    const pct=Math.min(100,(hours/9)*100);
+    const col=document.createElement('div');col.className='chart-col';
+    col.innerHTML=`<div class="chart-bar-wrap"><div class="chart-bar${i===0?' today':''}" style="height:${pct}%;"></div></div><div class="chart-day">${DAYS_RU[d.getDay()]}</div>`;
+    chart.appendChild(col);
+  }
+}
+
+function saveDay(){
+  state.sleepTime=document.getElementById('sleepTime').value;
+  state.wakeTime=document.getElementById('wakeTime').value;
+  state.weight=document.getElementById('weight').value;
+  state.water=document.getElementById('water').value;
+  state.steps=document.getElementById('steps').value;
+  state.energy=document.getElementById('energySlider').value;
+  state.tension=document.getElementById('tensionSlider').value;
+  state.hunger=document.getElementById('hungerSlider').value;
+  state.note=document.getElementById('bodyNote').value;
+  state.kkal=document.getElementById('kkal').value;
+  state.protein=document.getElementById('protein_g').value;
+  state.fat=document.getElementById('fat_g').value;
+  state.carb=document.getElementById('carb_g').value;
+  localStorage.setItem(todayKey(),JSON.stringify(state));
+  renderWeightChart();renderGoalBar();
+  renderSleepChart();
+  const btn=document.getElementById('saveBtn');btn.textContent='+ Сохранено';btn.classList.add('saved');
+  setTimeout(()=>{btn.textContent='Сохранить';btn.classList.remove('saved');},2000);
+}
+
+loadState();
+document.getElementById('todayDate').innerHTML=renderDateNav(AD());
+document.getElementById('sleepTime').value=state.sleepTime||'23:00';
+document.getElementById('wakeTime').value=state.wakeTime||'07:00';
+if(state.weight)document.getElementById('weight').value=state.weight;
+if(state.water)document.getElementById('water').value=state.water;
+if(state.steps)document.getElementById('steps').value=state.steps;
+document.getElementById('energySlider').value=state.energy||5;
+document.getElementById('tensionSlider').value=state.tension||5;
+document.getElementById('hungerSlider').value=state.hunger||5;
+document.getElementById('energyVal').textContent=state.energy||5;
+document.getElementById('tensionVal').textContent=state.tension||5;
+document.getElementById('hungerVal').textContent=state.hunger||5;
+document.getElementById('bodyNote').value=state.note||'';
+if(state.sleepQ)setSleepQ(state.sleepQ);
+updateSleepDisplay();
+document.getElementById('sleepTime').addEventListener('input',updateSleepDisplay);
+document.getElementById('wakeTime').addEventListener('input',updateSleepDisplay);
+renderActivities();renderSymptoms();renderSleepChart();renderGoalBar();loadKBZU();renderCare();renderVits();renderWeightChart();
+</script>
+<nav style="position:fixed;bottom:0;left:0;right:0;height:72px;background:#152238;border-top:1px solid #243060;display:flex;align-items:center;justify-content:space-around;padding:0 8px 8px;z-index:100;"><a href="today.html" style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 12px;text-decoration:none;flex:1;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c49a52" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#c49a52;font-weight:500;">Сегодня</span><div style="width:20px;height:2px;background:#c49a52;border-radius:1px;"></div></a><a href="calendar.html" style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 12px;text-decoration:none;flex:1;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6878a0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#6878a0;font-weight:500;">Календарь</span></a><a href="goals.html" style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 12px;text-decoration:none;flex:1;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6878a0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg><span style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#6878a0;font-weight:500;">Проекты</span></a><a href="inbox.html" style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 12px;text-decoration:none;flex:1;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6878a0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><span style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#6878a0;font-weight:500;">Поток</span></a><a href="index.html" style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 12px;text-decoration:none;flex:1;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6878a0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#6878a0;font-weight:500;">Я</span></a></nav>
+</body>
+</html>

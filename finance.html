@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Финансы</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+  --bg:       #1b2a4a;
+  --surface:  #152238;
+  --surface2: #1e3052;
+  --card:     #f5f0e8;
+  --card2:    #ede8de;
+  --border:   #243060;
+  --border2:  #2e3d70;
+  --border-c: rgba(27,42,74,.1);
+  --text:     #f0ece4;
+  --dim:      #b8bcd0;
+  --muted:    #6878a0;
+  --on-card:  #1b2a4a;
+  --on-dim:   #384068;
+  --on-muted: #788098;
+  --gold:     #c49a52;
+  --gold-d:   #9a7230;
+  --gold-bg:  rgba(196,154,82,.1);
+  --crimson:  #6b2233;
+  --crimson-bg:rgba(107,34,51,.2);
+  --green:    #3d7a55;
+  --green-bg: rgba(61,122,85,.15);
+  --red:      #9e4040;
+  --bureau:   #c49a52;
+  --aparts:   #3d7a55;
+  --personal: #6b4aaa;
+  --font-s:   'Cormorant Garamond', serif;
+  --font-m:   'Manrope', sans-serif;
+  --r:        10px;
+  --nav-h:    72px;
+}
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body {
+  padding-bottom: 80px; background:var(--bg); color:var(--text); font-family:'Manrope',sans-serif; font-size:16px; min-height:100vh; }
+
+  .header { padding:28px 40px 20px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:flex-end; }
+  .header-title { font-family:'Cormorant Garamond',serif; font-size:40px; font-weight:300; }
+  .header-title span { color:var(--green); font-style:italic; }
+  .header-sub { color:var(--text-dim); font-size:14px; margin-top:6px; font-family:'Cormorant Garamond',serif; font-style:italic; }
+
+  .tabs { display:flex; gap:1px; background:var(--border); border-bottom:1px solid var(--border); overflow-x:auto; scrollbar-width:none; }
+  .tabs::-webkit-scrollbar { display:none; }
+  .tab { flex-shrink:0; padding:13px 16px; background:var(--bg); cursor:pointer; font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:var(--text-muted); border-bottom:2px solid transparent; text-align:center; transition:all .15s; white-space:nowrap; }
+  .tab:hover { background:var(--surface); }
+  .tab.active { color:var(--green); border-bottom-color:var(--green); }
+  .view { display:none; }
+  .view.active { display:block; }
+
+  .summary-row { display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--border); border-bottom:1px solid var(--border); }
+  .sum-cell { background:var(--bg); padding:20px 24px; }
+  .sum-label { font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--text-muted); margin-bottom:8px; }
+  .sum-val { font-family:'Cormorant Garamond',serif; font-size:36px; font-weight:300; line-height:1; }
+  .sum-sub { font-size:12px; color:var(--text-muted); margin-top:4px; }
+
+  .source-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--border); border-bottom:1px solid var(--border); }
+  .source-cell { background:var(--bg); padding:18px 22px; border-top:3px solid transparent; transition:background .15s; }
+  .source-cell:hover { background:var(--surface); }
+  .source-name { font-size:12px; letter-spacing:2px; text-transform:uppercase; margin-bottom:8px; }
+  .source-income { font-family:'Cormorant Garamond',serif; font-size:26px; font-weight:300; }
+  .source-expense { font-size:13px; margin-top:2px; }
+  .source-balance { font-size:13px; margin-top:4px; }
+
+  .main-grid { display:grid; grid-template-columns:340px 1fr; gap:1px; background:var(--border); }
+  .panel { background:var(--bg); padding:22px 26px; }
+  .panel-label { font-size:12px; letter-spacing:3px; text-transform:uppercase; color:var(--text-muted); margin-bottom:14px; display:flex; justify-content:space-between; align-items:center; }
+  .panel-label-btn { font-size:11px; color:var(--text-muted); cursor:pointer; padding:3px 8px; border:1px solid var(--border); border-radius:2px; transition:all .15s; text-transform:uppercase; letter-spacing:1px; }
+  .panel-label-btn:hover { color:var(--green); border-color:var(--green); }
+
+  .type-row { display:flex; gap:4px; margin-bottom:12px; }
+  .type-btn { flex:1; padding:10px; background:var(--surface); border:1px solid var(--border); border-radius:3px; cursor:pointer; font-family:'Manrope',sans-serif; font-size:12px; letter-spacing:2px; text-transform:uppercase; color:var(--text-dim); transition:all .15s; }
+  .type-btn.inc.active { background:var(--green); color:var(--bg); border-color:var(--green); }
+  .type-btn.exp.active { background:var(--red); color:var(--bg); border-color:var(--red); }
+
+  .fi { width:100%; background:var(--surface); border:1px solid var(--border); border-radius:3px; color:var(--text); font-family:'Manrope',sans-serif; font-size:14px; padding:10px 12px; outline:none; margin-bottom:8px; transition:border-color .15s; }
+  .fi:focus { border-color:var(--gold-dim); }
+  .fi::placeholder { color:var(--text-muted); }
+  .fi-row { display:flex; gap:8px; margin-bottom:8px; }
+  .fi-row .fi { margin-bottom:0; }
+
+  .source-btns { display:flex; gap:4px; margin-bottom:10px; }
+  .src-btn { flex:1; padding:8px 4px; background:var(--surface); border:1px solid var(--border); border-radius:3px; cursor:pointer; font-family:'Manrope',sans-serif; font-size:11px; color:var(--text-muted); text-align:center; transition:all .15s; letter-spacing:1px; }
+  .src-btn:hover { background:var(--surface2); }
+  .src-btn.active { color:var(--bg); border-color:transparent; }
+
+  .imp-flag { display:flex; align-items:center; gap:10px; padding:10px 12px; background:var(--surface); border:1px solid var(--border); border-radius:3px; cursor:pointer; margin-bottom:10px; transition:all .15s; }
+  .imp-flag.on { border-color:var(--red); background:#9e6b6b11; }
+  .imp-check { width:16px; height:16px; border:1px solid var(--border); border-radius:2px; display:flex; align-items:center; justify-content:center; font-size:11px; flex-shrink:0; transition:all .15s; }
+  .imp-flag.on .imp-check { background:var(--red); color:var(--bg); border-color:var(--red); }
+  .imp-text { font-size:13px; color:var(--text-dim); }
+
+  .submit-btn { width:100%; padding:12px; background:transparent; border:1px solid var(--gold-dim); color:var(--gold); font-family:'Manrope',sans-serif; font-size:12px; letter-spacing:3px; text-transform:uppercase; cursor:pointer; border-radius:3px; transition:all .2s; }
+  .submit-btn:hover { background:var(--gold-dim); color:var(--bg); }
+
+  .txn-filters { display:flex; gap:6px; margin-bottom:14px; flex-wrap:wrap; }
+  .txn-filter { padding:5px 12px; background:var(--surface); border:1px solid var(--border); border-radius:20px; cursor:pointer; font-size:12px; color:var(--text-muted); transition:all .15s; }
+  .txn-filter:hover { color:var(--text-dim); }
+  .txn-filter.active { border-color:transparent; }
+
+  .txn-list { display:flex; flex-direction:column; gap:3px; max-height:400px; overflow-y:auto; }
+  .txn-list::-webkit-scrollbar { width:3px; }
+  .txn-list::-webkit-scrollbar-thumb { background:var(--gold-dim); }
+  .txn-row { display:flex; align-items:center; gap:10px; padding:10px 12px; background:var(--surface); border-radius:3px; border-left:3px solid transparent; transition:background .1s; }
+  .txn-row:hover { background:var(--surface2); }
+  .txn-amt { font-family:'Cormorant Garamond',serif; font-size:20px; font-weight:300; width:80px; flex-shrink:0; }
+  .txn-desc-wrap { flex:1; }
+  .txn-title { font-size:14px; color:var(--text-dim); }
+  .txn-tags { font-size:11px; color:var(--text-muted); margin-top:2px; }
+  .txn-date { font-size:12px; color:var(--text-muted); white-space:nowrap; }
+  .txn-del { cursor:pointer; color:var(--text-muted); font-size:14px; padding:2px 6px; opacity:0; transition:opacity .15s; }
+  .txn-row:hover .txn-del { opacity:1; }
+  .txn-del:hover { color:var(--red); }
+
+  .chart-wrap { display:flex; gap:6px; align-items:flex-end; }
+  .chart-col { flex:1; display:flex; flex-direction:column; align-items:center; gap:3px; }
+  .chart-bars { display:flex; gap:2px; align-items:flex-end; width:100%; }
+  .c-bar { flex:1; border-radius:2px 2px 0 0; min-height:2px; transition:height .3s; }
+  .c-label { font-size:10px; color:var(--text-muted); }
+
+  .cat-item { display:flex; align-items:center; gap:10px; padding:9px 12px; background:var(--surface); border-radius:3px; margin-bottom:4px; }
+  .cat-color-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+  .cat-name-txt { flex:1; font-size:14px; color:var(--text-dim); }
+  .cat-amt-txt { font-family:'Cormorant Garamond',serif; font-size:18px; }
+  .cat-del { cursor:pointer; color:var(--text-muted); font-size:13px; padding:2px 6px; opacity:0; transition:opacity .15s; }
+  .cat-item:hover .cat-del { opacity:1; }
+
+  .goal-row { padding:14px 0; border-bottom:1px solid var(--border); }
+  .goal-head { display:flex; justify-content:space-between; margin-bottom:6px; align-items:center; }
+  .goal-name-txt { font-size:14px; color:var(--text-dim); }
+  .goal-pct-txt { font-family:'Cormorant Garamond',serif; font-size:20px; }
+  .goal-bar-bg { height:4px; background:var(--surface2); border-radius:2px; overflow:hidden; margin-bottom:4px; }
+  .goal-bar-fill { height:100%; border-radius:2px; transition:width .5s; }
+  .goal-sub-txt { font-size:12px; color:var(--text-muted); }
+</style>
+</head>
+<body>
+
+
+<div class="header">
+  <div>
+    <div class="header-title"><span>Финансы</span> — три потока</div>
+    <div class="header-sub" id="monthLabel">контроль без тревоги</div>
+  </div>
+  <div style="text-align:right;">
+    <div style="font-size:11px;letter-spacing:2px;color:var(--text-muted);text-transform:uppercase;margin-bottom:4px;">Баланс месяца</div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:44px;font-weight:300;line-height:1;" id="totalBalance">0 ₽</div>
+  </div>
+</div>
+
+<div class="source-grid" id="sourceGrid"></div>
+
+<div class="summary-row">
+  <div class="sum-cell"><div class="sum-label">Доходы / месяц</div><div class="sum-val" style="color:var(--green)" id="sumIncome">0 ₽</div><div class="sum-sub" id="sumIncomeSub"></div></div>
+  <div class="sum-cell"><div class="sum-label">Расходы / месяц</div><div class="sum-val" style="color:var(--red)" id="sumExpense">0 ₽</div></div>
+  <div class="sum-cell"><div class="sum-label">Импульсивно</div><div class="sum-val" style="color:var(--red)" id="sumImpAmt">0 ₽</div><div class="sum-sub" id="sumImpPct"></div></div>
+  <div class="sum-cell"><div class="sum-label">Профицит / дефицит</div><div class="sum-val" id="sumSaved">0 ₽</div><div class="sum-sub" id="sumSavedSub"></div></div>
+</div>
+
+<div style="padding:8px 16px;background:var(--bg);border-bottom:1px solid var(--border);display:flex;justify-content:flex-end;"><a href="http://marymoro.ru/core" style="font-size:11px;color:var(--text-muted);text-decoration:none;letter-spacing:1px;">← Главная</a></div>
+<div class="tabs">
+  <div class="tab active" data-tab="add"   onclick="switchTab('add',this)">+ Добавить</div>
+  <div class="tab"        data-tab="list"  onclick="switchTab('list',this)">Все записи</div>
+  <div class="tab"        data-tab="cats"  onclick="switchTab('cats',this)">Категории</div>
+  <div class="tab"        data-tab="chart" onclick="switchTab('chart',this)">Динамика</div>
+  <div class="tab"        data-tab="goals"    onclick="switchTab('goals',this)">Цели</div>
+  <div class="tab"        data-tab="planned"  onclick="switchTab('planned',this)">Платежи</div>
+  <div class="tab"        data-tab="distrib"  onclick="switchTab('distrib',this)">Распределение</div>
+</div>
+
+<!-- ADD -->
+<div class="view active" id="tab-add">
+  <div class="main-grid">
+    <div class="panel">
+      <div class="panel-label">Новая запись</div>
+      <div class="type-row">
+        <button class="type-btn inc active" id="btn-inc" onclick="setType('income')">+ Доход</button>
+        <button class="type-btn exp"        id="btn-exp" onclick="setType('expense')">- Расход</button>
+      </div>
+      <div class="fi-row">
+        <input class="fi" type="number" id="amount" placeholder="сумма ₽" style="width:120px;flex:none;">
+        <input class="fi" type="text"   id="desc"   placeholder="откуда / на что">
+      </div>
+      <div class="fi-row" style="margin-bottom:8px;">
+        <input class="fi" type="date" id="txnDate" style="margin-bottom:0;flex:1;" title="Оставь пустым — будет сегодня">
+        <div style="display:flex;align-items:center;gap:6px;padding:0 10px;background:var(--surface);border:1px solid var(--border);border-radius:3px;cursor:pointer;white-space:nowrap;font-size:12px;color:var(--text-muted);transition:all .15s;" onclick="setDateToday()" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--text-muted)'">Сегодня</div>
+      </div>
+      <div class="panel-label" style="margin-bottom:8px;">Источник</div>
+      <div class="source-btns" id="sourceBtns"></div>
+      <div class="panel-label" style="margin-bottom:8px;">Категория</div>
+      <select class="fi" id="catSelect" style="margin-bottom:10px;"></select>
+      <div class="imp-flag" id="impFlag" onclick="toggleImp()">
+        <div class="imp-check" id="impCheck"></div>
+        <div class="imp-text">! Импульсивная покупка</div>
+      </div>
+      <button class="submit-btn" onclick="addTxn()">Записать</button>
+    </div>
+    <div class="panel">
+      <div class="panel-label">Сегодня</div>
+      <div class="txn-list" id="todayList"></div>
+      <div style="margin-top:20px;">
+        <div class="panel-label">Эта неделя</div>
+        <div class="chart-wrap" id="weekChart" style="height:70px;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LIST -->
+<div class="view" id="tab-list">
+  <div class="panel" style="border-bottom:1px solid var(--border);">
+    <div class="txn-filters" id="listFilters"></div>
+    <div class="txn-list" id="fullList" style="max-height:560px;"></div>
+  </div>
+</div>
+
+<!-- CATEGORIES -->
+<div class="view" id="tab-cats">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);">
+    <div class="panel">
+      <div class="panel-label">Категории расходов
+        <span class="panel-label-btn" onclick="toggleAddCat()">+ добавить</span>
+      </div>
+      <div id="addCatForm" style="display:none;margin-bottom:14px;">
+        <div class="fi-row">
+          <input class="fi" id="newCatName" placeholder="название..." style="margin-bottom:0;">
+          <select class="fi" id="newCatSrc" style="margin-bottom:0;width:110px;flex:none;">
+            <option value="all">Все</option>
+            <option value="bureau">Бюро</option>
+            <option value="aparts">Апарты</option>
+            <option value="personal">Личное</option>
+            <option value="initiatives">Инициативы</option>
+          </select>
+          <button onclick="addCat()" style="padding:10px 14px;background:transparent;border:1px solid var(--gold-dim);color:var(--gold);font-family:'Manrope',sans-serif;font-size:12px;cursor:pointer;border-radius:3px;">+</button>
+        </div>
+      </div>
+      <div id="expCatList"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-label">Доходы по источникам</div>
+      <div id="incSourceList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- CHART -->
+<div class="view" id="tab-chart">
+  <div class="main-grid">
+    <div class="panel">
+      <div class="panel-label">6 месяцев</div>
+      <div style="display:flex;gap:16px;margin-bottom:12px;">
+        <div style="display:flex;align-items:center;gap:6px;"><div style="width:12px;height:8px;background:var(--green);opacity:.8;border-radius:1px;"></div><span style="font-size:12px;color:var(--text-muted);">доход</span></div>
+        <div style="display:flex;align-items:center;gap:6px;"><div style="width:12px;height:8px;background:var(--red);opacity:.8;border-radius:1px;"></div><span style="font-size:12px;color:var(--text-muted);">расход</span></div>
+      </div>
+      <div class="chart-wrap" id="mainChart" style="height:120px;"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-label">По источникам (месяц)</div>
+      <div id="sourceBreakdown"></div>
+    </div>
+  </div>
+</div>
+
+<!-- GOALS -->
+<div class="view" id="tab-goals">
+  <div class="main-grid">
+    <div class="panel">
+      <div class="panel-label">Новая цель</div>
+      <input class="fi" id="goalName"   placeholder="название цели...">
+      <input class="fi" type="number" id="goalTarget" placeholder="целевая сумма ₽">
+      <select class="fi" id="goalSource">
+        <option value="all">Общий доход</option>
+        <option value="bureau">Бюро</option>
+        <option value="aparts">Апарты</option>
+        <option value="personal">Личное</option>
+      </select>
+      <button class="submit-btn" onclick="addGoal()">Добавить цель</button>
+    </div>
+    <div class="panel">
+      <div class="panel-label">Финансовые цели</div>
+      <div id="goalsList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- PLANNED PAYMENTS TAB -->
+<div class="view" id="tab-planned">
+  <div class="main-grid">
+    <div class="panel">
+      <div class="panel-label">Добавить платёж</div>
+      <input class="fi" id="plName"   placeholder="название (ипотека, кредит, аренда...)">
+      <input class="fi" type="number" id="plAmount" placeholder="сумма ₽ в месяц">
+      <div class="fi-row">
+        <input class="fi" type="number" id="plDay" placeholder="день месяца (1-31)" min="1" max="31" style="margin-bottom:0;">
+        <select class="fi" id="plSource" style="margin-bottom:0;">
+          <option value="bureau">Бюро</option>
+          <option value="aparts">Апарты</option>
+          <option value="personal" selected>Личное</option>
+          <option value="initiatives">Инициативы</option>
+        </select>
+      </div>
+      <select class="fi" id="plCat" style="margin-top:8px;">
+        <option value="credit">Кредит / ипотека</option>
+        <option value="rent_out">Аренда (платёж)</option>
+        <option value="sub">Подписка / сервис</option>
+        <option value="insurance">Страховка</option>
+        <option value="utility">Коммунальные</option>
+        <option value="other">Другое</option>
+      </select>
+      <button class="submit-btn" style="margin-top:8px;" onclick="addPlanned()">Добавить платёж</button>
+    </div>
+    <div class="panel">
+      <div class="panel-label">График на этот месяц</div>
+      <div id="plannedSummary" style="display:flex;gap:20px;margin-bottom:16px;"></div>
+      <div id="plannedList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- DISTRIBUTION TAB -->
+<div class="view" id="tab-distrib">
+  <div style="max-width:780px;padding:24px 28px;">
+
+    <!-- QUICK COUNTER -->
+    <div style="margin-bottom:24px;">
+      <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--text-muted);margin-bottom:12px;">Быстрый счётчик дня</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;" id="quickCells"></div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <input type="number" id="quickAmt" placeholder="сумма ₽" style="flex:1;background:var(--surface);border:1px solid var(--border);border-radius:3px;color:var(--text);font-family:Manrope,sans-serif;font-size:14px;padding:10px 12px;outline:none;" onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--border)'">
+        <input type="text" id="quickDesc" placeholder="описание" style="flex:2;background:var(--surface);border:1px solid var(--border);border-radius:3px;color:var(--text);font-family:Manrope,sans-serif;font-size:14px;padding:10px 12px;outline:none;" onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--border)'">
+        <button onclick="addQuick()" style="padding:10px 18px;background:transparent;border:1px solid var(--gold-dim);color:var(--gold);font-family:Manrope,sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;border-radius:3px;transition:all .15s;white-space:nowrap;" onmouseover="this.style.background='var(--gold-dim)'" onmouseout="this.style.background='transparent'">+ Добавить</button>
+      </div>
+    </div>
+
+    <!-- DISTRIBUTION CALCULATOR -->
+    <div style="margin-bottom:24px;padding:20px;background:var(--surface);border-radius:4px;border:1px solid var(--border);">
+      <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--text-muted);margin-bottom:14px;">Распределение прибыли 35 / 15 / 50</div>
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:16px;">
+        <input type="number" id="distribAmt" placeholder="сумма к распределению ₽" style="flex:1;background:var(--bg);border:1px solid var(--border);border-radius:3px;color:var(--text);font-family:Manrope,sans-serif;font-size:16px;padding:10px 12px;outline:none;" oninput="calcDistrib()" onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--border)'">
+        <select id="distribSrc" onchange="calcDistrib()" style="background:var(--bg);border:1px solid var(--border);border-radius:3px;color:var(--text-dim);font-family:Manrope,sans-serif;font-size:13px;padding:10px 12px;outline:none;">
+          <option value="bureau">Бюро</option>
+          <option value="aparts">Апарты</option>
+          <option value="initiatives">Инициативы</option>
+          <option value="all">Все потоки</option>
+        </select>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;" id="distribResult">
+        <div style="padding:14px;background:var(--bg);border-radius:3px;border-top:2px solid var(--steel);text-align:center;">
+          <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--steel-fg);margin-bottom:6px;">Реинвест 35%</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;color:var(--steel-fg);" id="d-reinvest">—</div>
+        </div>
+        <div style="padding:14px;background:var(--bg);border-radius:3px;border-top:2px solid var(--copper);text-align:center;">
+          <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--copper-fg);margin-bottom:6px;">Подушка 15%</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;color:var(--copper-fg);" id="d-cushion">—</div>
+        </div>
+        <div style="padding:14px;background:var(--bg);border-radius:3px;border-top:2px solid var(--green);text-align:center;">
+          <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--green-fg);margin-bottom:6px;">Тебе 50%</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;color:var(--green-fg);" id="d-you">—</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CUSHION PROGRESS -->
+    <div style="padding:20px;background:var(--surface);border-radius:4px;border:1px solid var(--border);">
+      <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--text-muted);margin-bottom:14px;">Прогресс подушки безопасности</div>
+      <div style="margin-bottom:16px;">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;">
+          <span style="font-size:12px;color:var(--bureau)">Бюро — цель 1 000 000 ₽</span>
+          <span style="font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--gold);" id="cushion-bureau-val">—</span>
+        </div>
+        <div style="height:6px;background:var(--bg);border-radius:3px;overflow:hidden;">
+          <div id="cushion-bureau-bar" style="height:100%;background:var(--bureau);border-radius:3px;transition:width .5s;width:0%"></div>
+        </div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:4px;" id="cushion-bureau-sub"></div>
+      </div>
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;">
+          <span style="font-size:12px;color:var(--aparts)">Апарты — цель 360 000 ₽</span>
+          <span style="font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--gold);" id="cushion-aparts-val">—</span>
+        </div>
+        <div style="height:6px;background:var(--bg);border-radius:3px;overflow:hidden;">
+          <div id="cushion-aparts-bar" style="height:100%;background:var(--aparts);border-radius:3px;transition:width .5s;width:0%"></div>
+        </div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:4px;" id="cushion-aparts-sub"></div>
+      </div>
+      <!-- personal cushion -->
+      <div style="margin-top:16px;">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;">
+          <span style="font-size:12px;color:var(--personal)">Личная — цель <input type="number" id="cushion-personal-target" placeholder="введи цель ₽" style="width:130px;background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--personal);font-family:Manrope,sans-serif;font-size:12px;padding:0 4px;outline:none;" oninput="saveCushionTarget('personal',this.value)"></span>
+          <span style="font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--gold);" id="cushion-personal-val">—</span>
+        </div>
+        <div style="height:6px;background:var(--surface2);border-radius:3px;overflow:hidden;">
+          <div id="cushion-personal-bar" style="height:100%;background:var(--personal);border-radius:3px;transition:width .5s;width:0%"></div>
+        </div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:4px;" id="cushion-personal-sub"></div>
+      </div>
+      <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border);display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+        <span style="font-size:11px;color:var(--text-muted);">Внести вручную:</span>
+        <input type="number" id="cushionAmt" placeholder="сумма ₽" style="width:120px;background:var(--bg);border:1px solid var(--border);border-radius:3px;color:var(--text);font-family:Manrope,sans-serif;font-size:13px;padding:7px 10px;outline:none;" onfocus="this.style.borderColor='var(--copper)'" onblur="this.style.borderColor='var(--border)'">
+        <select id="cushionSrc" style="background:var(--bg);border:1px solid var(--border);border-radius:3px;color:var(--text-dim);font-family:Manrope,sans-serif;font-size:12px;padding:7px 10px;outline:none;">
+          <option value="bureau">Бюро</option>
+          <option value="aparts">Апарты</option>
+          <option value="personal">Личная</option>
+        </select>
+        <button onclick="addCushion()" style="padding:7px 14px;background:transparent;border:1px solid var(--copper);color:var(--copper-fg);font-family:Manrope,sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;border-radius:3px;transition:all .15s;" onmouseover="this.style.background='var(--copper)';this.style.color='var(--bg)'" onmouseout="this.style.background='transparent';this.style.color='var(--copper-fg)'">+ В подушку</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const SOURCES=[
+  {id:'bureau',  label:'Бюро',   color:'var(--bureau)'},
+  {id:'aparts',  label:'Апарты', color:'var(--aparts)'},
+  {id:'initiatives',label:'Инициативы', color:'var(--initiatives)'},
+  {id:'personal',label:'Личное', color:'var(--personal)'},
+];
+const DEFAULT_CATS=[
+  {id:'project',  name:'Проект/заказ',       source:'all'},
+  {id:'rent_in',  name:'Аренда (доход)',      source:'aparts'},
+  {id:'food',     name:'Еда',                source:'personal'},
+  {id:'health',   name:'Здоровье',           source:'personal'},
+  {id:'clothes',  name:'Одежда',             source:'personal'},
+  {id:'home_exp', name:'Дом/ремонт',         source:'all'},
+  {id:'content',  name:'Контент/маркетинг',  source:'all'},
+  {id:'subs',     name:'Подписки',           source:'personal'},
+  {id:'transport',name:'Транспорт',          source:'personal'},
+  {id:'fun',      name:'Развлечения',        source:'personal'},
+  {id:'other_exp',name:'Другое',             source:'all'},
+];
+const MONTHS_RU=['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+const DAYS_RU=['Вс','Пн','Вт','Ср','Чт','Пт','Сб'];
+
+let txns  = JSON.parse(localStorage.getItem('finance_txns2') || '[]');
+let cats  = JSON.parse(localStorage.getItem('finance_cats')  || JSON.stringify(DEFAULT_CATS));
+let goals = JSON.parse(localStorage.getItem('finance_goals2')|| '[]');
+
+// migrate old transactions
+const oldTxns=JSON.parse(localStorage.getItem('finance_txns')||'[]');
+if(oldTxns.length&&!txns.length){txns=oldTxns.map(t=>({...t,source:t.source||'personal'}));localStorage.setItem('finance_txns2',JSON.stringify(txns));}
+
+let currentType='income', currentSource='bureau', isImp=false, listFilter='all';
+const today=new Date();
+
+function fmt(n){return (n||0).toLocaleString('ru',{style:'currency',currency:'RUB',maximumFractionDigits:0});}
+function fmtK(n){return Math.abs(n)>=1000?(n/1000).toFixed(1)+'к':String(n||0);}
+function thisMonth(){return txns.filter(t=>{const d=new Date(t.date);return d.getMonth()===today.getMonth()&&d.getFullYear()===today.getFullYear();});}
+function sameDay(a,b){return a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate();}
+
+function switchTab(name,el){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tab-'+name).classList.add('active');
+  if(name==='list') renderList();
+  if(name==='cats') renderCats();
+  if(name==='chart') renderChart();
+  if(name==='goals') renderGoals();
+  if(name==='planned') renderPlanned();
+  if(name==='distrib') renderDistrib();
+}
+
+function setType(t){
+  currentType=t;
+  document.getElementById('btn-inc').classList.toggle('active',t==='income');
+  document.getElementById('btn-exp').classList.toggle('active',t==='expense');
+}
+
+function toggleImp(){
+  isImp=!isImp;
+  document.getElementById('impFlag').classList.toggle('on',isImp);
+  document.getElementById('impCheck').textContent=isImp?'+':'';
+}
+
+function renderSourceBtns(){
+  const w=document.getElementById('sourceBtns');w.innerHTML='';
+  SOURCES.forEach(s=>{
+    const b=document.createElement('button');b.className='src-btn'+(s.id===currentSource?' active':'');
+    if(s.id===currentSource)b.style.background=s.color;
+    b.textContent=s.label;b.onclick=()=>{currentSource=s.id;renderSourceBtns();};
+    w.appendChild(b);
+  });
+}
+
+function renderCatSelect(){
+  const sel=document.getElementById('catSelect');sel.innerHTML='';
+  cats.forEach(c=>{const o=document.createElement('option');o.value=c.id;o.textContent=c.name;sel.appendChild(o);});
+}
+
+function renderSourceGrid(){
+  const g=document.getElementById('sourceGrid');g.innerHTML='';
+  const mt=thisMonth();
+  SOURCES.forEach(s=>{
+    const st=mt.filter(t=>t.source===s.id);
+    const inc=st.filter(t=>t.type==='income').reduce((a,t)=>a+t.amount,0);
+    const exp=st.filter(t=>t.type==='expense').reduce((a,t)=>a+t.amount,0);
+    const bal=inc-exp;
+    const c=document.createElement('div');c.className='source-cell';c.style.borderTopColor=s.color;
+    c.innerHTML=`<div class="source-name" style="color:${s.color}">${s.label}</div><div class="source-income" style="color:${s.color}">${inc?fmt(inc):'—'}</div><div class="source-expense" style="color:var(--red)">${exp?'-'+fmt(exp):''}</div><div class="source-balance" style="color:${bal>=0?'var(--green)':'var(--red)'}">${(inc||exp)?fmt(bal):''}</div>`;
+    g.appendChild(c);
+  });
+}
+
+function renderSummary(){
+  const mt=thisMonth();
+  const inc=mt.filter(t=>t.type==='income').reduce((a,t)=>a+t.amount,0);
+  const exp=mt.filter(t=>t.type==='expense').reduce((a,t)=>a+t.amount,0);
+  const imp=mt.filter(t=>t.impulsive).reduce((a,t)=>a+t.amount,0);
+  const bal=inc-exp;
+  document.getElementById('sumIncome').textContent=fmt(inc);
+  document.getElementById('sumExpense').textContent=fmt(exp);
+  document.getElementById('sumImpAmt').textContent=fmt(imp);
+  document.getElementById('sumImpPct').textContent=exp>0?Math.round(imp/exp*100)+'% от расходов':'';
+  document.getElementById('sumSaved').textContent=fmt(Math.abs(bal));
+  document.getElementById('sumSaved').style.color=bal>=0?'var(--green)':'var(--red)';
+  document.getElementById('sumSavedSub').textContent=bal>=0?'профицит ^':'дефицит v';
+  document.getElementById('totalBalance').textContent=fmt(bal);
+  document.getElementById('totalBalance').style.color=bal>=0?'var(--green)':'var(--red)';
+  const d=today;document.getElementById('monthLabel').textContent=MONTHS_RU[d.getMonth()]+' '+d.getFullYear();
+}
+
+function makeTxnRow(t){
+  const src=SOURCES.find(s=>s.id===t.source)||SOURCES[0];
+  const cat=cats.find(c=>c.id===t.category)||{name:t.category||'—'};
+  const row=document.createElement('div');row.className='txn-row';
+  row.style.borderLeftColor=t.impulsive?'var(--red)':src.color;
+  if(t.impulsive)row.style.background='#9e6b6b08';
+  const d=new Date(t.date);
+  row.innerHTML=`<div class="txn-amt" style="color:${t.type==='income'?'var(--green)':'var(--red)'}">${t.type==='income'?'+':'-'}${fmtK(t.amount)}</div><div class="txn-desc-wrap"><div class="txn-title">${t.desc||'—'}${t.impulsive?' !':''}</div><div class="txn-tags">${src.label} · ${cat.name}</div></div><div class="txn-date">${d.getDate()}.${String(d.getMonth()+1).padStart(2,'0')}</div><div class="txn-del" onclick="deleteTxn(${t.id})">×</div>`;
+  return row;
+}
+
+function renderToday(){
+  const list=document.getElementById('todayList');list.innerHTML='';
+  const td=txns.filter(t=>sameDay(new Date(t.date),today)).sort((a,b)=>new Date(b.date)-new Date(a.date));
+  if(!td.length){list.innerHTML='<div style="color:var(--text-muted);font-size:14px;padding:12px 0;font-style:italic;font-family:Cormorant Garamond,serif;">Сегодня записей нет</div>';return;}
+  td.forEach(t=>list.appendChild(makeTxnRow(t)));
+}
+
+function renderWeekChart(){
+  const w=document.getElementById('weekChart');w.innerHTML='';
+  for(let i=6;i>=0;i--){
+    const d=new Date(today);d.setDate(today.getDate()-i);
+    const dt=txns.filter(t=>sameDay(new Date(t.date),d));
+    const inc=dt.filter(t=>t.type==='income').reduce((a,t)=>a+t.amount,0);
+    const exp=dt.filter(t=>t.type==='expense').reduce((a,t)=>a+t.amount,0);
+    const mx=Math.max(inc,exp,1);
+    const col=document.createElement('div');col.className='chart-col';
+    col.innerHTML=`<div class="chart-bars" style="height:54px;"><div class="c-bar" style="background:var(--green);opacity:.8;height:${Math.round(inc/mx*54)}px;"></div><div class="c-bar" style="background:var(--red);opacity:.8;height:${Math.round(exp/mx*54)}px;"></div></div><div class="c-label">${DAYS_RU[d.getDay()]}</div>`;
+    w.appendChild(col);
+  }
+}
+
+function setDateToday() {
+  const d = new Date();
+  document.getElementById('txnDate').value = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function addTxn(){
+  const amt=parseFloat(document.getElementById('amount').value);
+  const desc=document.getElementById('desc').value.trim();
+  if(!amt||amt<=0)return;
+  const dateRaw = document.getElementById('txnDate').value;
+  const txnDate = dateRaw ? new Date(dateRaw+'T12:00:00').toISOString() : new Date().toISOString();
+  txns.unshift({id:Date.now(),type:currentType,amount:amt,desc:desc||'—',source:currentSource,category:document.getElementById('catSelect').value,impulsive:isImp,date:txnDate});
+  localStorage.setItem('finance_txns2',JSON.stringify(txns));
+  document.getElementById('amount').value='';document.getElementById('desc').value='';document.getElementById('txnDate').value='';
+  isImp=false;document.getElementById('impFlag').classList.remove('on');document.getElementById('impCheck').textContent='';
+  renderAll(); if(document.getElementById("tab-distrib")) { renderQuickCells(); renderCushionProgress(); }
+}
+
+function deleteTxn(id){txns=txns.filter(t=>t.id!==id);localStorage.setItem('finance_txns2',JSON.stringify(txns));renderAll();}
+
+function renderList(){
+  const ff=document.getElementById('listFilters');ff.innerHTML='';
+  [{id:'all',label:'Все',color:null},...SOURCES.map(s=>({id:s.id,label:s.label,color:s.color})),{id:'impulsive',label:'Импульсивные',color:'var(--red)'}].forEach(f=>{
+    const b=document.createElement('div');b.className='txn-filter'+(f.id===listFilter?' active':'');
+    if(f.id===listFilter&&f.color){b.style.background=f.color;b.style.color='var(--bg)';}
+    b.textContent=f.label;b.onclick=()=>{listFilter=f.id;renderList();};
+    ff.appendChild(b);
+  });
+  const list=document.getElementById('fullList');list.innerHTML='';
+  let fl=listFilter==='all'?[...txns]:listFilter==='impulsive'?txns.filter(t=>t.impulsive):txns.filter(t=>t.source===listFilter);
+  fl=fl.sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,80);
+  if(!fl.length){list.innerHTML='<div style="color:var(--text-muted);font-size:14px;padding:16px 0;font-style:italic;font-family:Cormorant Garamond,serif;">Нет записей</div>';return;}
+  fl.forEach(t=>list.appendChild(makeTxnRow(t)));
+}
+
+function renderCats(){
+  const mt=thisMonth();
+  const expEl=document.getElementById('expCatList');expEl.innerHTML='';
+  cats.forEach(c=>{
+    const amt=mt.filter(t=>t.type==='expense'&&t.category===c.id).reduce((a,t)=>a+t.amount,0);
+    const src=SOURCES.find(s=>s.id===c.source)||{color:'var(--text-muted)'};
+    const item=document.createElement('div');item.className='cat-item';
+    item.innerHTML=`<div class="cat-color-dot" style="background:${src.color}"></div><div class="cat-name-txt">${c.name}</div><div class="cat-amt-txt" style="color:${amt>0?'var(--red)':'var(--text-muted)'}">${amt>0?fmt(amt):'—'}</div><div class="cat-del" onclick="deleteCat('${c.id}')">×</div>`;
+    expEl.appendChild(item);
+  });
+  const incEl=document.getElementById('incSourceList');incEl.innerHTML='';
+  SOURCES.forEach(s=>{
+    const amt=mt.filter(t=>t.type==='income'&&t.source===s.id).reduce((a,t)=>a+t.amount,0);
+    const item=document.createElement('div');item.className='cat-item';
+    item.innerHTML=`<div class="cat-color-dot" style="background:${s.color}"></div><div class="cat-name-txt">${s.label}</div><div class="cat-amt-txt" style="color:${amt>0?'var(--green)':'var(--text-muted)'}">${amt>0?fmt(amt):'—'}</div>`;
+    incEl.appendChild(item);
+  });
+}
+
+function toggleAddCat(){const f=document.getElementById('addCatForm');f.style.display=f.style.display==='none'?'block':'none';}
+function addCat(){
+  const name=document.getElementById('newCatName').value.trim();if(!name)return;
+  cats.push({id:'c_'+Date.now(),name,source:document.getElementById('newCatSrc').value});
+  localStorage.setItem('finance_cats',JSON.stringify(cats));
+  document.getElementById('newCatName').value='';
+  renderCats();renderCatSelect();
+}
+function deleteCat(id){cats=cats.filter(c=>c.id!==id);localStorage.setItem('finance_cats',JSON.stringify(cats));renderCats();renderCatSelect();}
+
+function renderChart(){
+  const w=document.getElementById('mainChart');w.innerHTML='';
+  const months=[];for(let i=5;i>=0;i--){const d=new Date(today.getFullYear(),today.getMonth()-i,1);months.push(d);}
+  const maxV=Math.max(...months.map(m=>{const mt=txns.filter(t=>{const td=new Date(t.date);return td.getMonth()===m.getMonth()&&td.getFullYear()===m.getFullYear();});return Math.max(mt.filter(t=>t.type==='income').reduce((a,t)=>a+t.amount,0),mt.filter(t=>t.type==='expense').reduce((a,t)=>a+t.amount,0));}),1);
+  months.forEach(m=>{
+    const mt=txns.filter(t=>{const td=new Date(t.date);return td.getMonth()===m.getMonth()&&td.getFullYear()===m.getFullYear();});
+    const inc=mt.filter(t=>t.type==='income').reduce((a,t)=>a+t.amount,0);
+    const exp=mt.filter(t=>t.type==='expense').reduce((a,t)=>a+t.amount,0);
+    const h=100;
+    const col=document.createElement('div');col.className='chart-col';
+    col.innerHTML=`<div class="chart-bars" style="height:${h}px;"><div class="c-bar" style="background:var(--green);opacity:.8;height:${Math.round(inc/maxV*h)}px;"></div><div class="c-bar" style="background:var(--red);opacity:.8;height:${Math.round(exp/maxV*h)}px;"></div></div><div class="c-label">${MONTHS_RU[m.getMonth()].slice(0,3)}</div>`;
+    w.appendChild(col);
+  });
+  const brd=document.getElementById('sourceBreakdown');brd.innerHTML='';
+  const mt=thisMonth();
+  SOURCES.forEach(s=>{
+    const inc=mt.filter(t=>t.type==='income'&&t.source===s.id).reduce((a,t)=>a+t.amount,0);
+    const exp=mt.filter(t=>t.type==='expense'&&t.source===s.id).reduce((a,t)=>a+t.amount,0);
+    if(!inc&&!exp)return;
+    const row=document.createElement('div');row.style.cssText='display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);';
+    row.innerHTML=`<div style="width:3px;height:36px;background:${s.color};border-radius:2px;flex-shrink:0;"></div><div style="flex:1;"><div style="font-size:14px;color:var(--text-dim);margin-bottom:3px;">${s.label}</div><div style="font-size:12px;color:var(--text-muted);">доход: <span style="color:var(--green)">${fmt(inc)}</span></div></div><div style="text-align:right;"><div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:${(inc-exp)>=0?'var(--green)':'var(--red)'};">${fmt(inc-exp)}</div><div style="font-size:12px;color:var(--text-muted);">расход: ${fmt(exp)}</div></div>`;
+    brd.appendChild(row);
+  });
+}
+
+function renderGoals(){
+  const el=document.getElementById('goalsList');el.innerHTML='';
+  const mt=thisMonth();
+  goals.forEach((g,i)=>{
+    const inc=g.source==='all'?mt.filter(t=>t.type==='income').reduce((a,t)=>a+t.amount,0):mt.filter(t=>t.type==='income'&&t.source===g.source).reduce((a,t)=>a+t.amount,0);
+    const pct=Math.min(100,g.target>0?Math.round(inc/g.target*100):0);
+    const src=SOURCES.find(s=>s.id===g.source);const color=src?src.color:'var(--gold)';
+    const row=document.createElement('div');row.className='goal-row';
+    row.innerHTML=`<div class="goal-head"><span class="goal-name-txt">${g.name}</span><span style="display:flex;align-items:center;gap:8px;"><span class="goal-pct-txt" style="color:${color}">${pct}%</span><span style="cursor:pointer;color:var(--text-muted);font-size:14px;padding:2px 6px;" onclick="deleteGoal(${i})">×</span></span></div><div class="goal-bar-bg"><div class="goal-bar-fill" style="width:${pct}%;background:${color};"></div></div><div class="goal-sub-txt">${fmt(inc)} из ${fmt(g.target)}</div>`;
+    el.appendChild(row);
+  });
+  if(!goals.length)el.innerHTML='<div style="color:var(--text-muted);font-size:14px;padding:16px 0;font-style:italic;font-family:Cormorant Garamond,serif;">Поставь финансовую цель месяца</div>';
+}
+
+function addGoal(){
+  const name=document.getElementById('goalName').value.trim();
+  const target=parseFloat(document.getElementById('goalTarget').value);
+  if(!name||!target)return;
+  goals.push({name,target,source:document.getElementById('goalSource').value});
+  localStorage.setItem('finance_goals2',JSON.stringify(goals));
+  document.getElementById('goalName').value='';document.getElementById('goalTarget').value='';
+  renderGoals();
+}
+function deleteGoal(i){goals.splice(i,1);localStorage.setItem('finance_goals2',JSON.stringify(goals));renderGoals();}
+
+// ── PLANNED PAYMENTS ──
+let planned = JSON.parse(localStorage.getItem('finance_planned') || '[]');
+const PL_CAT_NAMES = {credit:'Кредит/ипотека',rent_out:'Аренда',sub:'Подписка',insurance:'Страховка',utility:'Коммунальные',other:'Другое'};
+
+function addPlanned() {
+  const name = document.getElementById('plName').value.trim();
+  const amount = parseFloat(document.getElementById('plAmount').value);
+  if (!name || !amount) return;
+  planned.push({
+    id: Date.now(), name, amount,
+    day: parseInt(document.getElementById('plDay').value)||1,
+    source: document.getElementById('plSource').value,
+    cat: document.getElementById('plCat').value,
+    active: true,
+  });
+  localStorage.setItem('finance_planned', JSON.stringify(planned));
+  document.getElementById('plName').value=''; document.getElementById('plAmount').value='';
+  renderPlanned();
+}
+
+function togglePlanned(id) {
+  const p = planned.find(x=>x.id===id); if(!p) return;
+  p.active = !p.active;
+  localStorage.setItem('finance_planned', JSON.stringify(planned));
+  renderPlanned();
+}
+
+function deletePlanned(id) {
+  planned = planned.filter(x=>x.id!==id);
+  localStorage.setItem('finance_planned', JSON.stringify(planned));
+  renderPlanned();
+}
+
+function renderPlanned() {
+  const list = document.getElementById('plannedList'); if (!list) return;
+  list.innerHTML = '';
+  const sumEl = document.getElementById('plannedSummary'); if (sumEl) sumEl.innerHTML = '';
+
+  const active = planned.filter(p=>p.active);
+  const totalMonthly = active.reduce((a,p)=>a+p.amount,0);
+  const mt = thisMonth();
+  const totalIncome = mt.filter(t=>t.type==='income').reduce((a,t)=>a+t.amount,0);
+  const covered = totalIncome >= totalMonthly;
+
+  if (sumEl) {
+    sumEl.innerHTML = `
+      <div><div style="font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:300;color:var(--red);line-height:1;">${fmt(totalMonthly)}</div><div style="font-size:12px;color:var(--text-muted);margin-top:4px;">обязательных в месяц</div></div>
+      <div><div style="font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:300;color:${covered?'var(--green)':'var(--red)'};line-height:1;">${fmt(Math.max(0, totalIncome - totalMonthly))}</div><div style="font-size:12px;color:var(--text-muted);margin-top:4px;">${covered?'остаётся свободно':'не хватает'}</div></div>
+      <div><div style="font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:300;color:var(--text-dim);line-height:1;">${active.length}</div><div style="font-size:12px;color:var(--text-muted);margin-top:4px;">активных платежей</div></div>
+    `;
+  }
+
+  if (!planned.length) {
+    list.innerHTML = '<div style="color:var(--text-muted);font-size:14px;padding:16px 0;font-style:italic;font-family:Cormorant Garamond,serif;">Добавь регулярные платежи — ипотека, кредиты, аренда</div>';
+    return;
+  }
+
+  const d = new Date();
+  [...planned].sort((a,b)=>a.day-b.day).forEach(p => {
+    const src = SOURCES.find(s=>s.id===p.source)||SOURCES[0];
+    const isPast = p.day < d.getDate();
+    const isDue = p.day === d.getDate();
+    const row = document.createElement('div');
+    row.style.cssText = `display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--surface);border-radius:3px;margin-bottom:5px;border-left:3px solid ${p.active?src.color:'var(--border)'};opacity:${p.active?1:0.5};`;
+    row.innerHTML = `
+      <div style="width:32px;text-align:center;flex-shrink:0;">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:20px;color:${isDue?'var(--gold)':isPast?'var(--text-muted)':'var(--text-dim)'};">${p.day}</div>
+        <div style="font-size:10px;color:var(--text-muted);">число</div>
+      </div>
+      <div style="flex:1;">
+        <div style="font-size:14px;color:${p.active?'var(--text)':'var(--text-muted)'};">${p.name}</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">${src.label} · ${PL_CAT_NAMES[p.cat]||p.cat}</div>
+      </div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--red);flex-shrink:0;">-${fmt(p.amount)}</div>
+      <div style="display:flex;gap:6px;flex-shrink:0;">
+        <div style="cursor:pointer;font-size:12px;padding:4px 8px;border:1px solid var(--border);border-radius:2px;color:var(--text-muted);transition:all .15s;" onclick="togglePlanned(${p.id})" title="${p.active?'Приостановить':'Активировать'}">${p.active?'||':'>'}</div>
+        <div style="cursor:pointer;font-size:12px;padding:4px 8px;border:1px solid var(--border);border-radius:2px;color:var(--text-muted);transition:all .15s;" onclick="deletePlanned(${p.id})">×</div>
+      </div>
+    `;
+    list.appendChild(row);
+  });
+}
+
+
+// ── DISTRIBUTION TAB ──
+let cushion = JSON.parse(localStorage.getItem('finance_cushion') || '{"bureau":0,"aparts":0,"personal":0,"target_personal":0}');
+let quickSrc = 'bureau';
+const QUICK_SOURCES = [
+  {id:'bureau', label:'+ Бюро', color:'var(--bureau)'},
+  {id:'aparts', label:'+ Апарты', color:'var(--aparts)'},
+  {id:'personal', label:'- Личное', color:'var(--personal)', expense:true},
+];
+
+function renderQuickCells() {
+  const el = document.getElementById('quickCells'); if(!el) return;
+  el.innerHTML = '';
+  QUICK_SOURCES.forEach(s => {
+    const c = document.createElement('div');
+    const isActive = s.id === quickSrc;
+    c.style.cssText = `padding:12px;background:${isActive?s.color:'var(--surface2)'};border:1px solid ${isActive?s.color:'var(--border)'};border-radius:3px;cursor:pointer;text-align:center;transition:all .15s;`;
+    c.innerHTML = `<div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${isActive?'var(--bg)':'var(--text-muted)'}">${s.label}</div>`;
+    c.onclick = () => { quickSrc = s.id; renderQuickCells(); };
+    el.appendChild(c);
+  });
+}
+
+function addQuick() {
+  const amt = parseFloat(document.getElementById('quickAmt').value);
+  const desc = document.getElementById('quickDesc').value.trim();
+  if(!amt||amt<=0) return;
+  const qs = QUICK_SOURCES.find(s=>s.id===quickSrc);
+  txns.unshift({id:Date.now(), type:qs.expense?'expense':'income', amount:amt, desc:desc||qs.label, source:quickSrc, category:qs.expense?'other_exp':'project', impulsive:false, date:new Date().toISOString()});
+  localStorage.setItem('finance_txns2', JSON.stringify(txns));
+  document.getElementById('quickAmt').value = '';
+  document.getElementById('quickDesc').value = '';
+  renderAll();
+  renderCushionProgress();
+}
+
+function calcDistrib() {
+  const amt = parseFloat(document.getElementById('distribAmt').value) || 0;
+  document.getElementById('d-reinvest').textContent = amt > 0 ? fmt(Math.round(amt*0.35)) : '—';
+  document.getElementById('d-cushion').textContent = amt > 0 ? fmt(Math.round(amt*0.15)) : '—';
+  document.getElementById('d-you').textContent = amt > 0 ? fmt(Math.round(amt*0.50)) : '—';
+}
+
+function addCushion() {
+  const amt = parseFloat(document.getElementById('cushionAmt').value);
+  const src = document.getElementById('cushionSrc').value;
+  if(!amt||amt<=0) return;
+  cushion[src] = (cushion[src]||0) + amt;
+  localStorage.setItem('finance_cushion', JSON.stringify(cushion));
+  document.getElementById('cushionAmt').value = '';
+  renderCushionProgress();
+}
+
+function saveCushionTarget(src, val) {
+  cushion['target_'+src] = parseFloat(val)||0;
+  localStorage.setItem('finance_cushion', JSON.stringify(cushion));
+  renderCushionProgress();
+}
+
+function renderCushionProgress() {
+  const DEFAULT_TARGETS = {bureau:1000000, aparts:360000};
+  ['bureau','aparts','personal'].forEach(src => {
+    const val = cushion[src]||0;
+    const target = src==='personal' ? (cushion['target_personal']||0) : DEFAULT_TARGETS[src];
+    const el_val = document.getElementById('cushion-'+src+'-val');
+    const el_bar = document.getElementById('cushion-'+src+'-bar');
+    const el_sub = document.getElementById('cushion-'+src+'-sub');
+    if(el_val) el_val.textContent = val>0 ? fmt(val) : '—';
+    if(src==='personal') {
+      const tin = document.getElementById('cushion-personal-target');
+      if(tin && !tin.value && cushion['target_personal']) tin.value = cushion['target_personal'];
+    }
+    if(target>0) {
+      const pct = Math.min(100, Math.round(val/target*100));
+      if(el_bar) el_bar.style.width = pct+'%';
+      if(el_sub) el_sub.textContent = pct+'% · осталось '+fmt(Math.max(0,target-val));
+    } else {
+      if(el_bar) el_bar.style.width = '0%';
+      if(el_sub && src==='personal') el_sub.textContent = 'укажи цель выше';
+    }
+  });
+}
+
+function renderDistrib() {
+  renderQuickCells();
+  renderCushionProgress();
+}
+
+function renderAll(){renderSourceGrid();renderSummary();renderToday();renderWeekChart();}
+
+renderSourceBtns();renderCatSelect();renderAll();renderQuickCells();renderCushionProgress();
+</script>
+<nav style="position:fixed;bottom:0;left:0;right:0;height:72px;background:#152238;border-top:1px solid #243060;display:flex;align-items:center;justify-content:space-around;padding:0 8px 8px;z-index:100;"><a href="today.html" style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 12px;text-decoration:none;flex:1;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c49a52" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#c49a52;font-weight:500;">Сегодня</span><div style="width:20px;height:2px;background:#c49a52;border-radius:1px;"></div></a><a href="calendar.html" style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 12px;text-decoration:none;flex:1;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6878a0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#6878a0;font-weight:500;">Календарь</span></a><a href="goals.html" style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 12px;text-decoration:none;flex:1;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6878a0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg><span style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#6878a0;font-weight:500;">Проекты</span></a><a href="inbox.html" style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 12px;text-decoration:none;flex:1;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6878a0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><span style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#6878a0;font-weight:500;">Поток</span></a><a href="index.html" style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 12px;text-decoration:none;flex:1;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6878a0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#6878a0;font-weight:500;">Я</span></a></nav>
+</body>
+</html>

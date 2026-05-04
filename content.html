@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Контент</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #1b2a4a;
+  --surface:  #152238;
+  --surface2: #1e3052;
+  --card:     #f5f0e8;
+  --card2:    #ede8de;
+  --border:   #243060;
+  --border2:  #2e3d70;
+  --border-c: rgba(27,42,74,.1);
+  --text:     #f0ece4;
+  --dim:      #b8bcd0;
+  --muted:    #6878a0;
+  --on-card:  #1b2a4a;
+  --on-dim:   #384068;
+  --on-muted: #788098;
+  --gold:     #c49a52;
+  --gold-d:   #9a7230;
+  --gold-bg:  rgba(196,154,82,.1);
+  --crimson:  #6b2233;
+  --crimson-bg:rgba(107,34,51,.2);
+  --green:    #3d7a55;
+  --green-bg: rgba(61,122,85,.15);
+  --red:      #9e4040;
+  --bureau:   #c49a52;
+  --aparts:   #3d7a55;
+  --personal: #6b4aaa;
+  --font-s:   'Cormorant Garamond', serif;
+  --font-m:   'Manrope', sans-serif;
+  --r:        10px;
+  --nav-h:    72px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:var(--font-b);font-size:14px;min-height:100vh;}
+
+.header{padding:20px 28px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+.header-title{font-family:var(--font-d);font-size:28px;font-weight:300;}
+.header-title em{font-style:italic;color:var(--gold);}
+.header-sub{font-size:11px;color:var(--text-muted);letter-spacing:2px;text-transform:uppercase;margin-top:2px;}
+.nav-tabs{display:flex;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;}
+.nav-tab{padding:7px 16px;background:var(--bg);cursor:pointer;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);transition:all .15s;border-bottom:2px solid transparent;}
+.nav-tab:hover{background:var(--surface);}
+.nav-tab.active{color:var(--gold);border-bottom-color:var(--gold);background:var(--surface);}
+.back-btn{padding:6px 14px;background:transparent;border:1px solid var(--border);color:var(--text-muted);font-family:var(--font-b);font-size:11px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;border-radius:var(--r);transition:all .15s;text-decoration:none;display:inline-flex;align-items:center;gap:5px;}
+.back-btn:hover{border-color:var(--gold-dim);color:var(--gold);}
+
+.legend-bar{padding:8px 28px;border-bottom:1px solid var(--border-dim);display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
+.leg{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-muted);}
+.leg-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+
+.view{display:none;}.view.active{display:block;}
+
+/* WEEK */
+.week-nav{padding:10px 28px;border-bottom:1px solid var(--border-dim);display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.wn-btn{width:30px;height:30px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text-dim);font-size:13px;transition:all .15s;}
+.wn-btn:hover{border-color:var(--gold-dim);color:var(--gold);}
+.week-label{font-family:var(--font-d);font-size:20px;font-weight:300;color:var(--text-dim);}
+.week-label em{font-style:italic;color:var(--gold);}
+.week-goal{font-size:11px;color:var(--text-muted);border-left:2px solid var(--gold-dim);padding-left:10px;font-style:italic;}
+.tbtn{padding:5px 12px;background:transparent;border:1px solid var(--border);border-radius:var(--r);color:var(--text-muted);font-family:var(--font-b);font-size:10px;letter-spacing:1px;cursor:pointer;transition:all .12s;}
+.tbtn:hover{border-color:var(--gold-dim);color:var(--gold);}
+.tbtn.danger:hover{border-color:var(--red)55;color:var(--red);}
+.tbtn.primary{border-color:var(--gold-dim);color:var(--gold);}
+
+.week-grid{display:grid;grid-template-columns:60px repeat(7,1fr);gap:1px;background:var(--border-dim);}
+.wg-gutter{background:var(--bg);}
+.wg-day-head{background:var(--surface);padding:8px 10px;text-align:center;border-bottom:1px solid var(--border);}
+.wg-day-name{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);}
+.wg-day-date{font-family:var(--font-d);font-size:20px;font-weight:300;color:var(--text-dim);line-height:1.1;margin-top:1px;}
+.wg-day-date.today{color:var(--gold);}
+.wg-day-badge{font-size:10px;color:var(--text-muted);margin-top:3px;min-height:13px;}
+.wg-row-label{background:var(--bg);padding:6px 6px;display:flex;flex-direction:column;justify-content:center;align-items:flex-end;border-right:1px solid var(--border);}
+.wg-row-icon{font-size:12px;margin-bottom:1px;}
+.wg-row-name{font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);}
+.wg-cell{background:var(--bg);padding:5px 7px;min-height:78px;position:relative;}
+.wg-cell.shoot-day{background:var(--shoot-bg);}
+
+.post-card{background:var(--surface);border-radius:2px;padding:5px 22px 5px 7px;margin-bottom:3px;border-left:3px solid var(--gold);font-size:12px;color:var(--text-dim);line-height:1.4;cursor:pointer;transition:background .12s;position:relative;white-space:pre-line;}
+.post-card:hover{background:var(--surface2);}
+.post-card.personal{border-left-color:var(--personal);}
+.post-card.bureau{border-left-color:var(--bureau);}
+.post-card.aparts{border-left-color:var(--aparts);}
+.post-card.s-draft{border-left-style:dashed;}
+.post-card.s-ready{box-shadow:0 0 0 1px var(--green)33;}
+.post-card.s-done{opacity:.45;}
+.post-time{font-size:10px;color:var(--text-muted);margin-top:2px;}
+.status-btn{position:absolute;right:3px;top:3px;width:15px;height:15px;border-radius:2px;border:1px solid var(--border);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:8px;color:transparent;transition:all .12s;z-index:2;}
+.post-card:hover .status-btn{color:var(--text-muted);}
+.post-card.s-ready .status-btn{border-color:var(--green)66;color:var(--green);}
+.post-card.s-done .status-btn{background:var(--green)33;border-color:var(--green);color:var(--green);}
+.add-btn-sm{width:100%;padding:3px 0;background:transparent;border:1px dashed var(--border);border-radius:2px;color:var(--text-muted);font-size:10px;cursor:pointer;text-align:center;transition:all .12s;margin-top:3px;font-family:var(--font-b);}
+.add-btn-sm:hover{border-color:var(--gold-dim);color:var(--gold);}
+.note-badge{background:var(--surface2);border-radius:2px;padding:3px 6px;font-size:11px;color:var(--text-muted);margin-top:2px;border-left:2px solid var(--gold-dim);font-style:italic;line-height:1.35;white-space:pre-line;cursor:pointer;}
+.note-badge:hover{background:var(--surface3);}
+
+/* MONTH */
+.month-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:var(--border-dim);}
+.month-dow{background:var(--surface2);padding:7px;text-align:center;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);}
+.month-cell{background:var(--bg);padding:7px 8px;min-height:88px;cursor:pointer;transition:background .12s;}
+.month-cell:hover{background:var(--surface);}
+.month-cell.other{opacity:.3;}
+.month-cell.has-shoot{background:var(--shoot-bg);}
+.month-day-num{font-size:11px;color:var(--text-muted);margin-bottom:4px;}
+.month-day-num.tnow{color:var(--gold);}
+.month-posts{display:flex;flex-direction:column;gap:2px;}
+.mpip{height:3px;border-radius:2px;}
+.mpip.personal{background:var(--personal);}
+.mpip.bureau{background:var(--bureau);}
+.mpip.aparts{background:var(--aparts);}
+
+/* HOOKS */
+.hooks-wrap{padding:20px 28px;}
+.hooks-filter{display:flex;gap:5px;margin-bottom:14px;flex-wrap:wrap;}
+.hf-btn{padding:5px 12px;background:var(--surface);border:1px solid var(--border);border-radius:20px;cursor:pointer;font-size:11px;color:var(--text-muted);font-family:var(--font-b);transition:all .15s;}
+.hf-btn.active.f-all{background:var(--gold);color:var(--bg);border-color:var(--gold);}
+.hf-btn.active.f-personal{background:var(--personal);color:var(--bg);border-color:var(--personal);}
+.hf-btn.active.f-bureau{background:var(--bureau);color:var(--bg);border-color:var(--bureau);}
+.hf-btn.active.f-aparts{background:var(--aparts);color:var(--bg);border-color:var(--aparts);}
+.hf-btn.active.f-question{background:#5a8a8a;color:var(--bg);border-color:#5a8a8a;}
+.hf-btn.active.f-number{background:#6a6a9a;color:var(--bg);border-color:#6a6a9a;}
+.hf-btn.active.f-contrast{background:#8a6a4a;color:var(--bg);border-color:#8a6a4a;}
+.hooks-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
+.hook-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;border-left:3px solid var(--gold-dim);cursor:pointer;transition:all .15s;position:relative;}
+.hook-card:hover{background:var(--surface2);}
+.hook-card.personal{border-left-color:var(--personal);}
+.hook-card.bureau{border-left-color:var(--bureau);}
+.hook-card.aparts{border-left-color:var(--aparts);}
+.hook-card.all{border-left-color:var(--gold);}
+.hook-text{font-family:var(--font-d);font-size:16px;font-weight:300;line-height:1.4;color:var(--text);margin-bottom:7px;}
+.hook-meta{display:flex;gap:6px;flex-wrap:wrap;}
+.htag{font-size:10px;padding:2px 7px;border-radius:2px;letter-spacing:1px;text-transform:uppercase;}
+.htag.type{background:var(--surface3);color:var(--text-muted);}
+.htag.pain{background:var(--surface2);color:var(--text-muted);}
+.htag.emotion{background:var(--gold-dim)40;color:var(--gold);}
+.hook-actions{position:absolute;right:7px;top:7px;display:flex;gap:3px;opacity:0;transition:opacity .15s;}
+.hook-card:hover .hook-actions{opacity:1;}
+.ha-btn{background:var(--surface3);border:1px solid var(--border);border-radius:2px;padding:2px 7px;font-size:10px;color:var(--text-muted);cursor:pointer;font-family:var(--font-b);transition:all .12s;}
+.ha-btn:hover{color:var(--gold);}
+.ha-btn.del:hover{color:var(--red);}
+
+/* RULES */
+.rules-wrap{padding:20px 28px;max-width:860px;}
+.rs{margin-bottom:26px;}
+.rs-title{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--text-muted);margin-bottom:12px;padding-bottom:7px;border-bottom:1px solid var(--border-dim);}
+.rgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--border-dim);}
+.rhead{background:var(--surface2);padding:8px 12px;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);}
+.rcell{background:var(--surface);padding:10px 12px;font-size:12px;color:var(--text-dim);line-height:1.6;}
+.rcell.ap{border-left:3px solid var(--personal);}
+.rcell.ab{border-left:3px solid var(--bureau);}
+.rcell.aa{border-left:3px solid var(--aparts);}
+.tl{display:flex;flex-direction:column;}
+.tl-item{display:flex;gap:0;}
+.tl-m{width:34px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;}
+.tl-dot{width:9px;height:9px;border-radius:50%;background:var(--gold-dim);margin-top:4px;flex-shrink:0;}
+.tl-line{width:1px;background:var(--border-dim);flex:1;margin-top:2px;min-height:26px;}
+.tl-c{padding:0 0 16px 0;flex:1;}
+.tl-date{font-size:11px;color:var(--gold);letter-spacing:1px;margin-bottom:3px;}
+.tl-text{font-size:12px;color:var(--text-dim);line-height:1.55;}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:300;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);width:500px;max-height:86vh;overflow-y:auto;padding:22px 24px;position:relative;}
+.modal-close{position:absolute;right:13px;top:13px;cursor:pointer;color:var(--text-muted);font-size:18px;background:none;border:none;transition:color .12s;font-family:var(--font-b);}
+.modal-close:hover{color:var(--text);}
+.modal-title{font-family:var(--font-d);font-size:21px;font-weight:300;margin-bottom:15px;padding-right:22px;}
+.mf{margin-bottom:11px;}
+.ml{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin-bottom:5px;}
+.mi{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:2px;color:var(--text);font-family:var(--font-b);font-size:13px;padding:7px 10px;outline:none;transition:border-color .12s;}
+.mi:focus{border-color:var(--gold-dim);}
+.mta{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:2px;color:var(--text);font-family:var(--font-d);font-size:15px;font-weight:300;padding:8px 10px;outline:none;resize:none;line-height:1.55;transition:border-color .12s;}
+.mta:focus{border-color:var(--gold-dim);}
+.msel{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:2px;color:var(--text-dim);font-family:var(--font-b);font-size:13px;padding:7px 10px;outline:none;cursor:pointer;}
+.mrow{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.mactions{display:flex;gap:7px;margin-top:15px;justify-content:flex-end;}
+.btn-p{padding:7px 18px;background:var(--gold-dim);border:1px solid var(--gold-dim);border-radius:var(--r);color:var(--text);font-family:var(--font-b);font-size:11px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .15s;}
+.btn-p:hover{background:var(--gold);border-color:var(--gold);color:var(--bg);}
+.btn-s{padding:7px 18px;background:transparent;border:1px solid var(--border);border-radius:var(--r);color:var(--text-muted);font-family:var(--font-b);font-size:11px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .15s;}
+.btn-s:hover{color:var(--text);}
+.btn-d{padding:7px 18px;background:transparent;border:1px solid var(--red)44;border-radius:var(--r);color:var(--red);font-family:var(--font-b);font-size:11px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .15s;}
+.btn-d:hover{background:var(--red)22;}
+.sc{display:flex;gap:6px;flex-wrap:wrap;}
+.schip{padding:4px 12px;border-radius:20px;font-size:11px;cursor:pointer;border:1px solid var(--border);color:var(--text-muted);font-family:var(--font-b);transition:all .12s;}
+.schip:hover{border-color:var(--border);background:var(--surface2);}
+.schip.active.draft{background:var(--surface3);color:var(--text-dim);border-color:var(--border);}
+.schip.active.ready{background:var(--green)22;color:var(--green);border-color:var(--green)66;}
+.schip.active.done{background:var(--green)44;color:var(--green);border-color:var(--green);}
+
+.toast{position:fixed;bottom:22px;right:22px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:9px 16px;font-size:12px;color:var(--text-dim);z-index:500;transform:translateY(8px);opacity:0;transition:all .2s;pointer-events:none;}
+.toast.show{opacity:1;transform:none;}
+
+/* ── BANK & STATS (from content.html) ── */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);}
+.panel{background:var(--bg);padding:22px 26px;}
+.panel-label{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--text-muted);margin-bottom:14px;}
+.form-input,.form-textarea,.form-select{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:3px;color:var(--text);font-family:'Manrope',sans-serif;font-size:14px;padding:10px 12px;outline:none;margin-bottom:8px;transition:border-color .15s;}
+.form-input:focus,.form-textarea:focus,.form-select:focus{border-color:var(--gold-dim);}
+.form-input::placeholder,.form-textarea::placeholder{color:var(--text-muted);}
+.form-textarea{resize:vertical;min-height:80px;}
+.form-row{display:flex;gap:8px;margin-bottom:8px;}
+.form-row .form-input,.form-row .form-select{margin-bottom:0;}
+.add-btn{width:100%;padding:11px;background:transparent;border:1px solid var(--gold-dim);color:var(--gold);font-family:'Manrope',sans-serif;font-size:11px;letter-spacing:3px;text-transform:uppercase;cursor:pointer;border-radius:3px;transition:all .2s;}
+.add-btn:hover{background:var(--gold-dim);color:var(--bg);}
+.idea-item{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:var(--surface);border-radius:3px;margin-bottom:4px;border-left:3px solid transparent;}
+.idea-acc{font-size:11px;letter-spacing:2px;text-transform:uppercase;flex-shrink:0;padding-top:2px;}
+.idea-body{flex:1;}
+.idea-text{font-size:14px;color:var(--text-dim);line-height:1.5;}
+.idea-tags{font-size:11px;color:var(--text-muted);margin-top:4px;}
+.idea-del{cursor:pointer;color:var(--text-muted);font-size:14px;padding:2px 6px;opacity:0;transition:opacity .15s;}
+.idea-item:hover .idea-del{opacity:1;}
+.idea-del:hover{color:var(--red);}
+.stat-big{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:300;line-height:1;}
+.stat-label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px;}
+.stat-delta{font-size:12px;margin-top:4px;}
+.platform-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);}
+.platform-name{font-size:13px;color:var(--text-dim);flex:1;}
+.platform-subs{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:300;}
+.platform-delta{font-size:12px;color:var(--text-muted);}
+.platform-input{width:90px;background:var(--surface);border:1px solid var(--border);border-radius:3px;color:var(--text);font-family:'Manrope',sans-serif;font-size:13px;padding:6px 8px;outline:none;transition:border-color .15s;}
+.platform-input:focus{border-color:var(--gold-dim);}
+.freq-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);}
+.freq-platform{font-size:13px;color:var(--text-dim);width:80px;}
+.freq-dots{display:flex;gap:4px;}
+.freq-dot{width:18px;height:18px;border-radius:50%;background:var(--surface2);border:1px solid var(--border);cursor:pointer;transition:all .15s;}
+.freq-dot.posted{background:var(--green);border-color:var(--green);}
+.freq-target{font-size:12px;color:var(--text-muted);}
+</style>
+</head>
+<body>
+
+
+<div class="header">
+  <div>
+    <div class="header-title"><em>Контент</em> — план и календарь</div>
+    <div class="header-sub">brickburo · личный · jam-and-honey</div>
+  </div>
+  <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+    <div class="nav-tabs">
+      <div class="nav-tab active" onclick="switchView('week',this)">Неделя</div>
+      <div class="nav-tab" onclick="switchView('month',this)">Месяц</div>
+      <div class="nav-tab" onclick="switchView('hooks',this)">Хуки</div>
+      <div class="nav-tab" onclick="switchView('rules',this)">Система</div>
+      <div class="nav-tab" onclick="switchView('bank',this)">Банк идей</div>
+      <div class="nav-tab" onclick="switchView('stats',this)">Статистика</div>
+    </div>
+    <a class="back-btn" href="http://marymoro.ru/core">&larr; Главная</a>
+  </div>
+</div>
+
+<div class="legend-bar">
+  <div class="leg"><div class="leg-dot" style="background:var(--personal)"></div> Личный</div>
+  <div class="leg"><div class="leg-dot" style="background:var(--bureau)"></div> Бюро</div>
+  <div class="leg"><div class="leg-dot" style="background:var(--aparts)"></div> Апарты</div>
+  <div style="width:1px;height:12px;background:var(--border);"></div>
+  <div class="leg" style="font-size:11px;color:var(--text-muted)">— — черновик</div>
+  <div class="leg"><div class="leg-dot" style="background:var(--green)"></div>готово / опубликовано</div>
+  <div class="leg"><div style="width:12px;height:8px;border-radius:2px;background:var(--shoot-bg);border:1px solid #3a6a3a;"></div> съёмка</div>
+</div>
+
+<!-- WEEK -->
+<div class="view active" id="view-week">
+  <div class="week-nav">
+    <button class="wn-btn" onclick="navWeek(-1)">&larr;</button>
+    <div class="week-label" id="weekLabel"></div>
+    <button class="wn-btn" onclick="navWeek(1)">&rarr;</button>
+    <div class="week-goal" id="weekGoal"></div>
+    <div style="margin-left:auto;display:flex;gap:5px;">
+      <button class="tbtn" onclick="editWeekMeta()"> Изменить</button>
+      <button class="tbtn danger" onclick="deleteWeek()">Удалить</button>
+      <button class="tbtn primary" onclick="addWeek()">+ Неделя</button>
+    </div>
+  </div>
+  <div class="week-grid" id="weekGrid"></div>
+</div>
+
+<!-- MONTH -->
+<div class="view" id="view-month">
+  <div class="week-nav">
+    <button class="wn-btn" onclick="navMonth(-1)">&larr;</button>
+    <div class="week-label" id="monthLabel"></div>
+    <button class="wn-btn" onclick="navMonth(1)">&rarr;</button>
+  </div>
+  <div class="month-grid" id="monthGrid"></div>
+</div>
+
+<!-- HOOKS -->
+<div class="view" id="view-hooks">
+  <div class="hooks-wrap">
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:14px;">
+      <div>
+        <div style="font-family:var(--font-d);font-size:24px;font-weight:300;">Банк <em style="font-style:italic;color:var(--gold)">хуков</em></div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Нажми — скопируется · Наведи — управление</div>
+      </div>
+      <button class="tbtn primary" onclick="openAddHook()">+ Новый хук</button>
+    </div>
+    <div class="hooks-filter">
+      <button class="hf-btn f-all active" onclick="filterHooks('all',this)">Все</button>
+      <button class="hf-btn f-personal" onclick="filterHooks('personal',this)"> Личный</button>
+      <button class="hf-btn f-bureau" onclick="filterHooks('bureau',this)"> Бюро</button>
+      <button class="hf-btn f-aparts" onclick="filterHooks('aparts',this)"> Апарты</button>
+      <div style="width:1px;height:16px;background:var(--border);align-self:center;"></div>
+      <button class="hf-btn f-question" onclick="filterHooks('question',this)">? Вопросы</button>
+      <button class="hf-btn f-number" onclick="filterHooks('number',this)"> Цифры</button>
+      <button class="hf-btn f-contrast" onclick="filterHooks('contrast',this)"> Контраст</button>
+    </div>
+    <div class="hooks-grid" id="hooksGrid"></div>
+  </div>
+</div>
+
+<!-- RULES -->
+<div class="view" id="view-rules">
+  <div class="rules-wrap">
+    <div class="rs">
+      <div class="rs-title">Логика трёх аккаунтов</div>
+      <div class="rgrid">
+        <div class="rhead">Аккаунт</div><div class="rhead">Роль</div><div class="rhead">Цель</div>
+        <div class="rcell ap"><strong> Личный</strong></div><div class="rcell ap">Ты как человек. Жизнь, характер, истории. Авантюрист-эстет. Питер. Театр. Объект.</div><div class="rcell ap">Магнит для обеих аудиторий</div>
+        <div class="rcell ab"><strong> Бюро brickburo</strong></div><div class="rcell ab">Ты как архитектор. Объект, экспертиза, кейсы, профессиональный взгляд.</div><div class="rcell ab">Заявки на проекты</div>
+        <div class="rcell aa"><strong> Апарты jam-and-honey</strong></div><div class="rcell aa">Питер и атмосфера. Квартиры, город, жизнь владельца.</div><div class="rcell aa">Бронирования перед сезоном</div>
+      </div>
+    </div>
+    <div class="rs">
+      <div class="rs-title">Частота публикаций</div>
+      <div class="rgrid">
+        <div class="rhead">Аккаунт</div><div class="rhead">Что публикуем</div><div class="rhead">Частота</div>
+        <div class="rcell ap"> Личный</div><div class="rcell ap">Reels (жизнь, театр, возраст), карусели, stories ежедневно</div><div class="rcell ap" style="color:var(--gold)">3–4 поста/нед<br>Stories ежедневно</div>
+        <div class="rcell ab"> Бюро</div><div class="rcell ab">Reels (объект, провокации), карусели (экспертиза), гайды в директ</div><div class="rcell ab" style="color:var(--gold)">2–3 поста/нед<br>Stories 3–4 раза</div>
+        <div class="rcell aa"> Апарты</div><div class="rcell aa">Stories КАЖДЫЙ ДЕНЬ (прямые продажи!), Reels (туры, Питер)</div><div class="rcell aa" style="color:var(--gold)">2 поста/нед<br>Stories ЕЖЕДНЕВНО</div>
+      </div>
+    </div>
+    <div class="rs">
+      <div class="rs-title">Стратегия появлений напарника</div>
+      <div class="tl">
+        <div class="tl-item"><div class="tl-m"><div class="tl-dot" style="background:var(--bureau)"></div><div class="tl-line"></div></div><div class="tl-c"><div class="tl-date">10.03 — РУКИ</div><div class="tl-text">В кадре Reel — его руки держат план рядом с твоими. Никакого имени. <em style="color:var(--text-muted)">Если спросят — «коллега».</em></div></div></div>
+        <div class="tl-item"><div class="tl-m"><div class="tl-dot" style="background:var(--bureau)"></div><div class="tl-line"></div></div><div class="tl-c"><div class="tl-date">20.03 — СИЛУЭТ</div><div class="tl-text">Сторис: стоит спиной, смотрит на объект. «Мы с [имя] смотрим на эту стену 40 минут.»</div></div></div>
+        <div class="tl-item"><div class="tl-m"><div class="tl-dot" style="background:var(--bureau)"></div><div class="tl-line"></div></div><div class="tl-c"><div class="tl-date">24.03 — ГОЛОС</div><div class="tl-text">Сторис до коллаба: снимаешь его со спины. «Снимать не даёт. Зато проектирует хорошо.»</div></div></div>
+        <div class="tl-item"><div class="tl-m"><div class="tl-dot" style="background:var(--gold)"></div></div><div class="tl-c"><div class="tl-date">01.04 — РАСКРЫТИЕ (только если готов)</div><div class="tl-text">«Часть клиентов думает, что мы женаты. Они пропустили семь лет. Архитектура получается лучше, чем семейная жизнь. Хотя это тоже было неплохо.»</div></div></div>
+      </div>
+    </div>
+    <div class="rs">
+      <div class="rs-title">Бюджет времени — 1–1.5 часа в день</div>
+      <div class="rgrid">
+        <div class="rhead">Задача</div><div class="rhead">Как</div><div class="rhead">Время</div>
+        <div class="rcell">Публикация + подписи</div><div class="rcell">Готовить заранее, публиковать утром</div><div class="rcell" style="color:var(--gold)">20 мин</div>
+        <div class="rcell">Stories (все аккаунты)</div><div class="rcell">Живые + заготовленные, без перфекционизма</div><div class="rcell" style="color:var(--gold)">15 мин</div>
+        <div class="rcell">Ответы на комментарии</div><div class="rcell">Раз в день, вечером</div><div class="rcell" style="color:var(--gold)">15 мин</div>
+        <div class="rcell">Съёмка (Вт и Пт)</div><div class="rcell">На объекте — сразу для всех аккаунтов</div><div class="rcell" style="color:var(--gold)">30–60 мин</div>
+        <div class="rcell">Монтаж</div><div class="rcell">CapCut, субтитры автоматом — проверить вручную</div><div class="rcell" style="color:var(--gold)">20–30 мин</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalOverlay" onclick="closeModalOutside(event)">
+  <div class="modal" id="modal">
+    <button class="modal-close" onclick="closeModal()">×</button>
+    <div class="modal-title" id="modalTitle"></div>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+
+<!-- BANK OF IDEAS -->
+<div class="view" id="view-bank">
+  <div class="grid2">
+    <div class="panel">
+      <div class="panel-label">Добавить идею</div>
+      <textarea class="form-textarea" id="ideaText" placeholder="идея поста, тема, формат..."></textarea>
+      <div class="form-row">
+        <select class="form-select" id="ideaProject">
+          <option value="bureau">Бюро</option>
+          <option value="aparts">Апарты</option>
+          <option value="personal">Личное</option>
+        </select>
+        <select class="form-select" id="ideaFormat">
+          <option value="пост">Пост</option>
+          <option value="сторис">Сторис</option>
+          <option value="видео">Видео/рилс</option>
+          <option value="карусель">Карусель</option>
+          <option value="статья">Статья</option>
+        </select>
+      </div>
+      <input class="form-input" id="ideaTags" placeholder="теги через запятую...">
+      <button class="add-btn" onclick="addIdea()">Сохранить идею</button>
+    </div>
+    <div class="panel">
+      <div class="panel-label">Банк идей (<span id="ideaCount">0</span>)</div>
+      <div id="ideasList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="view" id="view-stats">
+  <div class="grid3">
+    <div class="panel">
+      <div class="panel-label">Бюро</div>
+      <div id="stats-bureau"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-label">Апарты</div>
+      <div id="stats-aparts"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-label">Личный бренд</div>
+      <div id="stats-personal"></div>
+    </div>
+  </div>
+  <div class="grid2">
+    <div class="panel">
+      <div class="panel-label">Обновить подписчиков</div>
+      <div id="platformRows"></div>
+      <button class="add-btn" style="margin-top:12px;" onclick="saveStats()">Сохранить</button>
+    </div>
+    <div class="panel">
+      <div class="panel-label">Частота публикаций — эта неделя</div>
+      <div id="freqTracker"></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════
+// DEFAULT DATA
+// ═══════════════════════════════════════
+const DEF_WEEKS=[{label:"Неделя 1",name:"«Возвращение»",goal:"цель: 1 000 подписчиков",days:[{date:"09.03",day:"Пн",shoot:false,event:"",personal:{text:"Reel — театр с песенкой\n«Год молчала. Возвращаюсь.»",time:"19:00",status:"draft"},bureau:{text:"Stories — деталь объекта\nинтрига без текста",time:"20:00",status:"draft"},aparts:{text:"Stories — даты апреля\n«Сезон начинается»",time:"12:00",status:"draft"},note:""},{date:"10.03",day:"Вт",shoot:true,event:" Стройка",personal:null,bureau:{text:"Снять: общий план, детали\nматериалы, эскизы в руках",time:"",status:"draft"},aparts:{text:"Снять: атмосфера объекта",time:"",status:"draft"},note:" Съёмочный день на базе.\n\n ПОЯВЛЕНИЕ 1 — РУКИ:\nВ одном кадре его руки держат план рядом с твоими. Без имени. Без объяснений."},{date:"11.03",day:"Ср",shoot:false,event:" Театр с Леной",personal:{text:"Stories — живые из театра\nс Леной (будущий коллаб)",time:"20:00",status:"draft"},bureau:null,aparts:null,note:"Снять Лену в театре — материал для коллаба.\nПознакомить аудиторию с ней заранее"},{date:"12.03",day:"Чт",shoot:false,event:"",personal:{text:"Карусель «Кто я — честно»\n5 слайдов, 5 фраз",time:"19:00",status:"draft"},bureau:{text:"Пост — знакомство бюро\nбез пафоса",time:"18:00",status:"draft"},aparts:{text:"Пост — сезонный анонс\nдаты + карусель квартир",time:"19:00",status:"draft"},note:""},{date:"13.03",day:"Пт",shoot:true,event:" Стройка",personal:{text:"Stories закулисье\nобъект + кофе + деталь",time:"18:00",status:"draft"},bureau:{text:"Снять: Reel объект изнутри\nголос за кадром (публикация 14.03)",time:"",status:"draft"},aparts:null,note:"Второй съёмочный день.\nГолос писать дома в тишине отдельно"},{date:"14.03",day:"Сб",shoot:false,event:"",personal:{text:"Пост личное — история\nили питерский момент",time:"11:00",status:"draft"},bureau:{text:"Reel — объект изнутри\n«Год на одном объекте»",time:"19:00",status:"draft"},aparts:{text:"Reel — тур по квартире\n«Проектировала сама»",time:"11:00",status:"draft"},note:""},{date:"15.03",day:"Вс",shoot:false,event:"",personal:null,bureau:null,aparts:{text:"Stories — отзыв гостя\nна фоне фото квартиры",time:"18:00",status:"draft"},note:"Лёгкий день — только одна сторис апартов"}]},{label:"Неделя 2",name:"«Экспертиза»",goal:"цель: 100K просмотров суммарно",days:[{date:"16.03",day:"Пн",shoot:false,event:" Театр с Леной",personal:{text:"Stories театр — живые\n+ знакомство с Леной\n«Скоро коллаб»",time:"20:00",status:"draft"},bureau:null,aparts:null,note:"Второй поход в театр.\nСнять совместный материал для коллаба 22.03"},{date:"17.03",day:"Вт",shoot:true,event:" Стройка",personal:null,bureau:{text:"Снять материал для:\n— Reel «Материал решает всё»\n— Детали СПА-зоны\n— Эскизы крупным планом",time:"",status:"draft"},aparts:null,note:"Съёмочный день.\nФокус на материалах и фактурах крупным планом"},{date:"18.03",day:"Ср",shoot:false,event:"",personal:{text:"Reel «Возраст как оружие»\nголос за кадром, кадры объекта",time:"19:00",status:"draft"},bureau:{text:"Карусель «Рестораны\nзакрываются — не про еду»",time:"18:00",status:"draft"},aparts:{text:"Карусель «5 причин\nприехать в Питер в апреле»",time:"18:00",status:"draft"},note:"Репост карусели бюро в stories личного"},{date:"19.03",day:"Чт",shoot:false,event:"",personal:null,bureau:{text:"Reel «Материал решает всё»\nкрупные планы фактур\nголос за кадром",time:"19:00",status:"draft"},aparts:{text:"Stories — карта\n«10 минут от Эрмитажа»",time:"12:00",status:"draft"},note:""},{date:"20.03",day:"Пт",shoot:true,event:" Стройка",personal:{text:"Stories закулисье\n\n Stories — силуэт напарника\nна объекте. Первое имя вскользь.",time:"18:00",status:"draft"},bureau:{text:"Снять: зоны СПА\nготовые фрагменты, детали отделки",time:"",status:"draft"},aparts:null,note:" Съёмочный день — СПА.\n\n ПОЯВЛЕНИЕ 2 — СИЛУЭТ:\nСторис: стоит спиной, смотрит на объект.\n«Мы с [имя] смотрим на эту стену уже сорок минут. Она того стоит.»"},{date:"21.03",day:"Сб",shoot:false,event:"",personal:{text:"Пост личное — смешное\nили питерское",time:"11:00",status:"draft"},bureau:null,aparts:{text:"Reel — Питер как персонаж\nпрогулка + квартиры",time:"11:00",status:"draft"},note:""},{date:"22.03",day:"Вс",shoot:false,event:"",personal:{text:"Stories — анонс коллаба\n«Скоро с Леной»",time:"18:00",status:"draft"},bureau:null,aparts:{text:"Stories — живая владелица\nперед заездом гостей",time:"12:00",status:"draft"},note:"Финальная подготовка материала для коллаба"}]},{label:"Неделя 3",name:"«Система»",goal:"цель: рубрики + гайд + коллаб",days:[{date:"23.03",day:"Пн",shoot:false,event:"",personal:null,bureau:{text:"Reel — запуск рубрики\n«Объект изнутри» #1\nПочему 3 раза меняли пол",time:"18:00",status:"draft"},aparts:null,note:"Первый выпуск рубрики — якорный контент бюро"},{date:"24.03",day:"Вт",shoot:true,event:" Стройка +  Коллаб с Леной",personal:{text:"Stories — съёмка коллаба\nс Леной на локации",time:"13:00",status:"draft"},bureau:{text:" КОЛЛАБ с Леной\nReel «Пространство нанимает»\nCollab-функция",time:"13:00",status:"draft"},aparts:null,note:"Встреча с Леной для съёмки коллаба.\n\n ПОЯВЛЕНИЕ 3 — ГОЛОС:\nДо встречи с Леной — сторис. Снимаешь его со спины, он отмахивается.\n«Снимать не даёт. Зато проектирует хорошо.»"},{date:"25.03",day:"Ср",shoot:false,event:"",personal:{text:"Stories → репост коллаба\n«Поговорили с Леной честно. Смотри в бюро»",time:"14:00",status:"draft"},bureau:null,aparts:{text:"Карусель «Как я обустраивала\nквартиру — и что изменила бы»",time:"18:00",status:"draft"},note:""},{date:"26.03",day:"Чт",shoot:false,event:"",personal:{text:"Пост — история личная\nвыгорание / переезд / брак",time:"19:00",status:"draft"},bureau:{text:"Пост — анонс гайда\n«5 вопросов владельца HoReCa»\nДирект: ОБЪЕКТ",time:"12:00",status:"draft"},aparts:null,note:"Репост анонса гайда в stories личного аккаунта"},{date:"27.03",day:"Пт",shoot:true,event:" Стройка",personal:null,bureau:{text:"Снять: прогресс объекта\nдо/после фрагментов",time:"",status:"draft"},aparts:{text:"Снять атмосферу\nприроды вокруг базы",time:"",status:"draft"},note:"Съёмка прогресса — материал для итогов месяца"},{date:"28.03",day:"Сб",shoot:false,event:"",personal:{text:"Reel — питерское утро",time:"11:00",status:"draft"},bureau:{text:"Карусель «Как я работаю\nот звонка до открытия»",time:"18:00",status:"draft"},aparts:{text:"Stories — отзыв гостя\n+ стикер бронирования",time:"12:00",status:"draft"},note:""},{date:"29.03",day:"Вс",shoot:false,event:"",personal:null,bureau:null,aparts:{text:"Карусель «Майские в Питере»\nгид от жителя, ссылка на бронь",time:"18:00",status:"draft"},note:"Важно до майских — закрыть даты"}]},{label:"Неделя 4",name:"«Масштаб»",goal:"цель: заявки в бюро + бронирования апартов",days:[{date:"30.03",day:"Пн",shoot:false,event:"",personal:{text:"Карусель «Три аккаунта.\nОдна я. Как это работает»",time:"19:00",status:"draft"},bureau:{text:"Пост — мягкий анонс консультаций\nДирект: РАЗБОР",time:"18:00",status:"draft"},aparts:null,note:"Репост анонса консультаций в stories личного"},{date:"31.03",day:"Вт",shoot:true,event:" Стройка",personal:null,bureau:{text:"Снять: финальный материал\nпрогресс объекта, итоговые кадры",time:"",status:"draft"},aparts:null,note:"Последний съёмочный день месяца"},{date:"01.04",day:"Ср",shoot:false,event:"",personal:{text:" Пост-раскрытие\n«Партнёр. Бывший муж.\nСемь лет перерыва. Клиенты не заметили.»",time:"",status:"draft"},bureau:{text:"Reel «СПА изнутри»\nматериалы / свет / акустика",time:"19:00",status:"draft"},aparts:{text:"Reel — белые ночи на горизонте\n«Апрель ещё есть»",time:"11:00",status:"draft"},note:" МОМЕНТ РАСКРЫТИЯ:\n«Архитектура получается лучше, чем семейная жизнь. Хотя это тоже было неплохо.»\nПубликовать только если первые 3 появления прошли комфортно."},{date:"02.04",day:"Чт",shoot:false,event:"",personal:null,bureau:{text:"Карусель — кейс подписчика\nразбор присланного кафе",time:"19:00",status:"draft"},aparts:{text:"Stories — живая проверка квартир\nперед сезоном",time:"12:00",status:"draft"},note:"Запросить фото кафе у подписчиков (через stories 23.03)"},{date:"03.04",day:"Пт",shoot:true,event:" Стройка",personal:{text:"Stories закулисье",time:"18:00",status:"draft"},bureau:{text:"Снять: материал для рубрики #2\n«Объект изнутри»",time:"",status:"draft"},aparts:null,note:""},{date:"04.04",day:"Сб",shoot:false,event:"",personal:{text:"Пост — итоги марта\nчестно: цифры / что вышло / что нет",time:"18:00",status:"draft"},bureau:null,aparts:{text:"Карусель апрель —\nобновить даты и спецпредложение",time:"11:00",status:"draft"},note:""},{date:"05.04",day:"Вс",shoot:false,event:"",personal:{text:"Stories голосование\n«Больше жизни или больше профессии?»",time:"20:00",status:"draft"},bureau:{text:"Stories голосование\n«Что показывать с объекта?»",time:"20:00",status:"draft"},aparts:{text:"Stories голосование\n«Квартиры или Питер?»",time:"20:00",status:"draft"},note:"Финал месяца — аудитория выбирает план на апрель"}]}];
+
+const DEF_HOOKS=[{id:1,type:"question",text:"Почему дорогой ремонт выглядит дешевле дешёвого?",pain:"Потратил — не то",emotion:"Любопытство",account:"bureau"},{id:2,type:"question",text:"Что я проверяю в чужом заведении первые 10 секунд?",pain:"Правильно ли у меня",emotion:"Любопытство",account:"bureau"},{id:3,type:"question",text:"Почему гости не возвращаются — хотя всё красиво?",pain:"Нет повторных броней",emotion:"Тревога",account:"aparts"},{id:4,type:"question",text:"За что дизайнеры берут деньги, которые вам не нужны?",pain:"Чувствую переплату",emotion:"Гнев",account:"bureau"},{id:5,type:"question",text:"Почему я отказалась от проекта с большим бюджетом?",pain:"Деньги решают всё",emotion:"Любопытство",account:"personal"},{id:6,type:"question",text:"Что видит архитектор, когда заходит в вашу квартиру?",pain:"Стыд за жильё",emotion:"Тревога",account:"personal"},{id:7,type:"question",text:"Почему я выгорала три раза — и возвращалась?",pain:"Думаю бросить",emotion:"Надежда",account:"personal"},{id:8,type:"number",text:"1 диван поднял выручку квартиры на 30%. Вот какой.",pain:"Дизайн vs доход",emotion:"FOMO",account:"aparts"},{id:9,type:"number",text:"3 ошибки, которые я вижу в 90% питерских квартир.",pain:"Делаю неправильно",emotion:"Тревога",account:"bureau"},{id:10,type:"number",text:"За 30 лет я видела 400+ объектов. Жалею о двух.",pain:"Боюсь пожалеть",emotion:"Любопытство",account:"bureau"},{id:11,type:"number",text:"Потолок 3 метра — и я покрасила его тёмным. Вот что вышло.",pain:"Боюсь рисковать",emotion:"Надежда",account:"personal"},{id:12,type:"number",text:"Институт выгнал меня с 3 курса. Я вернулась через 7 лет.",pain:"Недостаточно профи",emotion:"Надежда",account:"personal"},{id:13,type:"number",text:"Я закрывала бизнес 3 раза. Вот что каждый раз шло не так.",pain:"Бизнес не растёт",emotion:"Надежда",account:"personal"},{id:14,type:"contrast",text:"Все вешают зеркала чтобы расширить. Я убираю.",pain:"Советы не работают",emotion:"Гнев",account:"bureau"},{id:15,type:"contrast",text:"Все делают «как в отеле». Мои квартиры — наоборот.",pain:"Все одинаковые",emotion:"Любопытство",account:"aparts"},{id:16,type:"contrast",text:"Все дизайнеры показывают готовое. Я — когда всё плохо.",pain:"Инстаграм нереален",emotion:"Гнев",account:"personal"},{id:17,type:"contrast",text:"Мне говорили: в 50 поздно начинать. Я переехала в Питер.",pain:"Возраст = ограничение",emotion:"Надежда",account:"personal"},{id:18,type:"contrast",text:"Все боятся цвета на потолке. Я начинаю с него.",pain:"Делаю стандартно",emotion:"Надежда",account:"bureau"},{id:19,type:"contrast",text:"Муж уходил четыре раза. Интерьер оставался. Вот что это значит.",pain:"Хочу дом который мой",emotion:"Любопытство",account:"personal"},{id:20,type:"anchor",text:"Мне 52. Я архитектор. И я до сих пор делаю это иначе.",pain:"Нет ролевой модели",emotion:"Надежда",account:"all"}];
+
+// ═══════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════
+function load(){
+  try{
+    const w=localStorage.getItem('cc2_weeks');
+    const h=localStorage.getItem('cc2_hooks');
+    return{weeks:w?JSON.parse(w):JSON.parse(JSON.stringify(DEF_WEEKS)),hooks:h?JSON.parse(h):JSON.parse(JSON.stringify(DEF_HOOKS))};
+  }catch(e){return{weeks:JSON.parse(JSON.stringify(DEF_WEEKS)),hooks:JSON.parse(JSON.stringify(DEF_HOOKS))};}
+}
+function save(){localStorage.setItem('cc2_weeks',JSON.stringify(S.weeks));localStorage.setItem('cc2_hooks',JSON.stringify(S.hooks));}
+let S=load();
+let CW=0,CMO=0,HF='all',CTX={};
+let _mStatus=null;
+
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1700);}
+function mkEl(tag,cls){const e=document.createElement(tag);if(cls)e.className=cls;return e;}
+function acC(a){return a==='personal'?'var(--personal)':a==='bureau'?'var(--bureau)':'var(--aparts)';}
+function acL(a){return a==='personal'?' Личный':a==='bureau'?' Бюро':' Апарты';}
+
+// ── VIEWS ──
+function switchView(name,el){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('view-'+name).classList.add('active');
+  el.classList.add('active');
+  if(name==='week')renderWeek();
+  if(name==='month')renderMonth();
+  if(name==='hooks')renderHooks();
+  if(name==='bank')renderIdeas();
+  if(name==='stats'){renderStats();renderPlatformChips();}
+}
+
+// ── MODAL ──
+function openModal(title,body){
+  document.getElementById('modalTitle').textContent=title;
+  document.getElementById('modalBody').innerHTML=body;
+  document.getElementById('modalOverlay').classList.add('open');
+}
+function closeModal(){document.getElementById('modalOverlay').classList.remove('open');}
+function closeModalOutside(e){if(e.target===document.getElementById('modalOverlay'))closeModal();}
+
+// ═══════════════════════════════════════
+// WEEK
+// ═══════════════════════════════════════
+function navWeek(d){CW=Math.max(0,Math.min(S.weeks.length-1,CW+d));renderWeek();}
+
+function renderWeek(){
+  const wk=S.weeks[CW];
+  if(!wk){
+    document.getElementById('weekLabel').textContent='Нет недель';
+    document.getElementById('weekGoal').textContent='';
+    document.getElementById('weekGrid').innerHTML='<div style="padding:32px;color:var(--text-muted);grid-column:1/-1">Нажми «+ Неделя» чтобы начать</div>';
+    return;
+  }
+  document.getElementById('weekLabel').innerHTML=`<em>${wk.label}</em> — ${wk.name}`;
+  document.getElementById('weekGoal').textContent=wk.goal;
+  const today=new Date();
+  const todayStr=`${String(today.getDate()).padStart(2,'0')}.${String(today.getMonth()+1).padStart(2,'0')}`;
+  const grid=document.getElementById('weekGrid');
+  grid.innerHTML='';
+
+  grid.appendChild(mkEl('div','wg-gutter'));
+  wk.days.forEach((d,di)=>{
+    const h=mkEl('div','wg-day-head');
+    const isT=d.date===todayStr;
+    const badge=d.shoot?'<span style="color:#7abf7a;font-size:10px"> съёмка</span>':d.event?`<span style="font-size:10px;color:var(--theatre)">${d.event}</span>`:'';
+    h.innerHTML=`<div class="wg-day-name">${d.day}</div><div class="wg-day-date${isT?' today':''}">${d.date.split('.')[0]}<span style="font-size:11px;opacity:.5">.${d.date.split('.')[1]}</span></div><div class="wg-day-badge">${badge}</div>`;
+    grid.appendChild(h);
+  });
+
+  ['personal','bureau','aparts'].forEach(acct=>{
+    const lbl=mkEl('div','wg-row-label');
+    lbl.innerHTML=`<div class="wg-row-icon">${acct==='personal'?'':acct==='bureau'?'':''}</div><div class="wg-row-name" style="color:${acC(acct)}">${acct==='personal'?'Личный':acct==='bureau'?'Бюро':'Апарты'}</div>`;
+    grid.appendChild(lbl);
+    wk.days.forEach((d,di)=>{
+      const cell=mkEl('div','wg-cell'+(d.shoot?' shoot-day':''));
+      const post=d[acct];
+      if(d.shoot&&!post){cell.innerHTML=`<div style="font-size:10px;color:#7abf7a;opacity:.55;padding:2px 0">Съёмочный день</div>`;}
+      else if(post){
+        const card=mkEl('div',`post-card ${acct} s-${post.status||'draft'}`);
+        const sIcon=post.status==='draft'?'—':post.status==='ready'?'+':'++';
+        card.innerHTML=`${post.text||''}${post.time?`<div class="post-time"> ${post.time}</div>`:''}<div class="status-btn" title="Статус: ${post.status||'draft'}">${sIcon}</div>`;
+        card.querySelector('.status-btn').onclick=(e)=>{e.stopPropagation();cycleStatus(CW,di,acct);};
+        card.onclick=()=>openEditPost(CW,di,acct);
+        cell.appendChild(card);
+      }
+      if(!post){
+        const btn=mkEl('button','add-btn-sm');btn.textContent='+ пост';
+        btn.onclick=()=>openEditPost(CW,di,acct,true);
+        cell.appendChild(btn);
+      }
+      grid.appendChild(cell);
+    });
+  });
+
+  const noteLbl=mkEl('div','wg-row-label');
+  noteLbl.innerHTML=`<div class="wg-row-icon"></div><div class="wg-row-name">Заметки</div>`;
+  grid.appendChild(noteLbl);
+  wk.days.forEach((d,di)=>{
+    const cell=mkEl('div','wg-cell'+(d.shoot?' shoot-day':''));
+    if(d.note){const nb=mkEl('div','note-badge');nb.textContent=d.note;nb.onclick=()=>openEditNote(CW,di);cell.appendChild(nb);}
+    const btn=mkEl('button','add-btn-sm');btn.textContent=d.note?' изменить':'+ заметка';
+    btn.onclick=()=>openEditNote(CW,di);
+    cell.appendChild(btn);
+    grid.appendChild(cell);
+  });
+}
+
+function cycleStatus(wi,di,acct){
+  const p=S.weeks[wi].days[di][acct];if(!p)return;
+  const c={draft:'ready',ready:'done',done:'draft'};
+  p.status=c[p.status||'draft'];
+  save();renderWeek();
+  toast(p.status==='ready'?'+ Готово':p.status==='done'?'++ Опубликовано':'Черновик');
+}
+
+// ── EDIT POST ──
+function openEditPost(wi,di,acct,isNew=false){
+  CTX={wi,di,acct};_mStatus=null;
+  const post=S.weeks[wi].days[di][acct]||{text:'',time:'',status:'draft'};
+  const d=S.weeks[wi].days[di];
+  const st=post.status||'draft';
+  openModal((isNew?'Новый пост — ':'Редактировать — ')+acL(acct)+' · '+d.date,
+  `<div class="mf"><div class="ml">Текст поста</div>
+    <textarea class="mta" id="ep_t" rows="5" placeholder="Текст, идея, формат, хук...">${post.text||''}</textarea></div>
+  <div class="mrow">
+    <div class="mf"><div class="ml">Время публикации</div><input class="mi" id="ep_time" value="${post.time||''}" placeholder="19:00"></div>
+    <div class="mf"><div class="ml">Статус</div>
+      <div class="sc">
+        <div class="schip draft ${st==='draft'?'active':''}" onclick="setMS('draft',this)">Черновик</div>
+        <div class="schip ready ${st==='ready'?'active':''}" onclick="setMS('ready',this)">+ Готово</div>
+        <div class="schip done ${st==='done'?'active':''}" onclick="setMS('done',this)">++ Опублик.</div>
+      </div>
+    </div>
+  </div>
+  <div class="mactions">
+    ${!isNew?`<button class="btn-d" onclick="delPost()">Удалить</button>`:''}
+    <button class="btn-s" onclick="closeModal()">Отмена</button>
+    <button class="btn-p" onclick="savePost()">Сохранить</button>
+  </div>`);
+}
+function setMS(s,el){_mStatus=s;document.querySelectorAll('.schip').forEach(c=>c.classList.remove('active'));el.classList.add('active');}
+function savePost(){
+  const {wi,di,acct}=CTX;
+  const text=document.getElementById('ep_t').value.trim();
+  const time=document.getElementById('ep_time').value.trim();
+  const status=_mStatus||S.weeks[wi].days[di][acct]?.status||'draft';
+  S.weeks[wi].days[di][acct]=text?{text,time,status}:null;
+  save();closeModal();renderWeek();toast('Сохранено');
+}
+function delPost(){const{wi,di,acct}=CTX;S.weeks[wi].days[di][acct]=null;save();closeModal();renderWeek();toast('Удалено');}
+
+// ── EDIT NOTE ──
+function openEditNote(wi,di){
+  CTX={wi,di};const d=S.weeks[wi].days[di];
+  openModal('Заметка · '+d.date+' '+d.day,
+  `<div class="mf"><div class="ml">Заметка / Инструкция</div>
+    <textarea class="mta" id="ep_n" rows="6" placeholder="Съёмочный день, событие, важные детали, стратегия...">${d.note||''}</textarea></div>
+  <div class="mrow">
+    <div class="mf"><div class="ml">Событие (в шапке дня)</div><input class="mi" id="ep_ev" value="${d.event||''}" placeholder=" Театр с Леной"></div>
+    <div class="mf"><div class="ml">Съёмочный день?</div>
+      <select class="msel" id="ep_sh"><option value="0" ${!d.shoot?'selected':''}>Нет</option><option value="1" ${d.shoot?'selected':''}> Да</option></select>
+    </div>
+  </div>
+  <div class="mactions"><button class="btn-s" onclick="closeModal()">Отмена</button><button class="btn-p" onclick="saveNote()">Сохранить</button></div>`);
+}
+function saveNote(){
+  const{wi,di}=CTX;
+  S.weeks[wi].days[di].note=document.getElementById('ep_n').value;
+  S.weeks[wi].days[di].event=document.getElementById('ep_ev').value;
+  S.weeks[wi].days[di].shoot=document.getElementById('ep_sh').value==='1';
+  save();closeModal();renderWeek();toast('Сохранено');
+}
+
+// ── WEEK META ──
+function editWeekMeta(){
+  const wk=S.weeks[CW];
+  openModal('Настройки недели',
+  `<div class="mf"><div class="ml">Название (Неделя 5...)</div><input class="mi" id="wm_l" value="${wk.label}"></div>
+  <div class="mf"><div class="ml">Тема / слоган</div><input class="mi" id="wm_n" value="${wk.name}" placeholder="«Возвращение»"></div>
+  <div class="mf"><div class="ml">Цель недели</div><input class="mi" id="wm_g" value="${wk.goal}" placeholder="цель: ..."></div>
+  <div class="mactions"><button class="btn-s" onclick="closeModal()">Отмена</button><button class="btn-p" onclick="saveWM()">Сохранить</button></div>`);
+}
+function saveWM(){
+  const wk=S.weeks[CW];
+  wk.label=document.getElementById('wm_l').value;
+  wk.name=document.getElementById('wm_n').value;
+  wk.goal=document.getElementById('wm_g').value;
+  save();closeModal();renderWeek();toast('Сохранено');
+}
+
+function deleteWeek(){
+  if(S.weeks.length<=1){toast('Нельзя удалить последнюю неделю');return;}
+  if(!confirm('Удалить эту неделю со всеми постами?'))return;
+  S.weeks.splice(CW,1);CW=Math.max(0,CW-1);save();renderWeek();toast('Неделя удалена');
+}
+
+function addWeek(){
+  const days=['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
+  let startDate=null;
+  const last=S.weeks[S.weeks.length-1];
+  if(last){const ld=last.days[last.days.length-1]?.date;if(ld){const[dd,mm]=ld.split('.').map(Number);const d=new Date(2026,mm-1,dd);d.setDate(d.getDate()+1);startDate=d;}}
+  const newDays=days.map((day,i)=>{
+    let dateStr='';
+    if(startDate){const d=new Date(startDate);d.setDate(startDate.getDate()+i);dateStr=`${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}`;}
+    return{date:dateStr,day,shoot:false,event:'',personal:null,bureau:null,aparts:null,note:''};
+  });
+  const n=S.weeks.length+1;
+  S.weeks.push({label:`Неделя ${n}`,name:'«Новая тема»',goal:'цель: ...',days:newDays});
+  CW=S.weeks.length-1;save();renderWeek();editWeekMeta();
+}
+
+// ═══════════════════════════════════════
+// MONTH
+// ═══════════════════════════════════════
+const MRU=['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+function getDayMap(){const o={};S.weeks.forEach(wk=>wk.days.forEach(d=>{if(d.date)o[d.date]=d;}));return o;}
+function navMonth(d){CMO+=d;renderMonth();}
+function renderMonth(){
+  const base=new Date(2026,2,1);base.setMonth(base.getMonth()+CMO);
+  const year=base.getFullYear(),month=base.getMonth();
+  document.getElementById('monthLabel').innerHTML=`<em>${MRU[month]}</em> ${year}`;
+  const dm=getDayMap();const grid=document.getElementById('monthGrid');grid.innerHTML='';
+  ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'].forEach(d=>{const h=mkEl('div','month-dow');h.textContent=d;grid.appendChild(h);});
+  const first=new Date(year,month,1);let sd=first.getDay();sd=sd===0?6:sd-1;
+  const ld=new Date(year,month+1,0).getDate();const today=new Date();
+  for(let i=0;i<sd;i++){const c=mkEl('div','month-cell other');c.innerHTML='<div class="month-day-num">·</div>';grid.appendChild(c);}
+  for(let d=1;d<=ld;d++){
+    const ds=`${String(d).padStart(2,'0')}.${String(month+1).padStart(2,'0')}`;
+    const info=dm[ds];const isT=today.getDate()===d&&today.getMonth()===month&&today.getFullYear()===year;
+    const c=mkEl('div','month-cell'+(info?.shoot?' has-shoot':''));
+    c.innerHTML=`<div class="month-day-num${isT?' tnow':''}">${d}${info?.shoot?'<span style="font-size:9px;color:#7abf7a"> </span>':''}</div><div class="month-posts" id="mp-${ds}"></div>`;
+    if(info)c.onclick=()=>openDayModal(info);
+    grid.appendChild(c);
+    if(info)requestAnimationFrame(()=>{const pp=document.getElementById('mp-'+ds);if(!pp)return;['personal','bureau','aparts'].forEach(a=>{if(info[a]){const p=mkEl('div','mpip '+a);pp.appendChild(p);}});});
+  }
+  const rem=(sd+ld)%7;if(rem>0)for(let i=1;i<=7-rem;i++){const c=mkEl('div','month-cell other');c.innerHTML=`<div class="month-day-num">${i}</div>`;grid.appendChild(c);}
+}
+function openDayModal(d){
+  let body='';
+  ['personal','bureau','aparts'].forEach(a=>{
+    if(d[a])body+=`<div style="margin-bottom:11px"><div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:${acC(a)};margin-bottom:4px">${acL(a)}</div><div style="background:var(--surface2);border-left:3px solid ${acC(a)};padding:7px 10px;border-radius:2px;font-size:13px;color:var(--text-dim);white-space:pre-line;line-height:1.45">${d[a].text}${d[a].time?'\n '+d[a].time:''}</div></div>`;
+  });
+  if(d.note)body+=`<div style="background:var(--surface2);border-left:2px solid var(--gold-dim);padding:7px 10px;border-radius:2px;font-size:12px;color:var(--text-muted);font-style:italic;white-space:pre-line;line-height:1.45;margin-top:4px">${d.note}</div>`;
+  if(!body)body='<div style="color:var(--text-muted);font-size:13px;padding:8px 0">Постов на этот день нет</div>';
+  openModal(`${d.date} · ${d.day}${d.event?' · '+d.event:''}`,body+'<div class="mactions"><button class="btn-s" onclick="closeModal()">Закрыть</button></div>');
+}
+
+// ═══════════════════════════════════════
+// HOOKS
+// ═══════════════════════════════════════
+function filterHooks(f,el){HF=f;document.querySelectorAll('.hf-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');renderHooks();}
+function renderHooks(){
+  const grid=document.getElementById('hooksGrid');grid.innerHTML='';
+  const flt=S.hooks.filter(h=>{
+    if(HF==='all')return true;
+    if(['personal','bureau','aparts'].includes(HF))return h.account.includes(HF)||h.account==='all';
+    return h.type===HF;
+  });
+  flt.forEach(h=>{
+    const ac=h.account==='all'?'all':h.account.includes('/')?'bureau':h.account;
+    const tl=h.type==='question'?'? Вопрос':h.type==='number'?' Цифра':h.type==='contrast'?' Контраст':' Якорный';
+    const c=mkEl('div',`hook-card ${ac}`);
+    c.innerHTML=`<div class="hook-text">${h.text}</div>
+      <div class="hook-meta"><span class="htag type">${tl}</span><span class="htag pain">${h.pain}</span><span class="htag emotion">${h.emotion}</span></div>
+      <div class="hook-actions">
+        <button class="ha-btn" onclick="copyH(event,'${h.text.replace(/'/g,"\\'").replace(/\n/g,' ')}')">Копировать</button>
+        <button class="ha-btn" onclick="openEditHook(event,${h.id})"></button>
+        <button class="ha-btn del" onclick="delHook(event,${h.id})">×</button>
+      </div>`;
+    c.onclick=()=>copyH(null,h.text);
+    grid.appendChild(c);
+  });
+  if(!flt.length)grid.innerHTML='<div style="color:var(--text-muted);font-size:13px;padding:16px 0;grid-column:1/-1">Нет хуков в этой категории</div>';
+}
+function copyH(e,t){if(e)e.stopPropagation();navigator.clipboard.writeText(t).then(()=>toast('Скопировано +')).catch(()=>toast('Нет доступа к буферу'));}
+
+function hookFormHTML(h){
+  return`<div class="mf"><div class="ml">Текст хука</div>
+    <textarea class="mta" id="hf_t" rows="3" placeholder="Провокационный заголовок...">${h.text||''}</textarea></div>
+  <div class="mrow">
+    <div class="mf"><div class="ml">Тип</div><select class="msel" id="hf_type">
+      <option value="question" ${h.type==='question'?'selected':''}>? Вопрос</option>
+      <option value="number" ${h.type==='number'?'selected':''}> Цифра</option>
+      <option value="contrast" ${h.type==='contrast'?'selected':''}> Контраст</option>
+      <option value="anchor" ${h.type==='anchor'?'selected':''}> Якорный</option>
+    </select></div>
+    <div class="mf"><div class="ml">Аккаунт</div><select class="msel" id="hf_acct">
+      <option value="personal" ${h.account==='personal'?'selected':''}> Личный</option>
+      <option value="bureau" ${h.account==='bureau'?'selected':''}> Бюро</option>
+      <option value="aparts" ${h.account==='aparts'?'selected':''}> Апарты</option>
+      <option value="all" ${h.account==='all'?'selected':''}>Все аккаунты</option>
+    </select></div>
+  </div>
+  <div class="mrow">
+    <div class="mf"><div class="ml">Боль аудитории</div><input class="mi" id="hf_pain" value="${h.pain||''}" placeholder="Потратил — не то"></div>
+    <div class="mf"><div class="ml">Эмоция</div><input class="mi" id="hf_emo" value="${h.emotion||''}" placeholder="Любопытство"></div>
+  </div>
+  <div class="mactions"><button class="btn-s" onclick="closeModal()">Отмена</button><button class="btn-p" onclick="saveHook()">Сохранить</button></div>`;
+}
+function openAddHook(){CTX={hookId:null};openModal('Новый хук',hookFormHTML({}));}
+function openEditHook(e,id){e.stopPropagation();const h=S.hooks.find(x=>x.id===id);if(!h)return;CTX={hookId:id};openModal('Редактировать хук',hookFormHTML(h));}
+function saveHook(){
+  const text=document.getElementById('hf_t').value.trim();if(!text){toast('Введи текст');return;}
+  const h={id:CTX.hookId||Date.now(),type:document.getElementById('hf_type').value,text,pain:document.getElementById('hf_pain').value,emotion:document.getElementById('hf_emo').value,account:document.getElementById('hf_acct').value};
+  if(CTX.hookId){const i=S.hooks.findIndex(x=>x.id===CTX.hookId);if(i>=0)S.hooks[i]=h;}else S.hooks.push(h);
+  save();closeModal();renderHooks();toast('Сохранено');
+}
+function delHook(e,id){e.stopPropagation();if(!confirm('Удалить этот хук?'))return;S.hooks=S.hooks.filter(h=>h.id!==id);save();renderHooks();toast('Удалено');}
+
+// ═══════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════
+// Auto-save DEF_WEEKS to localStorage on first load
+if(!localStorage.getItem('cc2_weeks')){localStorage.setItem('cc2_weeks',JSON.stringify(S.weeks));}
+renderWeek();renderHooks();renderMonth();
+
+// ── BANK OF IDEAS & STATS (merged from content module) ──
+const PROJECTS = { bureau:'Бюро', aparts:'Апарты', personal:'Личное' };
+const PROJ_COLORS_C = { bureau:'var(--bureau)', aparts:'var(--aparts)', personal:'var(--personal)' };
+const PLATFORMS = ['TG','VK','Inst','VC','Behance','Другое'];
+
+let ideas  = JSON.parse(localStorage.getItem('content_ideas')  || '[]');
+let cstats = JSON.parse(localStorage.getItem('content_stats')  || '{}');
+let freq   = JSON.parse(localStorage.getItem('content_freq')   || '{}');
+
+function addIdea() {
+  const text=document.getElementById('ideaText').value.trim();
+  if(!text) return;
+  ideas.unshift({id:Date.now(),text,project:document.getElementById('ideaProject').value,format:document.getElementById('ideaFormat').value,tags:document.getElementById('ideaTags').value});
+  localStorage.setItem('content_ideas',JSON.stringify(ideas));
+  document.getElementById('ideaText').value='';document.getElementById('ideaTags').value='';
+  renderIdeas();
+}
+
+function deleteIdea(id) { ideas=ideas.filter(i=>i.id!==id); localStorage.setItem('content_ideas',JSON.stringify(ideas)); renderIdeas(); }
+
+function renderIdeas() {
+  const el=document.getElementById('ideasList');el.innerHTML='';
+  document.getElementById('ideaCount').textContent=ideas.length;
+  ideas.forEach(idea=>{
+    const color=PROJ_COLORS[idea.project]||'var(--text-muted)';
+    const item=document.createElement('div');item.className='idea-item';
+    item.innerHTML=`<div class="idea-acc" style="background:${color}"></div><div class="idea-body"><div class="idea-text">${idea.text}</div><div class="idea-tags">${PROJECTS[idea.project]} · ${idea.format}${idea.tags?' · '+idea.tags:''}</div></div><div class="idea-del" onclick="deleteIdea(${idea.id})">×</div>`;
+    el.appendChild(item);
+  });
+  if(!ideas.length) el.innerHTML='<div style="color:var(--text-muted);font-size:14px;padding:12px 0;font-style:italic;font-family:Cormorant Garamond,serif;">Идеи приходят — лови их здесь</div>';
+}
+
+function useIdea(id) {
+  const idea=ideas.find(i=>i.id===id);if(!idea)return;
+  switchTab('add',document.querySelector('[data-tab=add]'));
+  document.getElementById('postTitle').value=idea.text;
+  document.getElementById('postProject').value=idea.project;
+  document.getElementById('postFormat').value=idea.format||'пост';
+}
+
+function renderStats() {
+  ['bureau','aparts','personal'].forEach(proj=>{
+    const el=document.getElementById(`stats-${proj}`);el.innerHTML='';
+    const projPosts=posts.filter(p=>p.project===proj);
+    const posted=projPosts.filter(p=>p.status==='posted').length;
+    const ready=projPosts.filter(p=>p.status==='ready').length;
+    const color=PROJ_COLORS[proj];
+    el.innerHTML=`
+      <div style="font-family:'Cormorant Garamond',serif;font-size:42px;font-weight:300;color:${color};line-height:1;margin-bottom:4px;">${posted}</div>
+      <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">опубликовано всего</div>
+      <div style="display:flex;gap:16px;margin-bottom:16px;">
+        <div><div style="font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--text-dim);">${ready}</div><div style="font-size:11px;color:var(--text-muted);">готово</div></div>
+        <div><div style="font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--text-muted);">${projPosts.filter(p=>p.status==='draft').length}</div><div style="font-size:11px;color:var(--text-muted);">черновик</div></div>
+        <div><div style="font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--text-dim);">${ideas.filter(i=>i.project===proj).length}</div><div style="font-size:11px;color:var(--text-muted);">идей</div></div>
+      </div>
+    `;
+  });
+
+  // platform rows
+  const platEl=document.getElementById('platformRows');platEl.innerHTML='';
+  PLATFORM_LIST.forEach(pl=>{
+    const cur=stats[pl.id]||{subs:0,prev:0};
+    const delta=cur.subs-cur.prev;
+    const row=document.createElement('div');row.className='platform-row';
+    row.innerHTML=`<div class="platform-name">${pl.name}</div><div class="platform-subs">${cur.subs||0}</div><div class="platform-delta" style="color:${delta>0?'var(--green)':delta<0?'var(--red)':'var(--text-muted)'}">${delta>0?'+':''}${delta||'—'}</div><input class="platform-input" type="number" placeholder="новое число" id="stat_${pl.id}">`;
+    platEl.appendChild(row);
+  });
+
+  // freq tracker
+  const freqEl=document.getElementById('freqTracker');freqEl.innerHTML='';
+  const targets={bureau:3,aparts:2,personal:2};
+  Object.entries(PROJECTS).forEach(([proj,name])=>{
+    const color=PROJ_COLORS[proj];
+    const row=document.createElement('div');row.className='freq-row';
+    const dots=document.createElement('div');dots.className='freq-dots';
+    for(let i=0;i<7;i++){
+      const d=new Date(today);d.setDate(today.getDate()-((today.getDay()||7)-1)+i);
+      const k=`freq_${proj}_${dateKey(d)}`;
+      const on=!!freq[k];
+      const dot=document.createElement('div');dot.className='freq-dot'+(on?' posted':'');
+      dot.textContent=DAYS_RU[d.getDay()];
+      dot.onclick=()=>{freq[k]=!freq[k];localStorage.setItem('content_freq',JSON.stringify(freq));renderStats();};
+      dots.appendChild(dot);
+    }
+    const posted7=Object.keys(freq).filter(k=>k.startsWith(`freq_${proj}_`)).length;
+    row.innerHTML=`<div class="freq-platform" style="color:${color}">${name}</div>`;
+    row.appendChild(dots);
+    row.innerHTML+=`<div class="freq-target" style="color:${color}">${posted7}/${targets[proj]}</div>`;
+    freqEl.appendChild(row);
+  });
+}
+
+function saveStats() {
+  PLATFORM_LIST.forEach(pl=>{
+    const el=document.getElementById(`stat_${pl.id}`);
+    if(el&&el.value) {
+      const prev=stats[pl.id]?stats[pl.id].subs:0;
+      stats[pl.id]={subs:parseInt(el.value),prev,date:new Date().toISOString()};
+    }
+  });
+  localStorage.setItem('content_stats',JSON.stringify(stats));
+  renderStats();
+}
+
+function renderPlatformChips() {
+  const wrap = document.getElementById('platformChips'); wrap.innerHTML='';
+  PLATFORMS.forEach(pl=>{
+    const chip=document.createElement('div');
+    chip.className='chip'+(selectedPlatforms.includes(pl)?' active':'');
+    if(selectedPlatforms.includes(pl)) chip.style.background='var(--rose-dim)';
+    chip.textContent=pl;
+    chip.onclick=()=>{
+      if(selectedPlatforms.includes(pl)) selectedPlatforms=selectedPlatforms.filter(x=>x!==pl);
+      else selectedPlatforms.push(pl);
+      renderPlatformChips();
+    };
+    wrap.appendChild(chip);
+  });
+}
+
+function updateTotalPosted() {
+  const now = new Date();
+  const count = posts.filter(p=>{
+    if(p.status!=='posted'||!p.date) return false;
+    const [y,m] = p.date.split('_').map(Number);
+    return m===now.getMonth()&&y===now.getFullYear();
+  }).length;
+  document.getElementById('totalPosted').textContent = count;
+}
+
+</script>
+<nav style="position:fixed;bottom:0;left:0;right:0;height:72px;background:#152238;border-top:1px solid #243060;display:flex;align-items:center;justify-content:space-around;padding:0 8px 8px;z-index:100;"><a href="today.html" style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 12px;text-decoration:none;flex:1;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c49a52" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#c49a52;font-weight:500;">Сегодня</span><div style="width:20px;height:2px;background:#c49a52;border-radius:1px;"></div></a><a href="calendar.html" style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 12px;text-decoration:none;flex:1;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6878a0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#6878a0;font-weight:500;">Календарь</span></a><a href="goals.html" style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 12px;text-decoration:none;flex:1;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6878a0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg><span style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#6878a0;font-weight:500;">Проекты</span></a><a href="inbox.html" style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 12px;text-decoration:none;flex:1;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6878a0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><span style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#6878a0;font-weight:500;">Поток</span></a><a href="index.html" style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 12px;text-decoration:none;flex:1;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6878a0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#6878a0;font-weight:500;">Я</span></a></nav>
+</body>
+</html>

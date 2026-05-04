@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Дом · FlyLady</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #1b2a4a;
+  --surface:  #152238;
+  --surface2: #1e3052;
+  --card:     #f5f0e8;
+  --card2:    #ede8de;
+  --border:   #243060;
+  --border2:  #2e3d70;
+  --border-c: rgba(27,42,74,.1);
+  --text:     #f0ece4;
+  --dim:      #b8bcd0;
+  --muted:    #6878a0;
+  --on-card:  #1b2a4a;
+  --on-dim:   #384068;
+  --on-muted: #788098;
+  --gold:     #c49a52;
+  --gold-d:   #9a7230;
+  --gold-bg:  rgba(196,154,82,.1);
+  --crimson:  #6b2233;
+  --crimson-bg:rgba(107,34,51,.2);
+  --green:    #3d7a55;
+  --green-bg: rgba(61,122,85,.15);
+  --red:      #9e4040;
+  --bureau:   #c49a52;
+  --aparts:   #3d7a55;
+  --personal: #6b4aaa;
+  --font-s:   'Cormorant Garamond', serif;
+  --font-m:   'Manrope', sans-serif;
+  --r:        10px;
+  --nav-h:    72px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:var(--font-b);font-size:14px;min-height:100vh;}
+
+/* HEADER */
+.header{padding:20px 28px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+.header-title{font-family:var(--font-d);font-size:28px;font-weight:300;}
+.header-title em{font-style:italic;color:var(--green);}
+.header-sub{font-size:11px;color:var(--text-muted);letter-spacing:2px;text-transform:uppercase;margin-top:2px;}
+.nav-tabs{display:flex;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;}
+.nav-tab{padding:7px 16px;background:var(--bg);cursor:pointer;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);transition:all .15s;border-bottom:2px solid transparent;}
+.nav-tab:hover{background:var(--surface);}
+.nav-tab.active{color:var(--green);border-bottom-color:var(--green);background:var(--surface);}
+.back-btn{padding:6px 14px;background:transparent;border:1px solid var(--border);color:var(--text-muted);font-family:var(--font-b);font-size:11px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;border-radius:var(--r);transition:all .15s;text-decoration:none;display:inline-flex;align-items:center;gap:5px;}
+.back-btn:hover{border-color:var(--green-dim);color:var(--green);}
+
+.view{display:none;}.view.active{display:block;}
+
+/* DAILY */
+.daily-wrap{padding:20px 28px;display:grid;grid-template-columns:1fr 340px;gap:20px;max-width:1100px;}
+.daily-main{}
+.daily-side{}
+
+.day-header{display:flex;align-items:baseline;gap:14px;margin-bottom:18px;flex-wrap:wrap;}
+.day-title{font-family:var(--font-d);font-size:28px;font-weight:300;}
+.day-title em{font-style:italic;color:var(--green);}
+.day-date{font-size:11px;color:var(--text-muted);letter-spacing:2px;}
+.day-nav{display:flex;gap:5px;margin-left:auto;}
+.dn-btn{width:28px;height:28px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text-dim);font-size:12px;transition:all .12s;}
+.dn-btn:hover{border-color:var(--green-dim);color:var(--green);}
+
+/* SCORE BAR */
+.score-bar{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;gap:16px;}
+.score-num{font-family:var(--font-d);font-size:36px;font-weight:300;color:var(--green);line-height:1;min-width:60px;}
+.score-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px;}
+.score-track{flex:1;height:4px;background:var(--border);border-radius:2px;overflow:hidden;}
+.score-fill{height:100%;background:var(--green);border-radius:2px;transition:width .4s;}
+
+/* TOP-3 */
+.section{margin-bottom:16px;}
+.section-title{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;}
+.section-title span{cursor:pointer;opacity:.5;transition:opacity .12s;}
+.section-title span:hover{opacity:1;}
+
+.task-list{display:flex;flex-direction:column;gap:2px;}
+.task-row{display:flex;align-items:flex-start;gap:8px;padding:7px 10px;background:var(--surface);border-radius:2px;border-left:2px solid transparent;transition:all .12s;cursor:pointer;}
+.task-row:hover{background:var(--surface2);}
+.task-row.done{opacity:.45;}
+.task-row.done .task-text{text-decoration:line-through;}
+.task-row.priority{border-left-color:var(--gold);}
+.task-check{width:16px;height:16px;border:1px solid var(--border);border-radius:2px;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:10px;color:transparent;transition:all .12s;}
+.task-row:hover .task-check{color:var(--text-muted);}
+.task-row.done .task-check{background:var(--green-dim);border-color:var(--green);color:var(--green);}
+.task-text{font-size:13px;color:var(--text-dim);line-height:1.4;flex:1;}
+.task-del{opacity:0;font-size:11px;color:var(--text-muted);cursor:pointer;padding:0 3px;transition:opacity .12s;}
+.task-row:hover .task-del{opacity:.5;}
+.task-del:hover{color:var(--red);opacity:1!important;}
+.add-task-row{display:flex;gap:6px;margin-top:4px;}
+.add-task-input{flex:1;background:var(--bg);border:1px solid var(--border);border-radius:2px;color:var(--text);font-family:var(--font-b);font-size:12px;padding:6px 10px;outline:none;transition:border-color .12s;}
+.add-task-input:focus{border-color:var(--green-dim);}
+.add-task-input::placeholder{color:var(--text-muted);}
+.add-task-btn{padding:6px 12px;background:transparent;border:1px solid var(--border);border-radius:2px;color:var(--text-muted);font-family:var(--font-b);font-size:10px;cursor:pointer;transition:all .12s;}
+.add-task-btn:hover{border-color:var(--green-dim);color:var(--green);}
+
+/* ROUTINE BLOCKS */
+.routine-block{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);margin-bottom:8px;overflow:hidden;}
+.routine-head{padding:10px 14px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:background .12s;}
+.routine-head:hover{background:var(--surface2);}
+.routine-icon{font-size:14px;}
+.routine-name{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);flex:1;}
+.routine-progress{font-size:11px;color:var(--text-muted);}
+.routine-progress.full{color:var(--green);}
+.routine-chevron{font-size:10px;color:var(--text-muted);transition:transform .15s;}
+.routine-block.open .routine-chevron{transform:rotate(90deg);}
+.routine-items{display:none;padding:4px 14px 10px;border-top:1px solid var(--border-dim);}
+.routine-block.open .routine-items{display:block;}
+.ri-row{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--border-dim);cursor:pointer;}
+.ri-row:last-child{border-bottom:none;}
+.ri-row:hover .task-check{color:var(--text-muted);}
+.ri-check{width:14px;height:14px;border:1px solid var(--border);border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:9px;color:transparent;transition:all .12s;flex-shrink:0;}
+.ri-row.done .ri-check{background:var(--green-dim);border-color:var(--green);color:var(--green);}
+.ri-row.done .ri-text{text-decoration:line-through;opacity:.5;}
+.ri-text{font-size:12px;color:var(--text-dim);}
+.ri-time{font-size:10px;color:var(--text-muted);margin-left:auto;}
+
+/* ZONE BLOCK (side) */
+.zone-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;margin-bottom:12px;}
+.zone-card-title{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;}
+.zone-name{font-family:var(--font-d);font-size:20px;font-weight:300;margin-bottom:4px;}
+.zone-task{font-size:12px;color:var(--text-dim);line-height:1.5;margin-bottom:10px;}
+.zone-progress-wrap{height:3px;background:var(--border);border-radius:2px;overflow:hidden;margin-bottom:6px;}
+.zone-progress-fill{height:100%;border-radius:2px;transition:width .4s;}
+.zone-pct{font-size:10px;color:var(--text-muted);}
+
+/* TOMORROW */
+.tomorrow-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;margin-bottom:12px;}
+.tomorrow-title{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px;}
+.tmr-row{display:flex;gap:8px;align-items:center;margin-bottom:6px;}
+.tmr-label{font-size:10px;color:var(--text-muted);min-width:64px;letter-spacing:1px;}
+.tmr-input{flex:1;background:var(--bg);border:1px solid var(--border);border-radius:2px;color:var(--text);font-family:var(--font-b);font-size:12px;padding:4px 8px;outline:none;transition:border-color .12s;}
+.tmr-input:focus{border-color:var(--green-dim);}
+.sleep-row{display:flex;gap:8px;margin-top:8px;}
+
+/* WEEKLY JOURNAL */
+.journal-wrap{padding:20px 28px;}
+.week-selector{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap;}
+.ws-btn{width:28px;height:28px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text-dim);font-size:12px;transition:all .12s;}
+.ws-btn:hover{border-color:var(--green-dim);color:var(--green);}
+.ws-label{font-family:var(--font-d);font-size:20px;font-weight:300;color:var(--text-dim);}
+.ws-label em{font-style:italic;color:var(--green);}
+.ws-zone{font-size:11px;color:var(--text-muted);border-left:2px solid var(--green-dim);padding-left:10px;font-style:italic;}
+.ws-score{margin-left:auto;font-family:var(--font-d);font-size:24px;font-weight:300;}
+
+.journal-grid{display:grid;grid-template-columns:80px repeat(7,1fr);gap:1px;background:var(--border-dim);}
+.jg-head{background:var(--surface2);padding:8px 10px;text-align:center;}
+.jg-day-name{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);}
+.jg-day-date{font-family:var(--font-d);font-size:18px;font-weight:300;color:var(--text-dim);}
+.jg-day-date.today{color:var(--green);}
+.jg-row-label{background:var(--bg);padding:8px 10px;display:flex;align-items:center;justify-content:flex-end;border-right:1px solid var(--border);}
+.jg-row-name{font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);}
+.jg-cell{background:var(--bg);padding:6px;display:flex;flex-direction:column;gap:3px;align-items:center;justify-content:center;min-height:48px;}
+.jg-cell.good{background:var(--green-bg);}
+.jg-cell.bad{background:#9e5a5a11;}
+.jg-checkbox{width:18px;height:18px;border:1px solid var(--border);border-radius:3px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;color:transparent;transition:all .15s;}
+.jg-checkbox:hover{border-color:var(--green-dim);color:var(--green);}
+.jg-checkbox.checked{background:var(--green-dim);border-color:var(--green);color:var(--green);}
+.jg-pct{font-size:10px;letter-spacing:1px;}
+
+/* weekly summary row */
+.jg-summary{background:var(--surface2);padding:8px 10px;text-align:center;}
+.jg-sum-pct{font-size:12px;font-weight:300;}
+.jg-sum-pct.good{color:var(--green);}
+.jg-sum-pct.ok{color:var(--gold);}
+.jg-sum-pct.bad{color:var(--red);}
+
+/* ZONES VIEW */
+.zones-wrap{padding:20px 28px;}
+.zones-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:24px;}
+.zone-tile{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px 12px;cursor:pointer;transition:all .15s;border-top:3px solid transparent;}
+.zone-tile:hover{background:var(--surface2);}
+.zone-tile.active{border-top-color:var(--green);}
+.zt-num{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px;}
+.zt-name{font-family:var(--font-d);font-size:16px;font-weight:300;margin-bottom:6px;}
+.zt-bar{height:3px;background:var(--border);border-radius:2px;overflow:hidden;margin-bottom:4px;}
+.zt-fill{height:100%;border-radius:2px;transition:width .4s;}
+.zt-pct{font-size:10px;color:var(--text-muted);}
+.zt-dates{font-size:10px;color:var(--text-muted);margin-top:2px;}
+
+.zone-detail{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px 22px;}
+.zd-title{font-family:var(--font-d);font-size:24px;font-weight:300;margin-bottom:4px;}
+.zd-sub{font-size:11px;color:var(--text-muted);margin-bottom:16px;}
+.zd-task-list{display:flex;flex-direction:column;gap:4px;margin-bottom:16px;}
+.zd-task{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--surface2);border-radius:2px;cursor:pointer;transition:background .12s;}
+.zd-task:hover{background:var(--surface3);}
+.zd-task.done{opacity:.5;}
+.zd-task.done .zd-text{text-decoration:line-through;}
+.zd-check{width:16px;height:16px;border:1px solid var(--border);border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:10px;color:transparent;flex-shrink:0;transition:all .12s;}
+.zd-task:hover .zd-check{color:var(--text-muted);}
+.zd-task.done .zd-check{background:var(--green-dim);border-color:var(--green);color:var(--green);}
+.zd-text{font-size:13px;color:var(--text-dim);}
+.zd-add-row{display:flex;gap:6px;}
+.zd-add-input{flex:1;background:var(--bg);border:1px solid var(--border);border-radius:2px;color:var(--text);font-family:var(--font-b);font-size:12px;padding:7px 10px;outline:none;}
+.zd-add-input:focus{border-color:var(--green-dim);}
+.zd-add-btn{padding:7px 14px;background:transparent;border:1px solid var(--border);border-radius:2px;color:var(--text-muted);font-family:var(--font-b);font-size:10px;cursor:pointer;transition:all .12s;}
+.zd-add-btn:hover{border-color:var(--green-dim);color:var(--green);}
+
+/* TIMER */
+.timer-wrap{padding:20px 28px;}
+.timer-title{font-family:var(--font-d);font-size:28px;font-weight:300;margin-bottom:16px;}
+.timer-title em{font-style:italic;color:var(--green);}
+.timer-blocks{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px;}
+.timer-block{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px;text-align:center;cursor:pointer;transition:all .15s;border-top:3px solid transparent;}
+.timer-block:hover{background:var(--surface2);}
+.timer-block.active-block{border-top-color:var(--green);}
+.timer-block.done-block{border-top-color:var(--green);opacity:.6;}
+.tb-num{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px;}
+.tb-name{font-family:var(--font-d);font-size:15px;font-weight:300;margin-bottom:8px;}
+.tb-tasks{font-size:11px;color:var(--text-muted);line-height:1.5;text-align:left;margin-bottom:8px;}
+.tb-duration{font-size:11px;color:var(--text-muted);}
+
+.timer-display{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:32px;text-align:center;margin-bottom:16px;}
+.timer-big{font-family:var(--font-d);font-size:80px;font-weight:300;line-height:1;color:var(--text);margin-bottom:8px;letter-spacing:-2px;}
+.timer-big.running{color:var(--green);}
+.timer-big.paused{color:var(--gold);}
+.timer-big.done{color:var(--text-muted);}
+.timer-sub{font-size:11px;color:var(--text-muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:20px;}
+.timer-controls{display:flex;gap:10px;justify-content:center;}
+.tc-btn{padding:10px 24px;background:transparent;border:1px solid var(--border);border-radius:var(--r);color:var(--text-muted);font-family:var(--font-b);font-size:11px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .15s;}
+.tc-btn:hover{border-color:var(--border);}
+.tc-btn.start{border-color:var(--green-dim);color:var(--green);}
+.tc-btn.start:hover{background:var(--green-bg);}
+.tc-btn.stop:hover{border-color:var(--red)55;color:var(--red);}
+.timer-track{height:3px;background:var(--border);border-radius:2px;overflow:hidden;margin-top:16px;}
+.timer-track-fill{height:100%;background:var(--green);border-radius:2px;transition:width 1s linear;}
+
+/* SHOP */
+.shop-wrap{padding:20px 28px;}
+.shop-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+.shop-cat{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;}
+.shop-cat-title{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;}
+.shop-cat-title span{cursor:pointer;opacity:.5;transition:opacity .12s;}
+.shop-cat-title span:hover{opacity:1;}
+.shop-item{display:flex;align-items:center;gap:7px;padding:5px 0;border-bottom:1px solid var(--border-dim);cursor:pointer;}
+.shop-item:last-of-type{border-bottom:none;}
+.shop-item.bought{opacity:.35;}
+.shop-item.bought .shop-text{text-decoration:line-through;}
+.shop-check{width:13px;height:13px;border:1px solid var(--border);border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:9px;color:transparent;flex-shrink:0;transition:all .12s;}
+.shop-item:hover .shop-check{color:var(--text-muted);}
+.shop-item.bought .shop-check{background:var(--green-dim);border-color:var(--green);color:var(--green);}
+.shop-text{font-size:12px;color:var(--text-dim);}
+.shop-del{opacity:0;font-size:10px;color:var(--text-muted);cursor:pointer;margin-left:auto;padding:0 3px;}
+.shop-item:hover .shop-del{opacity:.5;}
+.shop-del:hover{color:var(--red);opacity:1!important;}
+.shop-add{display:flex;gap:5px;margin-top:8px;}
+.shop-add-in{flex:1;background:var(--bg);border:1px solid var(--border);border-radius:2px;color:var(--text);font-family:var(--font-b);font-size:11px;padding:5px 8px;outline:none;}
+.shop-add-in:focus{border-color:var(--green-dim);}
+.shop-add-btn{padding:5px 10px;background:transparent;border:1px solid var(--border);border-radius:2px;color:var(--text-muted);font-family:var(--font-b);font-size:10px;cursor:pointer;transition:all .12s;}
+.shop-add-btn:hover{border-color:var(--green-dim);color:var(--green);}
+.shop-clear-btn{font-size:10px;color:var(--text-muted);background:none;border:none;cursor:pointer;padding:0;font-family:var(--font-b);}
+.shop-clear-btn:hover{color:var(--green);}
+
+/* STATS VIEW */
+.stats-wrap{padding:20px 28px;}
+.stats-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:20px;}
+.ss-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;text-align:center;}
+.ss-val{font-family:var(--font-d);font-size:32px;font-weight:300;color:var(--green);line-height:1;}
+.ss-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin-top:4px;}
+.chart-area{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:16px;}
+.chart-title{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin-bottom:14px;}
+.bar-chart{display:flex;align-items:flex-end;gap:4px;height:80px;}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;}
+.bar-fill{width:100%;border-radius:2px 2px 0 0;transition:height .4s;background:var(--green-dim);min-height:3px;}
+.bar-fill.high{background:var(--green);}
+.bar-fill.mid{background:var(--gold-dim);}
+.bar-fill.low{background:var(--red)22;border:1px solid var(--red)44;}
+.bar-label{font-size:9px;color:var(--text-muted);letter-spacing:1px;}
+.bar-pct{font-size:9px;color:var(--text-muted);}
+.history-list{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;}
+.hl-row{display:flex;align-items:center;gap:12px;padding:10px 14px;border-bottom:1px solid var(--border-dim);cursor:pointer;transition:background .12s;}
+.hl-row:last-child{border-bottom:none;}
+.hl-row:hover{background:var(--surface2);}
+.hl-date{font-size:11px;color:var(--text-muted);min-width:80px;}
+.hl-bar{flex:1;height:4px;background:var(--border);border-radius:2px;overflow:hidden;}
+.hl-fill{height:100%;border-radius:2px;}
+.hl-pct{font-size:11px;min-width:36px;text-align:right;}
+.hl-pct.good{color:var(--green);}
+.hl-pct.ok{color:var(--gold);}
+.hl-pct.bad{color:var(--red);}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:300;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);width:460px;max-height:85vh;overflow-y:auto;padding:22px 24px;position:relative;}
+.modal-close{position:absolute;right:13px;top:13px;cursor:pointer;color:var(--text-muted);font-size:18px;background:none;border:none;font-family:var(--font-b);}
+.modal-close:hover{color:var(--text);}
+.modal-title{font-family:var(--font-d);font-size:21px;font-weight:300;margin-bottom:14px;padding-right:20px;}
+.mf{margin-bottom:10px;}
+.ml{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin-bottom:5px;}
+.mi{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:2px;color:var(--text);font-family:var(--font-b);font-size:13px;padding:7px 10px;outline:none;}
+.mi:focus{border-color:var(--green-dim);}
+.mactions{display:flex;gap:7px;margin-top:14px;justify-content:flex-end;}
+.btn-p{padding:7px 18px;background:var(--green-dim);border:1px solid var(--green-dim);border-radius:var(--r);color:var(--text);font-family:var(--font-b);font-size:11px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .15s;}
+.btn-p:hover{background:var(--green);border-color:var(--green);color:var(--bg);}
+.btn-s{padding:7px 18px;background:transparent;border:1px solid var(--border);border-radius:var(--r);color:var(--text-muted);font-family:var(--font-b);font-size:11px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;}
+
+.toast{position:fixed;bottom:22px;right:22px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:9px 16px;font-size:12px;color:var(--text-dim);z-index:500;transform:translateY(8px);opacity:0;transition:all .2s;pointer-events:none;}
+.toast.show{opacity:1;transform:none;}
+
+@media(max-width:768px){
+  .daily-wrap{grid-template-columns:1fr;}
+  .zones-grid{grid-template-columns:1fr 1fr;}
+  .timer-blocks{grid-template-columns:1fr 1fr;}
+  .shop-grid{grid-template-columns:1fr;}
+  .stats-summary{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+
+
+<div class="header">
+  <div>
+    <div class="header-title">Дом<em> · </em>FlyLady</div>
+    <div class="header-sub" id="headerSub">Зона 1: Коридор/прихожая · Неделя 1</div>
+  </div>
+  <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+    <div class="nav-tabs">
+      <div class="nav-tab active" onclick="switchView('daily',this)">Сегодня</div>
+      <div class="nav-tab" onclick="switchView('journal',this)">Журнал</div>
+      <div class="nav-tab" onclick="switchView('zones',this)">Зоны</div>
+      <div class="nav-tab" onclick="switchView('timer',this)">Таймер</div>
+      <div class="nav-tab" onclick="switchView('shop',this)">Покупки</div>
+      <div class="nav-tab" onclick="switchView('stats',this)">Статистика</div>
+    </div>
+    <a class="back-btn" href="http://marymoro.ru/">← Главная</a>
+  </div>
+</div>
+
+<!-- ═══ DAILY ═══ -->
+<div class="view active" id="view-daily">
+  <div class="daily-wrap">
+    <div class="daily-main">
+      <div class="day-header">
+        <div>
+          <div class="day-title">День <em id="dayTitleDate"></em></div>
+          <div class="day-date" id="daySubDate"></div>
+        </div>
+        <div class="day-nav">
+          <button class="dn-btn" onclick="navDay(-1)">←</button>
+          <button class="dn-btn" onclick="navDay(0)" title="Сегодня">·</button>
+          <button class="dn-btn" onclick="navDay(1)">→</button>
+        </div>
+      </div>
+
+      <div class="score-bar">
+        <div class="score-num" id="dailyScore">0</div>
+        <div style="flex:1">
+          <div class="score-label">Выполнено сегодня</div>
+          <div class="score-track"><div class="score-fill" id="scoreFill" style="width:0%"></div></div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:10px;color:var(--text-muted);letter-spacing:1px;" id="scoreDetails">0 / 0</div>
+        </div>
+      </div>
+
+      <!-- TOP-3 -->
+      <div class="section">
+        <div class="section-title">TOP-3 РАБОТА <span onclick="openAddTask('top3')">+ добавить</span></div>
+        <div class="task-list" id="top3List"></div>
+      </div>
+
+      <!-- ROUTINES -->
+      <div class="section">
+        <div class="section-title">РУТИНЫ</div>
+        <div id="routineBlocks"></div>
+      </div>
+
+      <!-- ZONE TODAY -->
+      <div class="section">
+        <div class="section-title">ЗОНА СЕГОДНЯ <span style="font-size:10px;color:var(--text-muted)">15 мин</span></div>
+        <div id="zoneTodayBlock"></div>
+      </div>
+    </div>
+
+    <div class="daily-side">
+      <!-- Zone card -->
+      <div class="zone-card">
+        <div class="zone-card-title">Зона недели</div>
+        <div class="zone-name" id="sideZoneName"></div>
+        <div class="zone-task" id="sideZoneTask"></div>
+        <div class="zone-progress-wrap"><div class="zone-progress-fill" id="sideZoneFill" style="width:0%;background:var(--green)"></div></div>
+        <div class="zone-pct" id="sideZonePct">0%</div>
+      </div>
+
+      <!-- Tomorrow -->
+      <div class="tomorrow-card">
+        <div class="tomorrow-title">Завтра</div>
+        <div class="tmr-row"><div class="tmr-label">Одежда:</div><input class="tmr-input" id="tmr_outfit" placeholder="джинсы + свитер"></div>
+        <div class="tmr-row"><div class="tmr-label">Сумка:</div><input class="tmr-input" id="tmr_bag" placeholder="рулетка + зарядка"></div>
+        <div class="tmr-row"><div class="tmr-label">Заметка:</div><input class="tmr-input" id="tmr_note" placeholder="купить, сделать..."></div>
+        <div class="sleep-row">
+          <div style="flex:1"><div class="ml" style="margin-bottom:4px">Сон</div><input class="tmr-input" id="tmr_sleep" placeholder="23:00" style="width:100%"></div>
+          <div style="flex:1"><div class="ml" style="margin-bottom:4px">Подъём</div><input class="tmr-input" id="tmr_wake" placeholder="09:00" style="width:100%"></div>
+        </div>
+        <button class="add-task-btn" style="width:100%;margin-top:8px;" onclick="saveTomorrow()">Сохранить</button>
+      </div>
+
+      <!-- Quick shop -->
+      <div class="zone-card">
+        <div class="zone-card-title" style="display:flex;align-items:center;justify-content:space-between;">
+          Покупки на неделе
+          <span style="cursor:pointer;font-size:10px;color:var(--green);" onclick="switchView('shop',document.querySelectorAll('.nav-tab')[4])">все →</span>
+        </div>
+        <div id="quickShopList" style="font-size:12px;color:var(--text-muted);">Список пуст</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ JOURNAL ═══ -->
+<div class="view" id="view-journal">
+  <div class="journal-wrap">
+    <div class="week-selector">
+      <button class="ws-btn" onclick="navJournalWeek(-1)">←</button>
+      <div class="ws-label" id="journalWeekLabel"></div>
+      <button class="ws-btn" onclick="navJournalWeek(1)">→</button>
+      <div class="ws-zone" id="journalWeekZone"></div>
+      <div class="ws-score" id="journalWeekScore"></div>
+    </div>
+    <div class="journal-grid" id="journalGrid"></div>
+  </div>
+</div>
+
+<!-- ═══ ZONES ═══ -->
+<div class="view" id="view-zones">
+  <div class="zones-wrap">
+    <div class="zones-grid" id="zonesGrid"></div>
+    <div class="zone-detail" id="zoneDetail"></div>
+  </div>
+</div>
+
+<!-- ═══ TIMER ═══ -->
+<div class="view" id="view-timer">
+  <div class="timer-wrap">
+    <div class="timer-title">Час <em>уборки</em></div>
+    <div class="timer-blocks" id="timerBlocks"></div>
+    <div class="timer-display">
+      <div class="timer-big" id="timerDisplay">15:00</div>
+      <div class="timer-sub" id="timerSub">Выбери блок и нажми Старт</div>
+      <div class="timer-controls">
+        <button class="tc-btn start" id="timerStartBtn" onclick="timerStartStop()">Старт</button>
+        <button class="tc-btn stop" onclick="timerReset()">Сброс</button>
+      </div>
+      <div class="timer-track"><div class="timer-track-fill" id="timerTrackFill" style="width:0%"></div></div>
+    </div>
+    <div style="font-size:11px;color:var(--text-muted);text-align:center;font-style:italic;">
+      Правило FlyLady: если не успеваешь — оставь блок 4. Лучше 45 минут, чем ничего.
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SHOP ═══ -->
+<div class="view" id="view-shop">
+  <div class="shop-wrap">
+    <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+      <div style="font-family:var(--font-d);font-size:24px;font-weight:300;">Список <em style="font-style:italic;color:var(--green)">покупок</em></div>
+      <button class="shop-clear-btn" onclick="clearBought()">+ Убрать купленное</button>
+    </div>
+    <div class="shop-grid" id="shopGrid"></div>
+  </div>
+</div>
+
+<!-- ═══ STATS ═══ -->
+<div class="view" id="view-stats">
+  <div class="stats-wrap">
+    <div class="stats-summary" id="statsSummary"></div>
+    <div class="chart-area">
+      <div class="chart-title">% выполнения по дням (последние 14)</div>
+      <div class="bar-chart" id="barChart"></div>
+    </div>
+    <div style="font-family:var(--font-d);font-size:18px;font-weight:300;margin-bottom:10px;color:var(--text-dim);">История</div>
+    <div class="history-list" id="historyList"></div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModalOut(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">×</button>
+    <div class="modal-title" id="modalTitle"></div>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════
+// CONFIG
+// ═══════════════════════════════════
+const ZONES = [
+  {id:1, name:'Коридор\nПрихожая', color:'var(--zone1)', week:'10–16 марта', tasks:['Разобрать сумки у двери → коробка «переезд»','Протереть зеркало и вешалку','Разобрать обувь (убрать лишнее)','Пол в коридоре (подмести + влажная)','Коробки для переезда — начать собирать','Хот-спот у двери — очистить']},
+  {id:2, name:'Кухня', color:'var(--zone2)', week:'17–23 марта', tasks:['Разобрать верхние шкафы','Протереть фасады','Холодильник — ревизия','Разобрать ящик с «всяким»','Столешница — глубокая чистка','Под мойкой — разобрать']},
+  {id:3, name:'Ванная\nТуалет', color:'var(--zone3)', week:'24–30 марта', tasks:['Ванна/душ — глубокая чистка','Зеркало и полочки','Под раковиной — разобрать','Смена косметики (убрать просроченное)','Полотенца — постирать и заменить','Коврик — постирать']},
+  {id:4, name:'Спальня\nГостиная', color:'var(--zone4)', week:'31 мар – 6 апр', tasks:['Под кроватью — разобрать','Гардероб — ревизия (коробки переезда)','Книги и декор — разобрать','Диван — чистить, подушки','Тумбочки — разобрать','Полы — глубокая уборка']},
+  {id:5, name:'Рабочее\nместо', color:'var(--zone5)', week:'7–13 апреля', tasks:['Стол — разобрать','Документы — разложить по папкам','Кабели — упорядочить','Полки с архивом','Коробки с рабочими материалами','Итого — фото «после» всего пространства']},
+];
+
+const ROUTINES = {
+  morning: {icon:'', name:'Утро', time:'до 10:00', items:[
+    {key:'self', text:'Умыться, одеться'},
+    {key:'bed', text:'Застелить кровать'},
+    {key:'kitchen_am', text:'Кухня — 5 минут'},
+    {key:'hotspot', text:'Хот-спот — 2 минуты'},
+  ]},
+  noon: {icon:'', name:'До 13:00', time:'до 13:00', items:[
+    {key:'work1', text:'Бюро / рабочие задачи'},
+    {key:'zone_am', text:'Зона — 5 минут'},
+    {key:'water', text:'Выпить воду'},
+  ]},
+  evening: {icon:'', name:'Вечер', time:'после 20:00', items:[
+    {key:'switch', text:'Переход (снять рабочий режим)'},
+    {key:'kitchen_pm', text:'Кухня — прибрать'},
+    {key:'zone_pm', text:'Зона — 15 минут'},
+    {key:'tomorrow', text:'Подготовить завтра'},
+  ]},
+  cleanup: {icon:'', name:'Час уборки', time:'пн 19:00', items:[
+    {key:'cleanup_done', text:'Час уборки (пн)'},
+  ]},
+};
+
+const TIMER_BLOCKS = [
+  {num:1, name:'Пыль / поверхности', tasks:' 3 поверхности\n Пыль на 1 мебели', min:15},
+  {num:2, name:'Полы', tasks:' Метла по коридору+кухне\n Пылесос', min:15},
+  {num:3, name:'Текстиль', tasks:' Полотенца (кухня+ванная)\n Постельное\n Подушка на диван', min:15},
+  {num:4, name:'Контроль', tasks:' Пакет мусора\n Хот-споты\n Фото «после»', min:15},
+];
+
+const DEFAULT_SHOP = {
+  cleaning: {name:' Хозтовары', items:[
+    {id:1,text:'Спрей универсальный (2 шт)',bought:false},
+    {id:2,text:'Салфетки микрофибра (2 пачки)',bought:false},
+    {id:3,text:'Мусорные пакеты (1 рулон)',bought:false},
+    {id:4,text:'Перчатки latex (1 пачка)',bought:false},
+  ]},
+  kitchen: {name:' Кухня', items:[
+    {id:10,text:'Чай ромашка/мята',bought:false},
+    {id:11,text:'Бумажные полотенца',bought:false},
+    {id:12,text:'Спонжи (2 шт)',bought:false},
+  ]},
+  moving: {name:' Переезд', items:[
+    {id:20,text:'Коробки гофрокартон (5 шт)',bought:false},
+    {id:21,text:'Маркер черный',bought:false},
+    {id:22,text:'Скотч прозрачный',bought:false},
+  ]},
+};
+
+// ═══════════════════════════════════
+// STATE
+// ═══════════════════════════════════
+function dateKey(d){ return `${d.getFullYear()}_${d.getMonth()}_${d.getDate()}`; }
+function loadDay(d){ try{ const s=localStorage.getItem('hl_day_'+dateKey(d)); return s?JSON.parse(s):{tasks:{top3:[]},routines:{},zone:{},tomorrow:{}}; }catch(e){return{tasks:{top3:[]},routines:{},zone:{},tomorrow:{}};} }
+function saveDay(d,data){ localStorage.setItem('hl_day_'+dateKey(d), JSON.stringify(data)); updateHeaderSub(); }
+function loadShop(){ try{ const s=localStorage.getItem('hl_shop'); return s?JSON.parse(s):JSON.parse(JSON.stringify(DEFAULT_SHOP)); }catch(e){ return JSON.parse(JSON.stringify(DEFAULT_SHOP)); } }
+function saveShop(sh){ localStorage.setItem('hl_shop',JSON.stringify(sh)); }
+function loadZones(){ try{ const s=localStorage.getItem('hl_zones'); return s?JSON.parse(s):{}; }catch(e){ return {}; } }
+function saveZones(z){ localStorage.setItem('hl_zones',JSON.stringify(z)); }
+
+let viewDay = new Date();
+let journalWeekOffset = 0;
+let activeZone = 0;
+let timerInterval = null;
+let timerSeconds = 15*60;
+let timerTotal = 15*60;
+let timerRunning = false;
+let timerBlock = 0;
+let timerBlockDone = [false,false,false,false];
+
+// ═══════════════════════════════════
+// UTILS
+// ═══════════════════════════════════
+function toast(m){ const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1700); }
+function mkEl(tag,cls){ const e=document.createElement(tag);if(cls)e.className=cls;return e; }
+function openModal(title,body){ document.getElementById('modalTitle').textContent=title;document.getElementById('modalBody').innerHTML=body;document.getElementById('modalOverlay').classList.add('open'); }
+function closeModal(){ document.getElementById('modalOverlay').classList.remove('open'); }
+function closeModalOut(e){ if(e.target===document.getElementById('modalOverlay'))closeModal(); }
+const MONTHS=['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+const DAYS_RU=['Вс','Пн','Вт','Ср','Чт','Пт','Сб'];
+function fmtDate(d){ return `${d.getDate()} ${MONTHS[d.getMonth()]}`; }
+function fmtDateFull(d){ return `${DAYS_RU[d.getDay()]}, ${d.getDate()} ${MONTHS[d.getMonth()]}`; }
+function sameDay(a,b){ return a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate(); }
+
+function getCurrentZone(){
+  // Week 1: Mar 10–16, Week 2: Mar 17–23, etc.
+  const start = new Date(2026,2,10);
+  const now = new Date();
+  const diff = Math.floor((now-start)/(7*86400000));
+  return Math.max(0, Math.min(4, diff));
+}
+function updateHeaderSub(){
+  const z = getCurrentZone();
+  document.getElementById('headerSub').textContent = `Зона ${z+1}: ${ZONES[z].name.replace('\n','/')} · Неделя ${z+1}`;
+}
+
+// ═══════════════════════════════════
+// SWITCH VIEW
+// ═══════════════════════════════════
+function switchView(name, el){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('view-'+name).classList.add('active');
+  if(el) el.classList.add('active');
+  if(name==='daily') renderDaily();
+  if(name==='journal') renderJournal();
+  if(name==='zones') renderZones();
+  if(name==='timer') renderTimerBlocks();
+  if(name==='shop') renderShop();
+  if(name==='stats') renderStats();
+}
+
+// ═══════════════════════════════════
+// DAILY
+// ═══════════════════════════════════
+function navDay(dir){
+  if(dir===0){ viewDay=new Date(); }
+  else{ viewDay=new Date(viewDay); viewDay.setDate(viewDay.getDate()+dir); }
+  renderDaily();
+}
+
+function renderDaily(){
+  const data = loadDay(viewDay);
+  const today = new Date();
+  const isToday = sameDay(viewDay, today);
+  document.getElementById('dayTitleDate').textContent = fmtDate(viewDay);
+  document.getElementById('daySubDate').textContent = (isToday?'Сегодня · ':'')+DAYS_RU[viewDay.getDay()]+', '+fmtDateFull(viewDay).split(', ')[1];
+
+  // score
+  let total=0, done=0;
+  Object.values(ROUTINES).forEach(r=>r.items.forEach(i=>{total++;if(data.routines[i.key])done++;}));
+  const top3 = data.tasks.top3||[];
+  total += top3.length;
+  done += top3.filter(t=>t.done).length;
+  const pct = total>0?Math.round(done/total*100):0;
+  document.getElementById('dailyScore').textContent = pct+'%';
+  document.getElementById('scoreFill').style.width = pct+'%';
+  document.getElementById('scoreDetails').textContent = `${done} / ${total}`;
+
+  // top3
+  renderTop3(data);
+
+  // routines
+  renderRoutines(data);
+
+  // zone today
+  renderZoneToday(data);
+
+  // side
+  const zIdx = getCurrentZone();
+  const z = ZONES[zIdx];
+  document.getElementById('sideZoneName').textContent = z.name.replace('\n',' / ');
+  document.getElementById('sideZoneTask').textContent = `Неделя: ${z.week}\nЦель: коробки переезда + чистота`;
+  const zd = loadZones();
+  const zProg = zd[zIdx]||{};
+  const zTotal = z.tasks.length;
+  const zDone = z.tasks.filter((_,i)=>zProg[i]).length;
+  const zPct = zTotal>0?Math.round(zDone/zTotal*100):0;
+  document.getElementById('sideZoneFill').style.width = zPct+'%';
+  document.getElementById('sideZonePct').textContent = `${zPct}% (${zDone}/${zTotal})`;
+
+  // tomorrow prefill
+  const tmr = data.tomorrow||{};
+  document.getElementById('tmr_outfit').value = tmr.outfit||'';
+  document.getElementById('tmr_bag').value = tmr.bag||'';
+  document.getElementById('tmr_note').value = tmr.note||'';
+  document.getElementById('tmr_sleep').value = tmr.sleep||'';
+  document.getElementById('tmr_wake').value = tmr.wake||'';
+
+  // quick shop
+  const sh = loadShop();
+  const unb = Object.values(sh).flatMap(c=>c.items.filter(i=>!i.bought));
+  const qs = document.getElementById('quickShopList');
+  if(unb.length===0){ qs.innerHTML='<span style="color:var(--green)">+ Всё куплено</span>'; }
+  else{ qs.innerHTML=unb.slice(0,5).map(i=>`<div style="padding:3px 0;border-bottom:1px solid var(--border-dim)">${i.text}</div>`).join('')+(unb.length>5?`<div style="color:var(--text-muted);font-size:10px;margin-top:3px">+ещё ${unb.length-5}</div>`:''  ); }
+}
+
+function renderTop3(data){
+  const list = document.getElementById('top3List');
+  list.innerHTML='';
+  const top3 = data.tasks.top3||[];
+  top3.forEach((t,i)=>{
+    const row=mkEl('div','task-row priority'+(t.done?' done':''));
+    row.onclick=()=>{data.tasks.top3[i].done=!t.done;saveDay(viewDay,data);renderDaily();};
+    row.innerHTML=`<div class="task-check">${t.done?'+':''}</div><div class="task-text">${t.text}</div><div class="task-del" onclick="delTask(event,${i})">×</div>`;
+    list.appendChild(row);
+  });
+  if(top3.length<5){
+    const row=mkEl('div','add-task-row');
+    row.innerHTML=`<input class="add-task-input" id="top3Input" placeholder="Задача..." onkeydown="if(event.key==='Enter')addTask()"><button class="add-task-btn" onclick="addTask()">+</button>`;
+    list.appendChild(row);
+  }
+}
+
+function addTask(){
+  const inp=document.getElementById('top3Input');const text=inp?.value?.trim();
+  if(!text)return;
+  const data=loadDay(viewDay);
+  data.tasks.top3=data.tasks.top3||[];
+  data.tasks.top3.push({text,done:false});
+  saveDay(viewDay,data);renderDaily();
+}
+function delTask(e,i){
+  e.stopPropagation();
+  const data=loadDay(viewDay);
+  data.tasks.top3.splice(i,1);
+  saveDay(viewDay,data);renderDaily();
+}
+function openAddTask(){ document.getElementById('top3Input')?.focus(); }
+
+function renderRoutines(data){
+  const wrap=document.getElementById('routineBlocks');
+  wrap.innerHTML='';
+  Object.entries(ROUTINES).forEach(([key,r])=>{
+    const done=r.items.filter(i=>data.routines[i.key]).length;
+    const total=r.items.length;
+    const full=done===total;
+    const block=mkEl('div','routine-block');
+    const head=mkEl('div','routine-head');
+    head.innerHTML=`<div class="routine-icon">${r.icon}</div><div class="routine-name">${r.name}</div><div class="routine-time"style="font-size:10px;color:var(--text-muted)">${r.time}</div><div class="routine-progress${full?' full':''}">${done}/${total}</div><div class="routine-chevron">></div>`;
+    head.onclick=()=>{block.classList.toggle('open');};
+    block.appendChild(head);
+    const items=mkEl('div','routine-items');
+    r.items.forEach(item=>{
+      const row=mkEl('div','ri-row'+(data.routines[item.key]?' done':''));
+      row.innerHTML=`<div class="ri-check">${data.routines[item.key]?'+':''}</div><div class="ri-text">${item.text}</div>`;
+      row.onclick=()=>{data.routines[item.key]=!data.routines[item.key];saveDay(viewDay,data);renderDaily();};
+      items.appendChild(row);
+    });
+    block.appendChild(items);
+    wrap.appendChild(block);
+  });
+}
+
+function renderZoneToday(data){
+  const zIdx=getCurrentZone();const z=ZONES[zIdx];
+  const zd=loadZones();const zProg=zd[zIdx]||{};
+  const wrap=document.getElementById('zoneTodayBlock');
+  wrap.innerHTML='';
+  const tasks=z.tasks.slice(0,3);
+  tasks.forEach((t,i)=>{
+    const row=mkEl('div','task-row'+(zProg[i]?' done':''));
+    row.onclick=()=>{zd[zIdx]=zd[zIdx]||{};zd[zIdx][i]=!zd[zIdx][i];saveZones(zd);renderDaily();};
+    row.innerHTML=`<div class="task-check">${zProg[i]?'+':''}</div><div class="task-text">${t}</div>`;
+    wrap.appendChild(row);
+  });
+}
+
+function saveTomorrow(){
+  const data=loadDay(viewDay);
+  data.tomorrow={
+    outfit:document.getElementById('tmr_outfit').value,
+    bag:document.getElementById('tmr_bag').value,
+    note:document.getElementById('tmr_note').value,
+    sleep:document.getElementById('tmr_sleep').value,
+    wake:document.getElementById('tmr_wake').value,
+  };
+  saveDay(viewDay,data);toast('Завтра сохранено +');
+}
+
+// ═══════════════════════════════════
+// JOURNAL
+// ═══════════════════════════════════
+function navJournalWeek(dir){ journalWeekOffset+=dir; renderJournal(); }
+
+function renderJournal(){
+  const base=new Date();base.setDate(base.getDate()-base.getDay()+1+journalWeekOffset*7); // Monday
+  const monday=new Date(base.getFullYear(),base.getMonth(),base.getDate());
+  const sunday=new Date(monday);sunday.setDate(monday.getDate()+6);
+  document.getElementById('journalWeekLabel').innerHTML=`<em>${fmtDate(monday)}</em> — ${fmtDate(sunday)}`;
+  const zIdx=getCurrentZone();
+  document.getElementById('journalWeekZone').textContent=`Зона ${zIdx+1}: ${ZONES[zIdx].name.replace('\n','/')}`;
+
+  const grid=document.getElementById('journalGrid');
+  grid.innerHTML='';
+
+  const routineKeys=Object.values(ROUTINES).flatMap(r=>r.items.map(i=>({key:i.key,text:i.text,block:r.name})));
+
+  // compute weekly totals
+  let weekDone=0,weekTotal=0;
+  const days=[];
+  for(let i=0;i<7;i++){const d=new Date(monday);d.setDate(monday.getDate()+i);days.push(d);}
+
+  // HEADER ROW: gutter + 7 days
+  const gh=mkEl('div','jg-row-label');gh.innerHTML='';grid.appendChild(gh);
+  const today=new Date();
+  days.forEach(d=>{
+    const h=mkEl('div','jg-head');
+    const isT=sameDay(d,today);
+    h.innerHTML=`<div class="jg-day-name">${DAYS_RU[d.getDay()]}</div><div class="jg-day-date${isT?' today':''}">${d.getDate()}</div>`;
+    grid.appendChild(h);
+  });
+
+  // ROUTINE ROWS
+  const blocks=Object.entries(ROUTINES);
+  blocks.forEach(([bkey,r])=>{
+    const lbl=mkEl('div','jg-row-label');
+    lbl.innerHTML=`<div class="jg-row-name">${r.icon} ${r.name.substring(0,5)}</div>`;
+    grid.appendChild(lbl);
+    days.forEach(d=>{
+      const data=loadDay(d);
+      const done=r.items.filter(i=>data.routines[i.key]).length;
+      const total=r.items.length;
+      weekDone+=done;weekTotal+=total;
+      const pct=total>0?Math.round(done/total*100):0;
+      const cell=mkEl('div','jg-cell'+(pct>=80?' good':pct<40&&total>0?' bad':''));
+      // click to open day
+      cell.style.cursor='pointer';
+      cell.onclick=()=>{viewDay=new Date(d);switchView('daily',document.querySelectorAll('.nav-tab')[0]);};
+      cell.innerHTML=`<div style="font-size:12px;color:${pct>=80?'var(--green)':pct>=50?'var(--gold)':'var(--text-muted)'}">${pct}%</div><div style="font-size:10px;color:var(--text-muted)">${done}/${total}</div>`;
+      grid.appendChild(cell);
+    });
+  });
+
+  // ZONE ROW
+  const zoneLbl=mkEl('div','jg-row-label');
+  zoneLbl.innerHTML=`<div class="jg-row-name"> Зона</div>`;
+  grid.appendChild(zoneLbl);
+  const zd=loadZones();
+  days.forEach(d=>{
+    const zProg=zd[zIdx]||{};
+    const total=ZONES[zIdx].tasks.length;
+    const done=Object.values(zProg).filter(Boolean).length;
+    const pct=total>0?Math.round(done/total*100):0;
+    const cell=mkEl('div','jg-cell');
+    cell.innerHTML=`<div style="font-size:11px;color:var(--text-muted)">${pct}%</div>`;
+    grid.appendChild(cell);
+  });
+
+  // SUMMARY ROW
+  const sumLbl=mkEl('div','jg-summary');sumLbl.innerHTML='Итого';grid.appendChild(sumLbl);
+  days.forEach(d=>{
+    const data=loadDay(d);
+    let dd=0,dt=0;
+    Object.values(ROUTINES).forEach(r=>r.items.forEach(i=>{dt++;if(data.routines[i.key])dd++;}));
+    dd+=(data.tasks.top3||[]).filter(t=>t.done).length;
+    dt+=(data.tasks.top3||[]).length;
+    const pct=dt>0?Math.round(dd/dt*100):0;
+    const cls=pct>=80?'good':pct>=50?'ok':'bad';
+    const sum=mkEl('div','jg-summary');
+    sum.innerHTML=`<div class="jg-sum-pct ${cls}">${pct}%</div>`;
+    grid.appendChild(sum);
+  });
+
+  const wPct=weekTotal>0?Math.round(weekDone/weekTotal*100):0;
+  const wCls=wPct>=80?'var(--green)':wPct>=50?'var(--gold)':'var(--red)';
+  document.getElementById('journalWeekScore').innerHTML=`<span style="color:${wCls}">${wPct}%</span>`;
+}
+
+// ═══════════════════════════════════
+// ZONES
+// ═══════════════════════════════════
+function renderZones(){
+  const grid=document.getElementById('zonesGrid');
+  grid.innerHTML='';
+  const zd=loadZones();
+  const curZ=getCurrentZone();
+  ZONES.forEach((z,i)=>{
+    const tile=mkEl('div','zone-tile'+(i===activeZone?' active':''));
+    tile.style.borderTopColor=z.color;
+    const prog=zd[i]||{};
+    const done=z.tasks.filter((_,ti)=>prog[ti]).length;
+    const pct=z.tasks.length>0?Math.round(done/z.tasks.length*100):0;
+    tile.innerHTML=`<div class="zt-num">Неделя ${i+1}${i===curZ?' · текущая':''}</div>
+      <div class="zt-name">${z.name.replace('\n','<br>')}</div>
+      <div class="zt-bar"><div class="zt-fill" style="width:${pct}%;background:${z.color}"></div></div>
+      <div class="zt-pct">${pct}% (${done}/${z.tasks.length})</div>
+      <div class="zt-dates">${z.week}</div>`;
+    tile.onclick=()=>{activeZone=i;renderZones();};
+    grid.appendChild(tile);
+  });
+  renderZoneDetail();
+}
+
+function renderZoneDetail(){
+  const z=ZONES[activeZone];
+  const zd=loadZones();const prog=zd[activeZone]||{};
+  const done=z.tasks.filter((_,i)=>prog[i]).length;
+  const pct=z.tasks.length>0?Math.round(done/z.tasks.length*100):0;
+  const detail=document.getElementById('zoneDetail');
+  let tasksHTML=z.tasks.map((t,i)=>`
+    <div class="zd-task${prog[i]?' done':''}" onclick="toggleZoneTask(${activeZone},${i})">
+      <div class="zd-check">${prog[i]?'+':''}</div>
+      <div class="zd-text">${t}</div>
+    </div>`).join('');
+  detail.innerHTML=`
+    <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:6px">
+      <div class="zd-title">${z.name.replace('\n',' / ')}</div>
+      <div style="font-size:22px;font-family:var(--font-d);color:${z.color}">${pct}%</div>
+    </div>
+    <div class="zd-sub">${z.week} · ${done} из ${z.tasks.length} задач</div>
+    <div class="zd-task-list">${tasksHTML}</div>
+    <div class="zd-add-row">
+      <input class="zd-add-input" id="zoneAddInput" placeholder="Добавить задачу...">
+      <button class="zd-add-btn" onclick="addZoneTask()">+ Добавить</button>
+    </div>`;
+}
+
+function toggleZoneTask(zIdx,taskIdx){
+  const zd=loadZones();
+  zd[zIdx]=zd[zIdx]||{};
+  zd[zIdx][taskIdx]=!zd[zIdx][taskIdx];
+  saveZones(zd);renderZones();toast('Сохранено');
+}
+
+function addZoneTask(){
+  const inp=document.getElementById('zoneAddInput');
+  const text=inp?.value?.trim();if(!text)return;
+  ZONES[activeZone].tasks.push(text);
+  inp.value='';renderZones();toast('Задача добавлена');
+}
+
+// ═══════════════════════════════════
+// TIMER
+// ═══════════════════════════════════
+function renderTimerBlocks(){
+  const wrap=document.getElementById('timerBlocks');
+  wrap.innerHTML='';
+  TIMER_BLOCKS.forEach((b,i)=>{
+    const div=mkEl('div','timer-block'+(timerBlock===i?' active-block':'')+(timerBlockDone[i]?' done-block':''));
+    div.innerHTML=`<div class="tb-num">Блок ${b.num}</div><div class="tb-name">${b.name}</div><div class="tb-tasks">${b.tasks}</div><div class="tb-duration">${b.min} мин</div>`;
+    div.onclick=()=>{if(timerRunning)return;timerBlock=i;timerSeconds=b.min*60;timerTotal=b.min*60;updateTimerDisplay();renderTimerBlocks();};
+    wrap.appendChild(div);
+  });
+}
+
+function updateTimerDisplay(){
+  const m=String(Math.floor(timerSeconds/60)).padStart(2,'0');
+  const s=String(timerSeconds%60).padStart(2,'0');
+  const disp=document.getElementById('timerDisplay');
+  disp.textContent=`${m}:${s}`;
+  disp.className='timer-big'+(timerRunning?' running':timerSeconds===0?' done':' paused');
+  const pct=timerTotal>0?(1-timerSeconds/timerTotal)*100:0;
+  document.getElementById('timerTrackFill').style.width=pct+'%';
+  const sub=TIMER_BLOCKS[timerBlock];
+  document.getElementById('timerSub').textContent=timerRunning?`Блок ${sub.num}: ${sub.name}`:timerSeconds===0?`+ Блок ${sub.num} завершён`:`Блок ${sub.num}: ${sub.name}`;
+  document.getElementById('timerStartBtn').textContent=timerRunning?'Пауза':'Старт';
+  document.getElementById('timerStartBtn').className='tc-btn start';
+}
+
+function timerStartStop(){
+  if(timerSeconds===0){timerReset();return;}
+  timerRunning=!timerRunning;
+  if(timerRunning){
+    timerInterval=setInterval(()=>{
+      if(timerSeconds>0){timerSeconds--;updateTimerDisplay();}
+      else{clearInterval(timerInterval);timerRunning=false;timerBlockDone[timerBlock]=true;updateTimerDisplay();renderTimerBlocks();
+        if(timerBlock<3){timerBlock++;timerSeconds=TIMER_BLOCKS[timerBlock].min*60;timerTotal=timerSeconds;setTimeout(()=>{toast(`+ Блок ${timerBlock} завершён! Небольшой перерыв.`);},100);}
+        else{toast(' Час уборки завершён! Молодец!');}
+      }
+    },1000);
+  } else { clearInterval(timerInterval); }
+  updateTimerDisplay();
+}
+
+function timerReset(){
+  clearInterval(timerInterval);timerRunning=false;
+  timerSeconds=TIMER_BLOCKS[timerBlock].min*60;timerTotal=timerSeconds;
+  updateTimerDisplay();
+}
+
+// ═══════════════════════════════════
+// SHOP
+// ═══════════════════════════════════
+function renderShop(){
+  const sh=loadShop();
+  const grid=document.getElementById('shopGrid');grid.innerHTML='';
+  Object.entries(sh).forEach(([catKey,cat])=>{
+    const card=mkEl('div','shop-cat');
+    const bought=cat.items.filter(i=>i.bought).length;
+    card.innerHTML=`<div class="shop-cat-title">${cat.name} <span class="shop-clear-btn" onclick="clearCatBought('${catKey}')">${bought>0?`убрать купленное (${bought})`:''}</span></div>
+      <div id="shopItems_${catKey}"></div>
+      <div class="shop-add"><input class="shop-add-in" id="shopIn_${catKey}" placeholder="Добавить..." onkeydown="if(event.key==='Enter')addShopItem('${catKey}')"><button class="shop-add-btn" onclick="addShopItem('${catKey}')">+</button></div>`;
+    grid.appendChild(card);
+    const itemsWrap=card.querySelector(`#shopItems_${catKey}`);
+    cat.items.forEach((item,i)=>{
+      const row=mkEl('div','shop-item'+(item.bought?' bought':''));
+      row.onclick=()=>{sh[catKey].items[i].bought=!item.bought;saveShop(sh);renderShop();};
+      row.innerHTML=`<div class="shop-check">${item.bought?'+':''}</div><div class="shop-text">${item.text}</div><div class="shop-del" onclick="delShopItem(event,'${catKey}',${i})">×</div>`;
+      itemsWrap.appendChild(row);
+    });
+  });
+}
+
+function addShopItem(catKey){
+  const inp=document.getElementById('shopIn_'+catKey);const text=inp?.value?.trim();if(!text)return;
+  const sh=loadShop();sh[catKey].items.push({id:Date.now(),text,bought:false});
+  saveShop(sh);inp.value='';renderShop();
+}
+function delShopItem(e,catKey,i){e.stopPropagation();const sh=loadShop();sh[catKey].items.splice(i,1);saveShop(sh);renderShop();}
+function clearBought(){const sh=loadShop();Object.values(sh).forEach(c=>{c.items=c.items.filter(i=>!i.bought);});saveShop(sh);renderShop();toast('Купленное убрано');}
+function clearCatBought(catKey){const sh=loadShop();sh[catKey].items=sh[catKey].items.filter(i=>!i.bought);saveShop(sh);renderShop();}
+
+// ═══════════════════════════════════
+// STATS
+// ═══════════════════════════════════
+function renderStats(){
+  const today=new Date();
+  // Collect last 30 days
+  const history=[];
+  for(let i=29;i>=0;i--){
+    const d=new Date(today);d.setDate(today.getDate()-i);
+    const data=loadDay(d);
+    let dd=0,dt=0;
+    Object.values(ROUTINES).forEach(r=>r.items.forEach(it=>{dt++;if(data.routines[it.key])dd++;}));
+    dd+=(data.tasks.top3||[]).filter(t=>t.done).length;
+    dt+=(data.tasks.top3||[]).length;
+    const pct=dt>0?Math.round(dd/dt*100):0;
+    if(dt>0||i===0) history.push({d,pct,done:dd,total:dt});
+  }
+
+  // streak
+  let streak=0;
+  for(let i=0;i<30;i++){
+    const d=new Date(today);d.setDate(today.getDate()-i);
+    const data=loadDay(d);
+    const anyDone=Object.values(data.routines||{}).some(Boolean)||(data.tasks.top3||[]).some(t=>t.done);
+    if(anyDone)streak++;else if(i>0)break;
+  }
+
+  // avg last 7
+  const last7=history.slice(-7).filter(h=>h.total>0);
+  const avg7=last7.length>0?Math.round(last7.reduce((a,h)=>a+h.pct,0)/last7.length):0;
+
+  // zone progress
+  const zd=loadZones();
+  const curZ=getCurrentZone();
+  const zProg=zd[curZ]||{};
+  const zTotal=ZONES[curZ].tasks.length;
+  const zDone=Object.values(zProg).filter(Boolean).length;
+  const zPct=zTotal>0?Math.round(zDone/zTotal*100):0;
+
+  // summary cards
+  const sum=document.getElementById('statsSummary');
+  sum.innerHTML=`
+    <div class="ss-card"><div class="ss-val" style="color:var(--gold)">${streak}</div><div class="ss-label">Дней серии</div></div>
+    <div class="ss-card"><div class="ss-val">${avg7}%</div><div class="ss-label">Среднее за 7 дн</div></div>
+    <div class="ss-card"><div class="ss-val" style="color:var(--sage)">${zPct}%</div><div class="ss-label">Зона ${curZ+1}</div></div>
+    <div class="ss-card"><div class="ss-val" style="color:var(--text-dim)">${history.filter(h=>h.pct>=80).length}</div><div class="ss-label">Дней >=80%</div></div>`;
+
+  // bar chart — last 14
+  const last14=[];
+  for(let i=13;i>=0;i--){const d=new Date(today);d.setDate(today.getDate()-i);const data=loadDay(d);let dd=0,dt=0;Object.values(ROUTINES).forEach(r=>r.items.forEach(it=>{dt++;if(data.routines[it.key])dd++;}));dd+=(data.tasks.top3||[]).filter(t=>t.done).length;dt+=(data.tasks.top3||[]).length;last14.push({d,pct:dt>0?Math.round(dd/dt*100):0,has:dt>0});}
+  const chart=document.getElementById('barChart');chart.innerHTML='';
+  last14.forEach(h=>{
+    const col=mkEl('div','bar-col');
+    const fillCls=h.pct>=80?'high':h.pct>=50?'mid':'low';
+    col.innerHTML=`<div class="bar-fill ${fillCls}" style="height:${h.has?Math.max(4,h.pct*0.8):4}px"></div><div class="bar-label">${h.d.getDate()}.${h.d.getMonth()+1}</div>`;
+    chart.appendChild(col);
+  });
+
+  // history list
+  const hlist=document.getElementById('historyList');hlist.innerHTML='';
+  const hist30=[...history].reverse().slice(0,20);
+  if(hist30.length===0){hlist.innerHTML='<div style="padding:20px;color:var(--text-muted);font-size:13px">История пуста — начни сегодня</div>';return;}
+  hist30.forEach(h=>{
+    const cls=h.pct>=80?'good':h.pct>=50?'ok':'bad';
+    const fillColor=h.pct>=80?'var(--green)':h.pct>=50?'var(--gold)':'var(--red)';
+    const row=mkEl('div','hl-row');
+    row.innerHTML=`<div class="hl-date">${fmtDateFull(h.d)}</div><div class="hl-bar"><div class="hl-fill" style="width:${h.pct}%;background:${fillColor}"></div></div><div class="hl-pct ${cls}">${h.pct}%</div>`;
+    row.onclick=()=>{viewDay=new Date(h.d);switchView('daily',document.querySelectorAll('.nav-tab')[0]);};
+    hlist.appendChild(row);
+  });
+}
+
+// ═══════════════════════════════════
+// INIT
+// ═══════════════════════════════════
+updateHeaderSub();
+renderDaily();
+updateTimerDisplay();
+</script>
+<nav style="position:fixed;bottom:0;left:0;right:0;height:72px;background:#152238;border-top:1px solid #243060;display:flex;align-items:center;justify-content:space-around;padding:0 8px 8px;z-index:100;"><a href="today.html" style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 12px;text-decoration:none;flex:1;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c49a52" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#c49a52;font-weight:500;">Сегодня</span><div style="width:20px;height:2px;background:#c49a52;border-radius:1px;"></div></a><a href="calendar.html" style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 12px;text-decoration:none;flex:1;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6878a0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#6878a0;font-weight:500;">Календарь</span></a><a href="goals.html" style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 12px;text-decoration:none;flex:1;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6878a0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg><span style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#6878a0;font-weight:500;">Проекты</span></a><a href="inbox.html" style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 12px;text-decoration:none;flex:1;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6878a0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><span style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#6878a0;font-weight:500;">Поток</span></a><a href="index.html" style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 12px;text-decoration:none;flex:1;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6878a0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#6878a0;font-weight:500;">Я</span></a></nav>
+</body>
+</html>
