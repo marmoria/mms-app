@@ -265,32 +265,56 @@ const PROJECT_COLORS = { bureau:'#b9975b', aparts:'#2d6a48', personal:'#5a4a9a',
 
 function getTasks() {
   const d = loadDay();
-  return d.tasks || [
-    { id:'t1', text:'Главная задача дня', project:'bureau',   dur:60,  done:false },
-    { id:'t2', text:'Вторая задача',      project:'aparts',   dur:60,  done:false },
-    { id:'t3', text:'Третья задача',      project:'personal', dur:60,  done:false },
-  ];
+  return d.tasks || [];
 }
 
 function renderTasks() {
   const tasks = getTasks();
   const el = document.getElementById('taskList');
   el.innerHTML = '';
+
+  if (!tasks.length) {
+    el.innerHTML = '<div style="font-size:13px;color:var(--muted);font-style:italic;padding:8px 0 4px;">Добавь задачи дня ниже</div>';
+  }
+
   tasks.forEach((t,i) => {
     const color = PROJECT_COLORS[t.project] || PROJECT_COLORS.default;
     const card = document.createElement('div');
-    card.className = 'task-card';
+    card.style.cssText = 'margin-bottom:8px;';
+
+    const subs = t.subtasks || [];
+    const subsDone = subs.filter(s=>s.done).length;
+
     card.innerHTML = `
-      <div class="task-card-accent" style="background:${color};"></div>
-      <div class="task-num">${i+1}</div>
-      <div class="task-body">
-        <div class="task-title" style="${t.done?'text-decoration:line-through;opacity:.5':''}">${esc(t.text)}</div>
-        <div class="task-meta">
-          <div class="task-dot" style="background:${color};"></div>
-          <span>${t.project||'общее'} · ${t.dur||30} мин</span>
+      <div class="task-card" style="padding-right:10px;">
+        <div class="task-card-accent" style="background:${color};"></div>
+        <div class="task-num">${i+1}</div>
+        <div class="task-body">
+          <div class="task-title" style="${t.done?'text-decoration:line-through;opacity:.5':''}">${esc(t.text)}</div>
+          <div class="task-meta">
+            <div class="task-dot" style="background:${color};"></div>
+            <span>${t.project||'общее'} · ${t.dur||30} мин</span>
+            ${subs.length ? `<span style="margin-left:6px;color:var(--on-muted);">${subsDone}/${subs.length}</span>` : ''}
+          </div>
+        </div>
+        <div style="display:flex;gap:4px;align-items:center;">
+          <button onclick="toggleSubtasks('${t.id}')" style="background:none;border:none;color:var(--on-muted);cursor:pointer;font-size:16px;padding:4px;opacity:.5;transition:opacity .15s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.5" title="Подзадачи">+</button>
+          <button onclick="deleteTask('${t.id}')" style="background:none;border:none;color:var(--on-muted);cursor:pointer;font-size:18px;padding:4px;opacity:.4;transition:opacity .15s;" onmouseover="this.style.opacity=1;this.style.color='#9e4040'" onmouseout="this.style.opacity=.4;this.style.color='var(--on-muted)'" title="Удалить">×</button>
+          <div class="task-check ${t.done?'done':''}" onclick="toggleTask('${t.id}')"></div>
         </div>
       </div>
-      <div class="task-check ${t.done?'done':''}" onclick="toggleTask('${t.id}')"></div>`;
+      <div id="subs-${t.id}" style="display:none;margin-left:16px;margin-top:2px;">
+        ${subs.map(s=>`
+          <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:rgba(245,240,232,.06);border-radius:8px;margin-bottom:3px;cursor:pointer;" onclick="toggleSubtask('${t.id}','${s.id}')">
+            <div style="width:14px;height:14px;border-radius:50%;border:1.5px solid ${s.done?'var(--green)':'rgba(245,240,232,.3)'};background:${s.done?'var(--green)':'transparent'};flex-shrink:0;"></div>
+            <span style="font-size:12px;color:${s.done?'var(--muted)':'var(--dim)'};${s.done?'text-decoration:line-through;':''}">${esc(s.text)}</span>
+            <button onclick="event.stopPropagation();deleteSubtask('${t.id}','${s.id}')" style="margin-left:auto;background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px;opacity:.4;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.4">×</button>
+          </div>`).join('')}
+        <div style="display:flex;gap:6px;margin-top:4px;">
+          <input id="sub-inp-${t.id}" placeholder="Добавить подзадачу..." style="flex:1;background:rgba(245,240,232,.06);border:1px solid var(--border);border-radius:8px;padding:7px 10px;color:var(--text);font-size:12px;font-family:var(--fm);outline:none;" onkeydown="if(event.key==='Enter')addSubtask('${t.id}')">
+          <button onclick="addSubtask('${t.id}')" style="background:var(--gold);border:none;border-radius:8px;padding:7px 12px;color:#1b2a4a;font-size:10px;font-weight:600;cursor:pointer;">+</button>
+        </div>
+      </div>`;
     el.appendChild(card);
   });
 
@@ -326,6 +350,58 @@ function addTask() {
 }
 
 function editTasks() { toast('Редактирование задач — скоро'); }
+
+function deleteTask(id) {
+  const d = loadDay();
+  if (!d.tasks) d.tasks = getTasks();
+  d.tasks = d.tasks.filter(x => x.id !== id);
+  saveDay(d); renderTasks();
+}
+
+function toggleSubtasks(taskId) {
+  const el = document.getElementById('subs-' + taskId);
+  if (el) el.style.display = el.style.display === 'none' ? '' : 'none';
+}
+
+function addSubtask(taskId) {
+  const inp = document.getElementById('sub-inp-' + taskId);
+  if (!inp) return;
+  const text = inp.value.trim();
+  if (!text) return;
+  const d = loadDay();
+  if (!d.tasks) d.tasks = [];
+  const t = d.tasks.find(x => x.id === taskId);
+  if (!t) return;
+  if (!t.subtasks) t.subtasks = [];
+  t.subtasks.push({ id: 's' + Date.now(), text, done: false });
+  inp.value = '';
+  saveDay(d); renderTasks();
+  // Re-open subtasks panel
+  const el = document.getElementById('subs-' + taskId);
+  if (el) el.style.display = '';
+}
+
+function toggleSubtask(taskId, subId) {
+  const d = loadDay();
+  if (!d.tasks) return;
+  const t = d.tasks.find(x => x.id === taskId);
+  if (!t || !t.subtasks) return;
+  const s = t.subtasks.find(x => x.id === subId);
+  if (s) { s.done = !s.done; saveDay(d); renderTasks(); }
+  const el = document.getElementById('subs-' + taskId);
+  if (el) el.style.display = '';
+}
+
+function deleteSubtask(taskId, subId) {
+  const d = loadDay();
+  if (!d.tasks) return;
+  const t = d.tasks.find(x => x.id === taskId);
+  if (!t || !t.subtasks) return;
+  t.subtasks = t.subtasks.filter(x => x.id !== subId);
+  saveDay(d); renderTasks();
+  const el = document.getElementById('subs-' + taskId);
+  if (el) el.style.display = '';
+}
 
 // ── HABITS ────────────────────────────────────────────────────────────
 const DEFAULT_HABITS = [
