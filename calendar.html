@@ -179,6 +179,16 @@
   .day-note { width: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: 3px; color: var(--text); font-family: 'Cormorant Garamond', serif; font-size: 16px; font-weight: 300; padding: 10px 14px; resize: none; height: 80px; outline: none; line-height: 1.6; transition: border-color .15s; }
   .day-note:focus { border-color: var(--gold-dim); }
   .day-note::placeholder { color: var(--text-muted); font-style: italic; }
+
+/* ── Card fix ── */
+.cr, .cr-done { background: var(--card) !important; color: var(--on-card) !important; }
+.cr .cr-txt { color: var(--on-card) !important; }
+.cr .cr-meta { color: var(--on-muted) !important; }
+.modal { background: var(--card) !important; color: var(--on-card) !important; }
+.modal-title { color: var(--on-card) !important; }
+.modal-body, .modal-foot { color: var(--on-card) !important; }
+.f-label { color: var(--on-muted) !important; }
+.f-input, .f-select, .f-textarea { background: rgba(27,42,74,.06) !important; border-color: rgba(27,42,74,.15) !important; color: var(--on-card) !important; }
 </style>
 </head>
 <body>
