@@ -208,6 +208,16 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-d);font-size:
 .day-step{font-size:11px;color:var(--text-dim);padding:4px 6px;background:var(--surface2);border-radius:2px;margin-bottom:3px;line-height:1.35;border-left:2px solid transparent;cursor:pointer;transition:all .1s;}
 .day-step:hover{background:var(--surface);}
 .day-step.done{opacity:.35;text-decoration:line-through;}
+
+/* ── Card fix ── */
+.cr, .cr-done { background: var(--card) !important; color: var(--on-card) !important; }
+.cr .cr-txt { color: var(--on-card) !important; }
+.cr .cr-meta { color: var(--on-muted) !important; }
+.modal { background: var(--card) !important; color: var(--on-card) !important; }
+.modal-title { color: var(--on-card) !important; }
+.modal-body, .modal-foot { color: var(--on-card) !important; }
+.f-label { color: var(--on-muted) !important; }
+.f-input, .f-select, .f-textarea { background: rgba(27,42,74,.06) !important; border-color: rgba(27,42,74,.15) !important; color: var(--on-card) !important; }
 </style>
 </head>
 <body>
