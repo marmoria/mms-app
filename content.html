@@ -232,6 +232,22 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-b);font-size:
 .freq-dot{width:18px;height:18px;border-radius:50%;background:var(--surface2);border:1px solid var(--border);cursor:pointer;transition:all .15s;}
 .freq-dot.posted{background:var(--green);border-color:var(--green);}
 .freq-target{font-size:12px;color:var(--text-muted);}
+
+/* ── Card fix ── */
+.cr, .cr-done { background: var(--card) !important; color: var(--on-card) !important; }
+.cr .cr-txt { color: var(--on-card) !important; }
+.cr .cr-meta { color: var(--on-muted) !important; }
+.modal { background: var(--card) !important; color: var(--on-card) !important; }
+.modal-title { color: var(--on-card) !important; }
+.modal-body, .modal-foot { color: var(--on-card) !important; }
+.f-label { color: var(--on-muted) !important; }
+.f-input, .f-select, .f-textarea { background: rgba(27,42,74,.06) !important; border-color: rgba(27,42,74,.15) !important; color: var(--on-card) !important; }
+
+/* Monospace in week grid */
+.wg-day-name, .wg-day-date, .wg-cell, .wg-row-name,
+.post-card, .note-badge, .add-btn-sm, .status-btn,
+.wg-day-head { font-family: 'Courier New', 'Courier', monospace !important; }
+.wg-day-date { letter-spacing: .5px; }
 </style>
 </head>
 <body>
@@ -449,7 +465,28 @@ function load(){
 }
 function save(){localStorage.setItem('cc2_weeks',JSON.stringify(S.weeks));localStorage.setItem('cc2_hooks',JSON.stringify(S.hooks));}
 let S=load();
-let CW=0,CMO=0,HF='all',CTX={};
+// Auto-find current week
+(function(){
+  const now=new Date();
+  const todayStr=String(now.getDate()).padStart(2,'0')+'.'+String(now.getMonth()+1).padStart(2,'0');
+  let found=-1;
+  S.weeks.forEach((wk,i)=>{
+    if(wk.days.some(d=>d.date===todayStr)) found=i;
+  });
+  if(found>=0) { window._initCW=found; }
+  else {
+    // Find closest future week
+    S.weeks.forEach((wk,i)=>{
+      if(found<0){
+        const d=wk.days[0]?.date;
+        if(d){const[dd,mm]=d.split('.').map(Number);const dt=new Date(2026,mm-1,dd);if(dt>=now)found=i;}
+      }
+    });
+    if(found<0) found=S.weeks.length-1;
+    window._initCW=Math.max(0,found);
+  }
+})();
+let CW=window._initCW||0,CMO=0,HF='all',CTX={};
 let _mStatus=null;
 
 function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1700);}
@@ -503,7 +540,7 @@ function renderWeek(){
   wk.days.forEach((d,di)=>{
     const h=mkEl('div','wg-day-head');
     const isT=d.date===todayStr;
-    const badge=d.shoot?'<span style="color:#7abf7a;font-size:10px"> съёмка</span>':d.event?`<span style="font-size:10px;color:var(--theatre)">${d.event}</span>`:'';
+    const badge=d.dayType==='prep'?'<span style="color:#c49a52;font-size:10px;font-weight:500;">Подготовка</span>':d.dayType==='shoot'?'<span style="color:#7abf7a;font-size:10px;font-weight:500;">Съёмка</span>':d.dayType==='montage'?'<span style="color:var(--gold);font-size:10px;">Монтаж</span>':d.dayType==='both'?'<span style="color:#7abf7a;font-size:10px;">Съёмка+Монт.</span>':d.shoot?'<span style="color:#7abf7a;font-size:10px;">съёмка</span>':d.event?`<span style="font-size:10px;color:var(--gold)">${d.event}</span>`:'';
     h.innerHTML=`<div class="wg-day-name">${d.day}</div><div class="wg-day-date${isT?' today':''}">${d.date.split('.')[0]}<span style="font-size:11px;opacity:.5">.${d.date.split('.')[1]}</span></div><div class="wg-day-badge">${badge}</div>`;
     grid.appendChild(h);
   });
@@ -557,20 +594,39 @@ function cycleStatus(wi,di,acct){
 // ── EDIT POST ──
 function openEditPost(wi,di,acct,isNew=false){
   CTX={wi,di,acct};_mStatus=null;
-  const post=S.weeks[wi].days[di][acct]||{text:'',time:'',status:'draft'};
+  const post=S.weeks[wi].days[di][acct]||{text:'',time:'',status:'draft',format:'',hook:''};
   const d=S.weeks[wi].days[di];
   const st=post.status||'draft';
-  openModal((isNew?'Новый пост — ':'Редактировать — ')+acL(acct)+' · '+d.date,
-  `<div class="mf"><div class="ml">Текст поста</div>
-    <textarea class="mta" id="ep_t" rows="5" placeholder="Текст, идея, формат, хук...">${post.text||''}</textarea></div>
+  const acctLabel=acL(acct);
+  openModal((isNew?'Новый пост — ':'Редактировать — ')+acctLabel+' · '+d.date,
+  `<div class="mf"><div class="ml">Идея / Хук (для AI)</div>
+    <div style="display:flex;gap:6px;">
+      <input class="mi" id="ep_hook" value="${post.hook||''}" placeholder="Тема, идея, ключевое послание..." style="flex:1;">
+      <button onclick="aiGeneratePost()" style="background:var(--gold);border:none;border-radius:6px;padding:6px 12px;color:#1b2a4a;font-size:10px;letter-spacing:1px;font-weight:600;cursor:pointer;white-space:nowrap;font-family:var(--font-m);">AI текст</button>
+    </div>
+  </div>
   <div class="mrow">
-    <div class="mf"><div class="ml">Время публикации</div><input class="mi" id="ep_time" value="${post.time||''}" placeholder="19:00"></div>
-    <div class="mf"><div class="ml">Статус</div>
-      <div class="sc">
-        <div class="schip draft ${st==='draft'?'active':''}" onclick="setMS('draft',this)">Черновик</div>
-        <div class="schip ready ${st==='ready'?'active':''}" onclick="setMS('ready',this)">+ Готово</div>
-        <div class="schip done ${st==='done'?'active':''}" onclick="setMS('done',this)">++ Опублик.</div>
-      </div>
+    <div class="mf" style="flex:1;"><div class="ml">Формат</div>
+      <select class="msel" id="ep_format">
+        <option value="" ${!post.format?'selected':''}>—</option>
+        <option value="reel" ${post.format==='reel'?'selected':''}>Reel / Видео</option>
+        <option value="post" ${post.format==='post'?'selected':''}>Пост с фото</option>
+        <option value="stories" ${post.format==='stories'?'selected':''}>Stories</option>
+        <option value="carousel" ${post.format==='carousel'?'selected':''}>Карусель</option>
+        <option value="live" ${post.format==='live'?'selected':''}>Live</option>
+      </select>
+    </div>
+    <div class="mf"><div class="ml">Время</div><input class="mi" id="ep_time" value="${post.time||''}" placeholder="19:00" style="width:80px;"></div>
+  </div>
+  <div class="mf"><div class="ml">Текст поста</div>
+    <div id="ai-status" style="font-size:11px;color:var(--gold);margin-bottom:4px;display:none;">Claude пишет...</div>
+    <textarea class="mta" id="ep_t" rows="6" placeholder="Текст, детали, призыв к действию...">${post.text||''}</textarea>
+  </div>
+  <div class="mf"><div class="ml">Статус</div>
+    <div class="sc">
+      <div class="schip draft ${st==='draft'?'active':''}" onclick="setMS('draft',this)">Черновик</div>
+      <div class="schip ready ${st==='ready'?'active':''}" onclick="setMS('ready',this)">Готово</div>
+      <div class="schip done ${st==='done'?'active':''}" onclick="setMS('done',this)">Опублик.</div>
     </div>
   </div>
   <div class="mactions">
@@ -581,38 +637,104 @@ function openEditPost(wi,di,acct,isNew=false){
 }
 function setMS(s,el){_mStatus=s;document.querySelectorAll('.schip').forEach(c=>c.classList.remove('active'));el.classList.add('active');}
 function savePost(){
-  const {wi,di,acct}=CTX;
+  const wi=CTX.wi,di=CTX.di,acct=CTX.acct;
   const text=document.getElementById('ep_t').value.trim();
-  const time=document.getElementById('ep_time').value.trim();
-  const status=_mStatus||S.weeks[wi].days[di][acct]?.status||'draft';
-  S.weeks[wi].days[di][acct]=text?{text,time,status}:null;
-  save();closeModal();renderWeek();toast('Сохранено');
+  if(!text){toast('Напиши текст поста');return;}
+  const post={
+    text,
+    time:document.getElementById('ep_time').value,
+    hook:document.getElementById('ep_hook').value,
+    format:document.getElementById('ep_format').value,
+    status:_mStatus||S.weeks[wi].days[di][acct]?.status||'draft'
+  };
+  S.weeks[wi].days[di][acct]=post;
+  save();closeModal();renderWeek();
 }
 function delPost(){const{wi,di,acct}=CTX;S.weeks[wi].days[di][acct]=null;save();closeModal();renderWeek();toast('Удалено');}
 
 // ── EDIT NOTE ──
 function openEditNote(wi,di){
   CTX={wi,di};const d=S.weeks[wi].days[di];
-  openModal('Заметка · '+d.date+' '+d.day,
-  `<div class="mf"><div class="ml">Заметка / Инструкция</div>
-    <textarea class="mta" id="ep_n" rows="6" placeholder="Съёмочный день, событие, важные детали, стратегия...">${d.note||''}</textarea></div>
-  <div class="mrow">
-    <div class="mf"><div class="ml">Событие (в шапке дня)</div><input class="mi" id="ep_ev" value="${d.event||''}" placeholder=" Театр с Леной"></div>
-    <div class="mf"><div class="ml">Съёмочный день?</div>
-      <select class="msel" id="ep_sh"><option value="0" ${!d.shoot?'selected':''}>Нет</option><option value="1" ${d.shoot?'selected':''}> Да</option></select>
+  const dayType=d.dayType||'regular';
+  openModal('День · '+d.date+' '+d.day,
+  `<div class="mrow">
+    <div class="mf"><div class="ml">Тип дня</div>
+      <select class="msel" id="ep_daytype" onchange="toggleDayFields(this.value)">
+        <option value="regular" ${dayType==='regular'?'selected':''}>Обычный</option>
+        <option value="prep" ${dayType==='prep'?'selected':''}>Подготовка к съёмке</option>
+        <option value="shoot" ${dayType==='shoot'?'selected':''}>Съёмочный день</option>
+        <option value="montage" ${dayType==='montage'?'selected':''}>Монтаж</option>
+        <option value="both" ${dayType==='both'?'selected':''}>Съёмка + Монтаж</option>
+      </select>
+    </div>
+    <div class="mf"><div class="ml">Событие / Повод</div><input class="mi" id="ep_ev" value="${d.event||''}" placeholder="Театр, встреча, прогулка..."></div>
+  </div>
+  <div id="prep-fields" style="${dayType==='prep'?'':'display:none'}">
+    <div class="mf"><div class="ml" style="color:#c49a52;">Подготовка — что снимаем завтра</div>
+      <textarea class="mta" id="ep_prep_plan" rows="3" placeholder="Список сцен и форматов для каждого аккаунта...">${d.prepPlan||''}</textarea>
+    </div>
+    <div class="mf"><div class="ml">Образ / Стиль</div>
+      <input class="mi" id="ep_prep_look" value="${d.prepLook||''}" placeholder="Одежда, макияж, цветовая гамма...">
+    </div>
+    <div class="mf"><div class="ml">Реквизит</div>
+      <input class="mi" id="ep_prep_props" value="${d.prepProps||''}" placeholder="Что подготовить, купить, взять...">
+    </div>
+    <div class="mf"><div class="ml">Сценарии / Тексты</div>
+      <textarea class="mta" id="ep_prep_scripts" rows="3" placeholder="Хуки, тексты для сторис, идеи для видео...">${d.prepScripts||''}</textarea>
     </div>
   </div>
-  <div class="mactions"><button class="btn-s" onclick="closeModal()">Отмена</button><button class="btn-p" onclick="saveNote()">Сохранить</button></div>`);
-}
-function saveNote(){
-  const{wi,di}=CTX;
-  S.weeks[wi].days[di].note=document.getElementById('ep_n').value;
-  S.weeks[wi].days[di].event=document.getElementById('ep_ev').value;
-  S.weeks[wi].days[di].shoot=document.getElementById('ep_sh').value==='1';
-  save();closeModal();renderWeek();toast('Сохранено');
+  <div id="shoot-fields" style="${dayType==='shoot'||dayType==='both'?'':'display:none'}">
+    <div class="mf"><div class="ml" style="color:#7abf7a;">Съёмка — что снимаем</div>
+      <textarea class="mta" id="ep_shoot_plan" rows="3" placeholder="Список сцен, форматов, локаций...">${d.shootPlan||''}</textarea>
+    </div>
+    <div class="mrow">
+      <div class="mf"><div class="ml">Реквизит / Образ</div><input class="mi" id="ep_props" value="${d.props||''}" placeholder="Одежда, декор..."></div>
+      <div class="mf"><div class="ml">Время съёмки</div><input class="mi" id="ep_shoot_time" value="${d.shootTime||''}" placeholder="14:00–17:00"></div>
+    </div>
+  </div>
+  <div id="montage-fields" style="${dayType==='montage'||dayType==='both'?'':'display:none'}">
+    <div class="mf"><div class="ml" style="color:var(--gold);">Монтаж — что обрабатываем</div>
+      <textarea class="mta" id="ep_montage_plan" rows="3" placeholder="Какие ролики, для каких постов...">${d.montagePlan||''}</textarea>
+    </div>
+  </div>
+  <div class="mf"><div class="ml">Заметка дня</div>
+    <textarea class="mta" id="ep_n" rows="3" placeholder="Стратегия, важные детали, напоминания...">${d.note||''}</textarea>
+  </div>
+  <div class="mactions">
+    <button class="btn-s" onclick="closeModal()">Отмена</button>
+    <button class="btn-p" onclick="saveNote()">Сохранить</button>
+  </div>`);
 }
 
-// ── WEEK META ──
+function toggleDayFields(val){
+  document.getElementById('prep-fields').style.display=(val==='prep')?'':'none';
+  document.getElementById('shoot-fields').style.display=(val==='shoot'||val==='both')?'':'none';
+  document.getElementById('montage-fields').style.display=(val==='montage'||val==='both')?'':'none';
+}
+function saveNote(){
+  const wi=CTX.wi,di=CTX.di;
+  const d=S.weeks[wi].days[di];
+  d.note=document.getElementById('ep_n').value;
+  d.event=document.getElementById('ep_ev').value;
+  const dt=document.getElementById('ep_daytype').value;
+  d.dayType=dt;
+  d.shoot=(dt==='shoot'||dt==='both');
+  if(dt==='prep'){
+    d.prepPlan=document.getElementById('ep_prep_plan').value;
+    d.prepLook=document.getElementById('ep_prep_look').value;
+    d.prepProps=document.getElementById('ep_prep_props').value;
+    d.prepScripts=document.getElementById('ep_prep_scripts').value;
+  }
+  if(dt==='shoot'||dt==='both'){
+    d.shootPlan=document.getElementById('ep_shoot_plan').value;
+    d.props=document.getElementById('ep_props').value;
+    d.shootTime=document.getElementById('ep_shoot_time').value;
+  }
+  if(dt==='montage'||dt==='both'){
+    d.montagePlan=document.getElementById('ep_montage_plan').value;
+  }
+  save();closeModal();renderWeek();
+}
 function editWeekMeta(){
   const wk=S.weeks[CW];
   openModal('Настройки недели',
@@ -639,14 +761,40 @@ function addWeek(){
   const days=['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
   let startDate=null;
   const last=S.weeks[S.weeks.length-1];
-  if(last){const ld=last.days[last.days.length-1]?.date;if(ld){const[dd,mm]=ld.split('.').map(Number);const d=new Date(2026,mm-1,dd);d.setDate(d.getDate()+1);startDate=d;}}
+  if(last){
+    const ld=last.days[last.days.length-1]?.date;
+    if(ld){
+      const[dd,mm]=ld.split('.').map(Number);
+      const d=new Date(2026,mm-1,dd);
+      d.setDate(d.getDate()+1);
+      // If last week is in the past, start from current Monday instead
+      const now=new Date();
+      now.setHours(0,0,0,0);
+      if(d<now){
+        const dow=now.getDay();
+        const mon=new Date(now);
+        mon.setDate(now.getDate()-(dow===0?6:dow-1));
+        startDate=mon;
+      } else {
+        startDate=d;
+      }
+    }
+  }
+  if(!startDate){
+    // No weeks yet — start from current Monday
+    const now=new Date();
+    const dow=now.getDay();
+    startDate=new Date(now);
+    startDate.setDate(now.getDate()-(dow===0?6:dow-1));
+  }
   const newDays=days.map((day,i)=>{
-    let dateStr='';
-    if(startDate){const d=new Date(startDate);d.setDate(startDate.getDate()+i);dateStr=`${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}`;}
+    const d=new Date(startDate);
+    d.setDate(startDate.getDate()+i);
+    const dateStr=String(d.getDate()).padStart(2,'0')+'.'+String(d.getMonth()+1).padStart(2,'0');
     return{date:dateStr,day,shoot:false,event:'',personal:null,bureau:null,aparts:null,note:''};
   });
   const n=S.weeks.length+1;
-  S.weeks.push({label:`Неделя ${n}`,name:'«Новая тема»',goal:'цель: ...',days:newDays});
+  S.weeks.push({label:'Неделя '+n,name:'«Новая тема»',goal:'цель: ...',days:newDays});
   CW=S.weeks.length-1;save();renderWeek();editWeekMeta();
 }
 
@@ -883,6 +1031,53 @@ function updateTotalPosted() {
     return m===now.getMonth()&&y===now.getFullYear();
   }).length;
   document.getElementById('totalPosted').textContent = count;
+}
+
+
+// ── AI post generation ───────────────────────────────────────────────
+async function aiGeneratePost(){
+  const hook=document.getElementById('ep_hook').value.trim();
+  const format=document.getElementById('ep_format').value;
+  const acct=CTX.acct;
+  const wi=CTX.wi,di=CTX.di;
+  const d=S.weeks[wi];
+
+  const key=localStorage.getItem('anthropic_api_key')||'';
+  if(!key){
+    const k=prompt('Введи API ключ Anthropic (sk-ant-...):');
+    if(!k) return;
+    localStorage.setItem('anthropic_api_key',k);
+  }
+
+  const statusEl=document.getElementById('ai-status');
+  const textarea=document.getElementById('ep_t');
+  if(statusEl) statusEl.style.display='';
+  
+  const acctNames={personal:'Личный бренд',bureau:'Бюро',aparts:'Апарты'};
+  const prompt=`Ты копирайтер для Instagram. Напиши пост для аккаунта "${acctNames[acct]||acct}".
+${hook?'Тема / идея: '+hook:''}
+${format?'Формат: '+format:''}
+${d.name?'Тема недели: '+d.name:''}
+
+Напиши живой, личный текст от первого лица. Не используй хэштеги прямо в тексте. Без шаблонных фраз. 150-300 слов. Только текст поста, ничего лишнего.`;
+
+  try{
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':localStorage.getItem('anthropic_api_key'),'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:800,messages:[{role:'user',content:prompt}]})
+    });
+    const data=await resp.json();
+    if(data.content?.[0]?.text){
+      if(textarea) textarea.value=data.content[0].text.trim();
+      toast('Текст сгенерирован');
+    } else if(data.error){
+      toast('Ошибка: '+data.error.message);
+    }
+  }catch(e){
+    toast('Ошибка: '+e.message);
+  }
+  if(statusEl) statusEl.style.display='none';
 }
 
 </script>
