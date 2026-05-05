@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Настройки — Maria OS</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+:root {
+  --bg: #1b2a4a; --surface: #152238; --surface2: #1e3052;
+  --card: #f5f0e8; --card2: #ede8de;
+  --border: #243060; --border2: #2e3d70; --border-c: rgba(27,42,74,.1);
+  --text: #f0ece4; --dim: #b8bcd0; --muted: #6878a0;
+  --on-card: #1b2a4a; --on-dim: #384068; --on-muted: #788098;
+  --gold: #c49a52; --gold-d: #9a7230; --gold-bg: rgba(196,154,82,.1);
+  --crimson: #6b2233; --green: #3d7a55;
+  --fs: 'Cormorant Garamond', serif; --fm: 'Manrope', sans-serif;
+  --nav-h: 72px; --r: 10px;
+}
+html, body { min-height: 100%; background: var(--bg); color: var(--text); font-family: var(--fm); font-weight: 300; padding-bottom: var(--nav-h); }
+
+.page-hdr { padding: 24px 20px 0; }
+.page-eyebrow { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); font-weight: 500; margin-bottom: 6px; }
+.page-title { font-family: var(--fs); font-size: 48px; font-weight: 300; line-height: .95; margin-bottom: 6px; }
+.page-sub { font-family: var(--fs); font-size: 15px; color: var(--muted); font-style: italic; margin-bottom: 4px; }
+.divider { border: none; border-top: 1px solid var(--border); margin: 16px 20px; }
+
+.sec { padding: 0 20px; margin-bottom: 24px; }
+.sec-title { font-family: var(--fs); font-size: 24px; font-weight: 300; margin-bottom: 12px; }
+
+/* cards */
+.card { background: var(--card); border-radius: 12px; padding: 16px 18px; margin-bottom: 8px; border: 1px solid var(--border-c); box-shadow: 0 1px 6px rgba(0,0,0,.08); }
+.card-label { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--on-muted); font-weight: 500; margin-bottom: 8px; }
+.card-value { font-family: var(--fs); font-size: 18px; color: var(--on-card); margin-bottom: 4px; }
+.card-hint { font-size: 11px; color: var(--on-muted); }
+
+/* inputs */
+.f-input, .f-textarea, .f-select {
+  width: 100%; background: rgba(27,42,74,.06); border: 1px solid rgba(27,42,74,.15);
+  border-radius: 8px; padding: 10px 14px; color: var(--on-card);
+  font-family: var(--fm); font-size: 13px; outline: none;
+  transition: border-color .15s; margin-bottom: 8px;
+}
+.f-textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
+.f-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--on-muted); font-weight: 500; margin-bottom: 6px; display: block; }
+.f-input:focus, .f-textarea:focus { border-color: var(--gold); }
+
+/* buttons */
+.btn { font-family: var(--fm); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; padding: 10px 18px; border-radius: 8px; cursor: pointer; border: 1px solid transparent; font-weight: 600; transition: all .15s; }
+.btn-gold { background: var(--gold); color: #1b2a4a; }
+.btn-gold:hover { background: var(--gold-d); }
+.btn-gold:disabled { opacity: .45; cursor: default; }
+.btn-outline { background: transparent; border-color: var(--gold); color: var(--gold); }
+.btn-outline:hover { background: var(--gold-bg); }
+.btn-danger { background: transparent; border-color: var(--crimson); color: #e08080; }
+.btn-danger:hover { background: rgba(107,34,51,.15); }
+
+/* setting row */
+.setting-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border-c); }
+.setting-row:last-child { border-bottom: none; }
+.setting-label { font-size: 13px; color: var(--on-card); font-weight: 500; }
+.setting-hint { font-size: 11px; color: var(--on-muted); margin-top: 2px; }
+
+/* toggle */
+.toggle { width: 44px; height: 24px; background: rgba(27,42,74,.15); border-radius: 12px; position: relative; cursor: pointer; transition: background .2s; flex-shrink: 0; }
+.toggle.on { background: var(--gold); }
+.toggle::after { content: ''; position: absolute; width: 18px; height: 18px; background: #fff; border-radius: 50%; top: 3px; left: 3px; transition: transform .2s; box-shadow: 0 1px 3px rgba(0,0,0,.2); }
+.toggle.on::after { transform: translateX(20px); }
+
+/* ai chat */
+.ai-msg { margin-bottom: 12px; }
+.ai-msg-from { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); margin-bottom: 4px; font-weight: 500; }
+.ai-msg-text { background: var(--card); border-radius: 10px; padding: 12px 14px; font-size: 13px; color: var(--on-card); line-height: 1.6; border: 1px solid var(--border-c); }
+.ai-msg.user .ai-msg-from { color: var(--muted); }
+.ai-msg.user .ai-msg-text { background: rgba(196,154,82,.08); border-color: rgba(196,154,82,.2); color: var(--dim); }
+.ai-input-row { display: flex; gap: 8px; align-items: flex-end; margin-top: 12px; }
+.ai-input { flex: 1; background: rgba(27,42,74,.3); border: 1px solid var(--border2); border-radius: 10px; padding: 10px 14px; color: var(--text); font-family: var(--fm); font-size: 13px; outline: none; resize: none; min-height: 44px; max-height: 120px; line-height: 1.5; }
+.ai-input:focus { border-color: var(--gold); }
+.ai-input::placeholder { color: var(--muted); font-style: italic; }
+.spinner { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--border2); border-top-color: var(--gold); animation: spin .7s linear infinite; display: inline-block; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* module list */
+.mod-item { display: flex; align-items: center; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--border-c); }
+.mod-item:last-child { border-bottom: none; }
+.mod-icon { width: 32px; height: 32px; border-radius: 8px; background: var(--gold-bg); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.mod-icon svg { width: 16px; height: 16px; stroke: var(--gold); fill: none; stroke-width: 1.5; }
+.mod-name { font-size: 14px; color: var(--on-card); flex: 1; font-weight: 500; }
+.mod-link { font-size: 10px; color: var(--gold); letter-spacing: 1px; text-decoration: none; }
+
+/* bottom nav */
+.bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 72px; background: var(--surface); border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-around; padding: 0 8px 8px; z-index: 100; }
+.nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 12px; text-decoration: none; flex: 1; }
+.nav-item svg { width: 22px; height: 22px; stroke: var(--muted); fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.nav-item span { font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+.nav-item.active svg { stroke: var(--gold); }
+.nav-item.active span { color: var(--gold); }
+.nav-under { width: 20px; height: 2px; background: var(--gold); border-radius: 1px; opacity: 0; }
+.nav-item.active .nav-under { opacity: 1; }
+
+.toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%) translateY(40px); background: var(--card); border-radius: 8px; padding: 9px 18px; font-size: 12px; color: var(--on-card); transition: transform .25s, opacity .25s; z-index: 200; white-space: nowrap; box-shadow: 0 4px 20px rgba(0,0,0,.2); opacity: 0; }
+.toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+</style>
+</head>
+<body>
+
+<div class="page-hdr">
+  <div class="page-eyebrow">Maria OS · Настройки</div>
+  <div class="page-title">Система</div>
+  <div class="page-sub">Управление, AI-ассистент, данные</div>
+</div>
+<hr class="divider">
+
+<!-- AI ASSISTANT -->
+<div class="sec">
+  <div class="sec-title">AI-ассистент <em style="font-style:italic;color:var(--gold);">системы</em></div>
+  <div class="card" style="background:var(--surface2);border-color:rgba(196,154,82,.15);">
+    <div class="card-label" style="color:var(--gold);">Что умеет</div>
+    <div style="font-size:13px;color:var(--dim);line-height:1.7;">
+      Спроси как настроить систему, что добавить, как улучшить привычки, как правильно расставить приоритеты. Или просто поговори о том как идут дела.
+    </div>
+  </div>
+  <div id="aiChatLog" style="max-height:340px;overflow-y:auto;margin-bottom:4px;"></div>
+  <div class="ai-input-row">
+    <textarea class="ai-input" id="aiInput" placeholder="Спроси что угодно о системе..." rows="1"
+      oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"
+      onkeydown="if((event.metaKey||event.ctrlKey)&&event.key==='Enter'){event.preventDefault();sendAI();}"></textarea>
+    <button class="btn btn-gold" id="aiSendBtn" onclick="sendAI()" style="padding:10px 16px;white-space:nowrap;">
+      Отправить
+    </button>
+  </div>
+  <div style="font-size:10px;color:var(--muted);margin-top:6px;">Cmd+Enter для отправки</div>
+</div>
+
+<!-- API KEY -->
+<div class="sec">
+  <div class="sec-title">API ключ</div>
+  <div class="card">
+    <div class="card-label">Claude API (Anthropic)</div>
+    <div id="keyStatus" class="card-hint" style="margin-bottom:10px;"></div>
+    <input class="f-input" type="password" id="apiKeyInp" placeholder="sk-ant-api03-...">
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-gold" onclick="saveKey()">Сохранить</button>
+      <button class="btn btn-outline" onclick="testKey()">Проверить</button>
+      <button class="btn btn-danger" onclick="clearKey()">Удалить</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODULES -->
+<div class="sec">
+  <div class="sec-title">Модули</div>
+  <div class="card">
+    <div id="moduleList"></div>
+  </div>
+</div>
+
+<!-- DATA -->
+<div class="sec">
+  <div class="sec-title">Данные</div>
+  <div class="card">
+    <div class="setting-row">
+      <div><div class="setting-label">Экспорт всего</div><div class="setting-hint">Скачать backup в JSON</div></div>
+      <button class="btn btn-outline" onclick="exportAll()">Скачать</button>
+    </div>
+    <div class="setting-row">
+      <div><div class="setting-label">Импорт данных</div><div class="setting-hint">Восстановить из backup</div></div>
+      <label class="btn btn-outline" style="cursor:pointer;">
+        Загрузить
+        <input type="file" accept=".json" onchange="importAll(this)" style="display:none;">
+      </label>
+    </div>
+    <div class="setting-row">
+      <div><div class="setting-label" style="color:#e08080;">Очистить всё</div><div class="setting-hint">Удалить все данные системы</div></div>
+      <button class="btn btn-danger" onclick="clearAll()">Очистить</button>
+    </div>
+  </div>
+</div>
+
+<!-- bottom nav -->
+<nav class="bottom-nav">
+  <a class="nav-item" href="today.html">
+    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+    <span>Сегодня</span><div class="nav-under"></div>
+  </a>
+  <a class="nav-item" href="calendar.html">
+    <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+    <span>Календарь</span><div class="nav-under"></div>
+  </a>
+  <a class="nav-item" href="goals.html">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+    <span>Проекты</span><div class="nav-under"></div>
+  </a>
+  <a class="nav-item" href="inbox.html">
+    <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+    <span>Поток</span><div class="nav-under"></div>
+  </a>
+  <a class="nav-item active" href="settings.html">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    <span>Я</span><div class="nav-under"></div>
+  </a>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+'use strict';
+
+// ── MODULES ──────────────────────────────────────────────────────────
+const MODULES = [
+  { id:'today',    name:'Сегодня',        href:'today.html',    icon:'home' },
+  { id:'goals',    name:'Цели',           href:'goals.html',    icon:'target' },
+  { id:'finance',  name:'Финансы',        href:'finance.html',  icon:'card' },
+  { id:'content',  name:'Контент',        href:'content.html',  icon:'film' },
+  { id:'home',     name:'FlyLady',        href:'home.html',     icon:'home2' },
+  { id:'life',     name:'Яркость жизни',  href:'life.html',     icon:'star' },
+  { id:'body',     name:'Тело',           href:'body.html',     icon:'heart' },
+  { id:'calendar', name:'Календарь',      href:'calendar.html', icon:'cal' },
+  { id:'inbox',    name:'Поток',          href:'inbox.html',    icon:'bolt' },
+  { id:'planner',  name:'Перепланировщик',href:'planner.html',  icon:'bolt' },
+];
+
+const ICONS = {
+  home:   '<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
+  home2:  '<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>',
+  target: '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>',
+  card:   '<rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/>',
+  film:   '<rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>',
+  star:   '<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>',
+  heart:  '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>',
+  cal:    '<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>',
+  bolt:   '<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>',
+};
+
+function renderModules() {
+  const el = document.getElementById('moduleList');
+  el.innerHTML = '';
+  MODULES.forEach(m => {
+    const row = document.createElement('div');
+    row.className = 'mod-item';
+    row.innerHTML = `
+      <div class="mod-icon">
+        <svg viewBox="0 0 24 24">${ICONS[m.icon]||ICONS.bolt}</svg>
+      </div>
+      <div class="mod-name">${m.name}</div>
+      <a class="mod-link" href="${m.href}">Открыть →</a>`;
+    el.appendChild(row);
+  });
+}
+
+// ── API KEY ───────────────────────────────────────────────────────────
+function updateKeyStatus() {
+  const key = localStorage.getItem('anthropic_api_key') || '';
+  const el = document.getElementById('keyStatus');
+  if (key) {
+    el.textContent = 'Ключ сохранён: ' + key.slice(0,12) + '...';
+    el.style.color = 'var(--green)';
+  } else {
+    el.textContent = 'Ключ не установлен — AI-функции недоступны';
+    el.style.color = 'var(--on-muted)';
+  }
+}
+
+function saveKey() {
+  const val = document.getElementById('apiKeyInp').value.trim();
+  if (!val) { toast('Введи ключ'); return; }
+  localStorage.setItem('anthropic_api_key', val);
+  document.getElementById('apiKeyInp').value = '';
+  updateKeyStatus();
+  toast('Ключ сохранён');
+}
+
+async function testKey() {
+  const key = localStorage.getItem('anthropic_api_key') || '';
+  if (!key) { toast('Сначала сохрани ключ'); return; }
+  toast('Проверяю...');
+  try {
+    const r = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type':'application/json', 'x-api-key':key, 'anthropic-version':'2023-06-01', 'anthropic-dangerous-direct-browser-access':'true' },
+      body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:10, messages:[{role:'user',content:'hi'}] })
+    });
+    if (r.ok) toast('Ключ работает!');
+    else { const e=await r.json(); toast('Ошибка: '+(e.error?.message||r.status)); }
+  } catch(e) { toast('Ошибка: '+e.message); }
+}
+
+function clearKey() {
+  if (!confirm('Удалить API ключ?')) return;
+  localStorage.removeItem('anthropic_api_key');
+  updateKeyStatus();
+  toast('Ключ удалён');
+}
+
+// ── AI CHAT ───────────────────────────────────────────────────────────
+let chatHistory = [];
+
+// System prompt with context about the user's system
+const SYSTEM = `Ты персональный ассистент Марии — помогаешь настраивать и улучшать её систему управления жизнью Maria OS.
+
+Система состоит из модулей: Сегодня (задачи, привычки, энергия), Цели (декомпозиция, вехи), Финансы (транзакции, подушки), Контент (план постов, съёмки, монтаж для 3 аккаунтов: Brick Buro, Апарты, Личный бренд), FlyLady (уборка, зоны, рутины), Яркость жизни (победы, события), Тело (сон, вес, вода), Календарь, Поток (входящие + база знаний), Перепланировщик.
+
+Данные хранятся в localStorage браузера. Пользователь — Мария, 52 года, предпринимательница.
+
+Отвечай коротко и по делу. Давай конкретные советы. Если спрашивают как что-то изменить в системе — объясни где это сделать.`;
+
+async function sendAI() {
+  const inp = document.getElementById('aiInput');
+  const text = inp.value.trim();
+  if (!text) return;
+
+  const key = localStorage.getItem('anthropic_api_key') || '';
+  if (!key) {
+    addMsg('system', 'Для AI-ассистента нужен API ключ. Сохрани его в разделе выше.');
+    return;
+  }
+
+  addMsg('user', text);
+  chatHistory.push({ role:'user', content:text });
+  inp.value = '';
+  inp.style.height = 'auto';
+
+  const btn = document.getElementById('aiSendBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner"></div>';
+
+  const loadingId = 'msg_' + Date.now();
+  const loadingEl = document.createElement('div');
+  loadingEl.id = loadingId;
+  loadingEl.className = 'ai-msg';
+  loadingEl.innerHTML = '<div class="ai-msg-from">Мария OS</div><div class="ai-msg-text" style="color:var(--on-muted);font-style:italic;">думает...</div>';
+  document.getElementById('aiChatLog').appendChild(loadingEl);
+  scrollChat();
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type':'application/json', 'x-api-key':key, 'anthropic-version':'2023-06-01', 'anthropic-dangerous-direct-browser-access':'true' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 800,
+        system: SYSTEM,
+        messages: chatHistory
+      })
+    });
+    const data = await resp.json();
+    const reply = data.content?.[0]?.text || 'Не удалось получить ответ.';
+    chatHistory.push({ role:'assistant', content:reply });
+    const old = document.getElementById(loadingId);
+    if (old) old.remove();
+    addMsg('system', reply);
+  } catch(e) {
+    const old = document.getElementById(loadingId);
+    if (old) old.remove();
+    addMsg('system', 'Ошибка: ' + e.message);
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = 'Отправить';
+}
+
+function addMsg(from, text) {
+  const log = document.getElementById('aiChatLog');
+  const div = document.createElement('div');
+  div.className = 'ai-msg' + (from === 'user' ? ' user' : '');
+  div.innerHTML = `<div class="ai-msg-from">${from === 'user' ? 'Ты' : 'Maria OS'}</div>
+    <div class="ai-msg-text">${esc(text)}</div>`;
+  log.appendChild(div);
+  scrollChat();
+}
+
+function scrollChat() {
+  const log = document.getElementById('aiChatLog');
+  log.scrollTop = log.scrollHeight;
+}
+
+// ── DATA ──────────────────────────────────────────────────────────────
+function exportAll() {
+  const keys = [];
+  for (let i = 0; i < localStorage.length; i++) keys.push(localStorage.key(i));
+  const data = {};
+  keys.forEach(k => { try { data[k] = JSON.parse(localStorage.getItem(k)); } catch(e) { data[k] = localStorage.getItem(k); } });
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'mariaos_backup_' + new Date().toISOString().slice(0,10) + '.json';
+  a.click();
+  toast('Backup скачан');
+}
+
+function importAll(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!confirm('Загрузить данные из файла? Текущие данные будут перезаписаны.')) return;
+      Object.entries(data).forEach(([k,v]) => localStorage.setItem(k, typeof v === 'string' ? v : JSON.stringify(v)));
+      toast('Данные восстановлены');
+    } catch(err) { toast('Ошибка: неверный формат файла'); }
+  };
+  reader.readAsText(file);
+}
+
+function clearAll() {
+  if (!confirm('Удалить ВСЕ данные системы? Это нельзя отменить.')) return;
+  if (!confirm('Ты уверена? Все задачи, цели, финансы, контент будут удалены.')) return;
+  localStorage.clear();
+  toast('Все данные удалены');
+}
+
+function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>'); }
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────
+renderModules();
+updateKeyStatus();
+
+// Welcome message
+addMsg('system', 'Привет! Я помогу настроить систему, ответить на вопросы о модулях или просто поговорить о том как идут дела. Что хочешь улучшить?');
+</script>
+</body>
+</html>
