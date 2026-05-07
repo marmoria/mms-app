@@ -152,7 +152,25 @@ html, body { min-height: 100%; background: var(--bg); color: var(--text); font-f
 <div class="sec">
   <div class="sec-title">Модули</div>
   <div class="card">
-    <div id="moduleList"></div>
+    <div style="font-size:11px;color:var(--on3);margin-bottom:12px;">Включи только то что используешь</div>
+    <div id="moduleToggles"></div>
+  </div>
+</div>
+
+<!-- QUICK LINKS -->
+<div class="sec">
+  <div class="sec-title">Быстрый доступ</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+    <a href="today.html"    class="card" style="text-decoration:none;display:block;padding:12px 14px;"><div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:4px;font-weight:500;">01</div><div style="font-size:14px;color:var(--on);font-weight:500;">Сегодня</div></a>
+    <a href="goals.html"   class="card" style="text-decoration:none;display:block;padding:12px 14px;"><div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:4px;font-weight:500;">02</div><div style="font-size:14px;color:var(--on);font-weight:500;">Цели</div></a>
+    <a href="finance.html" class="card" style="text-decoration:none;display:block;padding:12px 14px;"><div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:4px;font-weight:500;">03</div><div style="font-size:14px;color:var(--on);font-weight:500;">Финансы</div></a>
+    <a href="content.html" class="card" style="text-decoration:none;display:block;padding:12px 14px;"><div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:4px;font-weight:500;">04</div><div style="font-size:14px;color:var(--on);font-weight:500;">Контент</div></a>
+    <a href="home.html"    class="card" style="text-decoration:none;display:block;padding:12px 14px;"><div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:4px;font-weight:500;">05</div><div style="font-size:14px;color:var(--on);font-weight:500;">FlyLady</div></a>
+    <a href="life.html"    class="card" style="text-decoration:none;display:block;padding:12px 14px;"><div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:4px;font-weight:500;">06</div><div style="font-size:14px;color:var(--on);font-weight:500;">Яркость</div></a>
+    <a href="body.html"    class="card" style="text-decoration:none;display:block;padding:12px 14px;"><div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:4px;font-weight:500;">07</div><div style="font-size:14px;color:var(--on);font-weight:500;">Тело</div></a>
+    <a href="calendar.html" class="card" style="text-decoration:none;display:block;padding:12px 14px;"><div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:4px;font-weight:500;">08</div><div style="font-size:14px;color:var(--on);font-weight:500;">Календарь</div></a>
+    <a href="inbox.html"   class="card" style="text-decoration:none;display:block;padding:12px 14px;"><div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:4px;font-weight:500;">09</div><div style="font-size:14px;color:var(--on);font-weight:500;">Поток</div></a>
+    <a href="planner.html" class="card" style="text-decoration:none;display:block;padding:12px 14px;"><div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:4px;font-weight:500;">10</div><div style="font-size:14px;color:var(--on);font-weight:500;">Перепланировщик</div></a>
   </div>
 </div>
 
@@ -233,20 +251,48 @@ const ICONS = {
   bolt:   '<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>',
 };
 
+const MODULE_TOGGLES = [
+  { id:'body',      name:'Тело',           hint:'Сон, вес, вода, шаги, симптомы' },
+  { id:'home',      name:'FlyLady',        hint:'Зоны уборки, рутины' },
+  { id:'life',      name:'Яркость жизни',  hint:'Победы, культура, путешествия, радость' },
+  { id:'finance',   name:'Финансы',        hint:'Доходы, расходы, подушки' },
+  { id:'content',   name:'Контент',        hint:'3 аккаунта, съёмки, монтаж' },
+  { id:'goals',     name:'Цели',           hint:'Декомпозиция, вехи, прогресс' },
+  { id:'calendar',  name:'Календарь',      hint:'События, дедлайны' },
+  { id:'planner',   name:'Перепланировщик',hint:'AI-помощник планирования дня' },
+];
+
+function loadToggles() {
+  try { return JSON.parse(localStorage.getItem('module_toggles')||'{}'); } catch(e){ return {}; }
+}
+function saveToggles(t) { localStorage.setItem('module_toggles', JSON.stringify(t)); }
+
 function renderModules() {
-  const el = document.getElementById('moduleList');
+  const el = document.getElementById('moduleToggles');
+  if (!el) return;
+  const toggles = loadToggles();
   el.innerHTML = '';
-  MODULES.forEach(m => {
+  MODULE_TOGGLES.forEach(m => {
+    const on = toggles[m.id] !== false; // default on
     const row = document.createElement('div');
-    row.className = 'mod-item';
+    row.className = 'setting-row';
     row.innerHTML = `
-      <div class="mod-icon">
-        <svg viewBox="0 0 24 24">${ICONS[m.icon]||ICONS.bolt}</svg>
+      <div>
+        <div class="setting-label">${m.name}</div>
+        <div class="setting-hint">${m.hint}</div>
       </div>
-      <div class="mod-name">${m.name}</div>
-      <a class="mod-link" href="${m.href}">Открыть →</a>`;
+      <div class="toggle ${on?'on':''}" onclick="toggleModule('${m.id}',this)"></div>`;
     el.appendChild(row);
   });
+}
+
+function toggleModule(id, el) {
+  const toggles = loadToggles();
+  const cur = toggles[id] !== false;
+  toggles[id] = !cur;
+  el.classList.toggle('on', !cur);
+  saveToggles(toggles);
+  toast((cur?'Выключен: ':'Включён: ') + MODULE_TOGGLES.find(m=>m.id===id)?.name);
 }
 
 // ── API KEY ───────────────────────────────────────────────────────────
