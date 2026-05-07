@@ -51,6 +51,13 @@ html, body {
   grid-template-rows: 48px 1fr;
   height: 100vh; overflow: hidden;
 }
+@media (max-width: 900px) {
+  .shell { display: block; height: auto; overflow: visible; padding-bottom: 80px; }
+  .sidebar, .panel { display: none; }
+  .main { display: block; }
+  .feed { height: auto; overflow-y: visible; max-height: none; }
+  .compose { position: sticky; top: 0; z-index: 10; }
+}
 
 /* ── topbar ── */
 .topbar {
@@ -579,21 +586,109 @@ function render() {
   updateInboxCount();
 }
 
+// Where each category goes
+const CAT_ACTIONS = {
+  task:    { label:'В задачи',    fn:'sendToTasks' },
+  goal:    { label:'В цели',      fn:'sendToGoals' },
+  content: { label:'В контент',   fn:'sendToContent' },
+  cal:     { label:'В календарь', fn:'sendToCal' },
+  finance: { label:'В финансы',   fn:'sendToFinance' },
+  idea:    { label:'В базу знаний',fn:'sendToKb' },
+  thought: { label:'В базу знаний',fn:'sendToKb' },
+};
+
 function makeCard(item) {
-  const cfg = CATS[item.cat] || { label: item.cat, action: 'OK' };
+  const cfg = CATS[item.cat] || { label: item.cat };
+  const act = CAT_ACTIONS[item.cat] || { label:'Сохранить', fn:'sendToKb' };
   const card = document.createElement('div');
   card.className = 'result-item';
   card.dataset.id = item.id;
   card.innerHTML = `
     <div style="flex:1;">
       <div class="result-item-text">${escHtml(item.text)}</div>
-      ${item.note ? `<div class="result-item-meta">${escHtml(item.note)}</div>` : ''}
+      ${item.note ? `<div class="result-item-meta" style="margin-top:3px;">${escHtml(item.note)}</div>` : ''}
       <div class="result-item-meta" style="margin-top:4px;">${item.time}</div>
     </div>
-    <div class="result-item-actions">
+    <div class="result-item-actions" style="display:flex;flex-direction:column;gap:4px;align-items:flex-end;flex-shrink:0;">
+      <button class="ia-btn" style="background:var(--gold-bg);border-color:rgba(196,154,82,.3);color:var(--gold-d);font-weight:600;"
+        onclick="${act.fn}('${item.id}')">${act.label} →</button>
       <button class="ia-btn" onclick="archiveItem('${item.id}')">убрать</button>
     </div>`;
   return card;
+}
+
+// ── Action handlers ───────────────────────────────────────────────────
+function getItem(id) { return items.find(x => x.id === id); }
+
+function sendToTasks(id) {
+  const item = getItem(id);
+  if (!item) return;
+  // Save to planner tasks for today
+  const STORE = 'planner_v1';
+  const now = new Date();
+  const key = now.getFullYear()+'_'+now.getMonth()+'_'+now.getDate();
+  let d = {};
+  try { d = JSON.parse(localStorage.getItem(key)||'{}'); } catch(e){}
+  if (!d.tasks) d.tasks = [];
+  d.tasks.push({ id:'t'+Date.now(), text:item.text, project:'default', dur:30, done:false });
+  localStorage.setItem(key, JSON.stringify(d));
+  markSent(id, 'Добавлено в задачи дня');
+}
+
+function sendToGoals(id) {
+  const item = getItem(id);
+  if (!item) return;
+  // Save to goals as a quick note
+  let goals = [];
+  try { goals = JSON.parse(localStorage.getItem('goals_v2')||'[]'); } catch(e){}
+  goals.push({ id:'g'+Date.now(), title:item.text, area:'personal', deadline:'', measure:item.note||'', created:new Date().toISOString(), done:false, milestones:[], steps:[] });
+  localStorage.setItem('goals_v2', JSON.stringify(goals));
+  markSent(id, 'Добавлено в цели');
+}
+
+function sendToContent(id) {
+  const item = getItem(id);
+  if (!item) return;
+  // Save to content ideas
+  let ideas = [];
+  try { ideas = JSON.parse(localStorage.getItem('content_ideas')||'[]'); } catch(e){}
+  ideas.push({ id:'ci'+Date.now(), text:item.text, note:item.note||'', date:new Date().toISOString() });
+  localStorage.setItem('content_ideas', JSON.stringify(ideas));
+  markSent(id, 'Добавлено в контент-идеи');
+}
+
+function sendToCal(id) {
+  const item = getItem(id);
+  if (!item) return;
+  let events = [];
+  try { events = JSON.parse(localStorage.getItem('cal_events')||'[]'); } catch(e){}
+  const now = new Date();
+  events.push({ id:'ce'+Date.now(), title:item.text, note:item.note||'', dateKey:now.getFullYear()+'_'+now.getMonth()+'_'+now.getDate(), type:'personal', allDay:true });
+  localStorage.setItem('cal_events', JSON.stringify(events));
+  markSent(id, 'Добавлено в календарь');
+}
+
+function sendToFinance(id) {
+  const item = getItem(id);
+  if (!item) return;
+  markSent(id, 'Открой Финансы и добавь вручную');
+}
+
+function sendToKb(id) {
+  const item = getItem(id);
+  if (!item) return;
+  let kb = [];
+  try { kb = JSON.parse(localStorage.getItem('kb_items_v1')||'[]'); } catch(e){}
+  kb.push({ id:'kb'+Date.now(), text:item.text, note:item.note||'', cat:item.cat, date:new Date().toISOString() });
+  localStorage.setItem('kb_items_v1', JSON.stringify(kb));
+  markSent(id, 'Добавлено в базу знаний');
+}
+
+function markSent(id, msg) {
+  items = items.filter(x => x.id !== id);
+  save(items);
+  render();
+  toast(msg);
 }
 
 function renderHistory() {
