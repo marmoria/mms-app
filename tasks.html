@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Задачи — Maria OS</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+* { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+:root {
+  --bg:#1b2a4a; --surface:#152238; --surface2:#1e3052;
+  --card:#f5f0e8; --card2:#ede8de;
+  --border:#243060; --border2:#2e3d70; --bc:rgba(27,42,74,.1);
+  --text:#f0ece4; --dim:#b8bcd0; --muted:#6878a0;
+  --on:#1b2a4a; --on2:#384068; --on3:#788098;
+  --gold:#c49a52; --gold-d:#9a7230; --gold-bg:rgba(196,154,82,.1);
+  --crimson:#6b2233; --crimson-bg:rgba(107,34,51,.18);
+  --green:#3d7a55; --green-bg:rgba(61,122,85,.15);
+  --red:#9e4040;
+  --p-bureau:#c49a52; --p-aparts:#3d7a55; --p-personal:#6b4aaa;
+  --p-home:#5a7a68; --p-body:#a05060; --p-finance:#4a6880;
+  --p-content:#6b2233; --p-default:#6878a0;
+  --fs:'Cormorant Garamond',serif; --fm:'Manrope',sans-serif;
+  --r:10px; --nav-h:72px;
+}
+html,body { min-height:100%; background:var(--bg); color:var(--text); font-family:var(--fm); font-weight:300; padding-bottom:var(--nav-h); }
+
+/* header */
+.hdr { padding:22px 20px 0; display:flex; align-items:flex-start; justify-content:space-between; }
+.eyebrow { font-size:10px; letter-spacing:3px; text-transform:uppercase; color:var(--gold); font-weight:500; margin-bottom:5px; }
+.title { font-family:var(--fs); font-size:48px; font-weight:300; line-height:.95; margin-bottom:5px; }
+.subtitle { font-family:var(--fs); font-size:15px; color:var(--muted); font-style:italic; }
+hr.div { border:none; border-top:1px solid var(--border); margin:14px 20px; }
+
+/* toolbar */
+.toolbar {
+  display:flex; align-items:center; gap:8px;
+  padding:10px 20px; overflow-x:auto;
+  border-bottom:1px solid var(--border);
+  background:var(--surface);
+}
+.toolbar::-webkit-scrollbar { display:none; }
+.filter-btn {
+  font-size:10px; letter-spacing:1.5px; text-transform:uppercase; font-weight:500;
+  padding:6px 14px; border-radius:20px; cursor:pointer; white-space:nowrap;
+  border:1px solid var(--border2); background:transparent; color:var(--muted);
+  font-family:var(--fm); transition:all .15s; flex-shrink:0;
+}
+.filter-btn.on { background:var(--gold); border-color:var(--gold); color:#1b2a4a; }
+.filter-btn:hover:not(.on) { border-color:var(--muted); color:var(--dim); }
+.tb-sep { width:1px; height:20px; background:var(--border2); flex-shrink:0; }
+.add-btn {
+  margin-left:auto; flex-shrink:0;
+  background:var(--gold); border:none; border-radius:20px;
+  padding:7px 16px; color:#1b2a4a; font-size:10px; letter-spacing:2px;
+  text-transform:uppercase; font-weight:600; cursor:pointer; font-family:var(--fm);
+  display:flex; align-items:center; gap:5px; transition:background .15s;
+}
+.add-btn:hover { background:var(--gold-d); color:#fff; }
+
+/* stats bar */
+.stats-bar {
+  display:flex; gap:1px; background:var(--border);
+  border-bottom:1px solid var(--border);
+}
+.stat-cell {
+  flex:1; background:var(--surface); padding:10px 14px; text-align:center;
+}
+.stat-num { font-family:var(--fs); font-size:22px; font-weight:300; color:var(--gold); line-height:1; }
+.stat-label { font-size:9px; letter-spacing:2px; text-transform:uppercase; color:var(--muted); margin-top:3px; font-weight:500; }
+
+/* task list */
+.task-list { padding:12px 20px; }
+
+.group-label {
+  font-size:9px; letter-spacing:3px; text-transform:uppercase;
+  color:var(--gold); font-weight:500; margin:16px 0 8px;
+}
+.group-label:first-child { margin-top:4px; }
+
+/* task card */
+.tc { background:var(--card); border-radius:var(--r); margin-bottom:6px; border:1px solid var(--bc); box-shadow:0 1px 5px rgba(0,0,0,.08); overflow:hidden; transition:box-shadow .15s; }
+.tc:hover { box-shadow:0 2px 10px rgba(0,0,0,.12); }
+.tc-main { display:flex; align-items:center; gap:10px; padding:12px 14px; cursor:pointer; }
+.tc-accent { width:3px; flex-shrink:0; align-self:stretch; border-radius:2px; min-height:20px; }
+.tc-body { flex:1; min-width:0; }
+.tc-title { font-size:14px; color:var(--on); font-weight:500; margin-bottom:3px; line-height:1.4; }
+.tc-title.done { text-decoration:line-through; color:var(--on3); }
+.tc-meta { display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+.tc-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; }
+.tc-label { font-size:10px; color:var(--on3); }
+.tc-tag {
+  font-size:9px; padding:2px 7px; border-radius:10px;
+  background:rgba(27,42,74,.08); color:var(--on3); white-space:nowrap;
+}
+.tc-tag.deadline { background:rgba(158,64,64,.1); color:var(--red); }
+.tc-tag.deadline.soon { background:rgba(158,64,64,.2); color:#c06060; font-weight:600; }
+.tc-tag.today-tag { background:rgba(196,154,82,.12); color:var(--gold-d); }
+.tc-actions { display:flex; align-items:center; gap:4px; flex-shrink:0; }
+.tc-ico-btn { background:none; border:none; cursor:pointer; padding:4px; color:var(--on3); opacity:.4; transition:opacity .15s; font-size:12px; display:flex; align-items:center; }
+.tc-ico-btn:hover { opacity:1; }
+.tc-check { width:22px; height:22px; border-radius:50%; border:1.5px solid rgba(27,42,74,.2); flex-shrink:0; display:flex; align-items:center; justify-content:center; transition:all .15s; cursor:pointer; }
+.tc-check.done { background:var(--green); border-color:var(--green); }
+.tc-check.done::after { content:''; display:block; width:6px; height:10px; border:2px solid #fff; border-top:none; border-left:none; transform:rotate(45deg) translate(-1px,-2px); }
+
+/* subtasks */
+.tc-subs { border-top:1px solid rgba(27,42,74,.08); background:rgba(27,42,74,.02); padding:8px 14px 10px 44px; }
+.sub-row { display:flex; align-items:center; gap:8px; padding:5px 0; border-bottom:1px solid rgba(27,42,74,.05); cursor:pointer; }
+.sub-row:last-of-type { border-bottom:none; }
+.sub-check { width:14px; height:14px; border-radius:50%; border:1.5px solid rgba(27,42,74,.2); flex-shrink:0; transition:all .15s; }
+.sub-check.done { background:var(--green); border-color:var(--green); position:relative; }
+.sub-check.done::after { content:''; position:absolute; top:1px; left:3px; width:4px; height:7px; border:1.5px solid #fff; border-top:none; border-left:none; transform:rotate(45deg); }
+.sub-text { font-size:12px; flex:1; color:var(--on2); line-height:1.4; }
+.sub-text.done { text-decoration:line-through; color:var(--on3); }
+.sub-del { background:none; border:none; color:var(--on3); cursor:pointer; font-size:14px; opacity:.3; transition:all .15s; padding:0 3px; }
+.sub-del:hover { opacity:1; color:var(--red); }
+.sub-add-row { display:flex; gap:6px; margin-top:8px; }
+.sub-inp { flex:1; background:rgba(27,42,74,.06); border:1px solid rgba(27,42,74,.12); border-radius:8px; padding:7px 10px; font-size:12px; color:var(--on); font-family:var(--fm); outline:none; }
+.sub-inp::placeholder { color:var(--on3); font-style:italic; }
+.sub-inp:focus { border-color:rgba(196,154,82,.4); }
+.sub-add-btn { background:var(--gold); border:none; border-radius:8px; padding:7px 12px; color:#1b2a4a; font-size:11px; font-weight:600; cursor:pointer; }
+
+/* empty */
+.empty { text-align:center; padding:48px 24px; }
+.empty-title { font-family:var(--fs); font-size:28px; font-weight:300; color:var(--dim); margin-bottom:8px; font-style:italic; }
+.empty-sub { font-size:13px; color:var(--muted); line-height:1.6; }
+
+/* modal */
+.modal-bg { position:fixed; inset:0; background:rgba(0,0,0,.6); display:none; align-items:flex-start; justify-content:center; z-index:200; padding:20px; overflow-y:auto; }
+.modal-bg.open { display:flex; }
+.modal { background:var(--card); border-radius:var(--r); padding:24px; width:100%; max-width:500px; margin:auto; }
+.modal-title { font-family:var(--fs); font-size:22px; font-weight:300; color:var(--on); margin-bottom:16px; }
+.f-label { font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--on3); font-weight:500; margin-bottom:5px; margin-top:12px; display:block; }
+.f-inp, .f-sel, .f-ta {
+  width:100%; background:rgba(27,42,74,.06); border:1px solid rgba(27,42,74,.15);
+  border-radius:8px; padding:10px 12px; color:var(--on); font-family:var(--fm);
+  font-size:13px; outline:none; transition:border-color .15s;
+}
+.f-ta { resize:vertical; min-height:70px; line-height:1.6; }
+.f-inp:focus, .f-sel:focus, .f-ta:focus { border-color:rgba(196,154,82,.5); }
+.f-row { display:flex; gap:8px; }
+.f-row > * { flex:1; }
+.f-check-row { display:flex; align-items:center; gap:10px; margin-top:12px; cursor:pointer; }
+.f-check-row input { width:16px; height:16px; accent-color:var(--gold); cursor:pointer; }
+.f-check-label { font-size:13px; color:var(--on2); }
+.modal-foot { display:flex; gap:8px; justify-content:flex-end; margin-top:20px; flex-wrap:wrap; }
+.btn { font-family:var(--fm); font-size:10px; letter-spacing:2px; text-transform:uppercase; padding:9px 18px; border-radius:8px; cursor:pointer; border:1px solid transparent; font-weight:600; transition:all .15s; }
+.btn-gold { background:var(--gold); color:#1b2a4a; }
+.btn-gold:hover { background:var(--gold-d); }
+.btn-ghost { background:transparent; border-color:var(--border2); color:var(--on3); }
+.btn-ghost:hover { border-color:var(--muted); color:var(--on); }
+.btn-red { background:transparent; border-color:rgba(158,64,64,.4); color:#c07070; }
+.btn-red:hover { background:var(--crimson-bg); }
+
+/* bottom nav */
+.bnav { position:fixed; bottom:0; left:0; right:0; height:var(--nav-h); background:var(--surface); border-top:1px solid var(--border); display:flex; align-items:center; justify-content:space-around; padding:0 8px 8px; z-index:100; }
+.ni { display:flex; flex-direction:column; align-items:center; gap:4px; padding:8px 10px; text-decoration:none; flex:1; }
+.ni svg { width:22px; height:22px; stroke:var(--muted); fill:none; stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round; }
+.ni span { font-size:9px; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); font-weight:500; }
+.ni.on svg { stroke:var(--gold); }
+.ni.on span { color:var(--gold); }
+.ni-line { width:20px; height:2px; background:var(--gold); border-radius:1px; opacity:0; }
+.ni.on .ni-line { opacity:1; }
+
+.toast { position:fixed; bottom:80px; left:50%; transform:translateX(-50%) translateY(40px); background:var(--card); border-radius:8px; padding:9px 18px; font-size:12px; color:var(--on); transition:transform .25s,opacity .25s; z-index:300; white-space:nowrap; box-shadow:0 4px 20px rgba(0,0,0,.2); opacity:0; }
+.toast.show { transform:translateX(-50%) translateY(0); opacity:1; }
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div>
+    <div class="eyebrow" id="statsLine">Загрузка...</div>
+    <div class="title">Задачи</div>
+    <div class="subtitle">Все сферы · единый список</div>
+  </div>
+  <button class="add-btn" onclick="openAdd()">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    Задача
+  </button>
+</div>
+<hr class="div">
+
+<!-- TOOLBAR -->
+<div class="toolbar">
+  <button class="filter-btn on" onclick="setFilter('all',this)">Все</button>
+  <button class="filter-btn" onclick="setFilter('today',this)">Сегодня</button>
+  <button class="filter-btn" onclick="setFilter('deadline',this)">Дедлайн</button>
+  <div class="tb-sep"></div>
+  <button class="filter-btn" onclick="setFilter('bureau',this)">Бюро</button>
+  <button class="filter-btn" onclick="setFilter('aparts',this)">Апарты</button>
+  <button class="filter-btn" onclick="setFilter('personal',this)">Бренд</button>
+  <button class="filter-btn" onclick="setFilter('home',this)">Быт</button>
+  <button class="filter-btn" onclick="setFilter('body',this)">Тело</button>
+  <button class="filter-btn" onclick="setFilter('finance',this)">Финансы</button>
+  <button class="filter-btn" onclick="setFilter('content',this)">Контент</button>
+</div>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stat-cell">
+    <div class="stat-num" id="st-total">0</div>
+    <div class="stat-label">Всего</div>
+  </div>
+  <div class="stat-cell">
+    <div class="stat-num" id="st-today">0</div>
+    <div class="stat-label">Сегодня</div>
+  </div>
+  <div class="stat-cell">
+    <div class="stat-num" id="st-deadline">0</div>
+    <div class="stat-label">Дедлайн</div>
+  </div>
+  <div class="stat-cell">
+    <div class="stat-num" id="st-done">0</div>
+    <div class="stat-label">Готово</div>
+  </div>
+</div>
+
+<!-- LIST -->
+<div class="task-list" id="taskList"></div>
+
+<!-- MODAL -->
+<div class="modal-bg" id="modal">
+  <div class="modal">
+    <div class="modal-title" id="modalTitle">Новая задача</div>
+
+    <label class="f-label">Название *</label>
+    <input class="f-inp" id="m-text" placeholder="Что нужно сделать...">
+
+    <label class="f-label">Проект / Сфера</label>
+    <select class="f-sel" id="m-project">
+      <option value="bureau">Brick Buro</option>
+      <option value="aparts">Апарты</option>
+      <option value="personal">Личный бренд</option>
+      <option value="home">Быт / Дом</option>
+      <option value="body">Тело / Здоровье</option>
+      <option value="finance">Финансы</option>
+      <option value="content">Контент</option>
+      <option value="default">Общее</option>
+    </select>
+
+    <div class="f-row">
+      <div>
+        <label class="f-label">Дедлайн</label>
+        <input class="f-inp" id="m-deadline" type="date">
+      </div>
+      <div>
+        <label class="f-label">Время, мин</label>
+        <input class="f-inp" id="m-dur" type="number" value="30" min="5" step="5">
+      </div>
+    </div>
+
+    <label class="f-label">Ресурсы / Ссылки</label>
+    <input class="f-inp" id="m-resources" placeholder="Ссылки, документы, контакты, файлы...">
+
+    <label class="f-label">Заметка</label>
+    <textarea class="f-ta" id="m-note" placeholder="Контекст, детали, что важно помнить..."></textarea>
+
+    <label class="f-check-row">
+      <input type="checkbox" id="m-today">
+      <span class="f-check-label">Включить в план сегодня</span>
+    </label>
+
+    <div class="modal-foot">
+      <button class="btn btn-red" id="m-del" onclick="deleteTask()" style="display:none;margin-right:auto;">Удалить</button>
+      <button class="btn btn-ghost" onclick="closeModal()">Отмена</button>
+      <button class="btn btn-gold" onclick="saveTask()">Сохранить</button>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bnav">
+  <a class="ni" href="today.html"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span>Сегодня</span><div class="ni-line"></div></a>
+  <a class="ni on" href="tasks.html"><svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg><span>Задачи</span><div class="ni-line"></div></a>
+  <a class="ni" href="goals.html"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg><span>Цели</span><div class="ni-line"></div></a>
+  <a class="ni" href="inbox.html"><svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><span>Поток</span><div class="ni-line"></div></a>
+  <a class="ni" href="settings.html"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>Я</span><div class="ni-line"></div></a>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+'use strict';
+
+// ── constants ─────────────────────────────────────────────────────────
+const PROJECTS = {
+  bureau:   { name:'Brick Buro',      color:'#c49a52' },
+  aparts:   { name:'Апарты',          color:'#3d7a55' },
+  personal: { name:'Личный бренд',    color:'#6b4aaa' },
+  home:     { name:'Быт / Дом',       color:'#5a7a68' },
+  body:     { name:'Тело / Здоровье', color:'#a05060' },
+  finance:  { name:'Финансы',         color:'#4a6880' },
+  content:  { name:'Контент',         color:'#6b2233' },
+  default:  { name:'Общее',           color:'#6878a0' },
+};
+
+// ── storage ───────────────────────────────────────────────────────────
+function load()    { try { return JSON.parse(localStorage.getItem('all_tasks_v1')||'[]'); } catch(e){ return []; } }
+function save(t)   { localStorage.setItem('all_tasks_v1', JSON.stringify(t)); }
+function uid()     { return 't'+Date.now()+Math.random().toString(36).slice(2,5); }
+
+function todayStr() {
+  const d=new Date();
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+
+function daysUntil(dl) {
+  if (!dl) return null;
+  const diff = new Date(dl) - new Date(todayStr());
+  return Math.round(diff / 86400000);
+}
+
+// ── state ─────────────────────────────────────────────────────────────
+let currentFilter = 'all';
+let editId = null;
+
+// ── filter ────────────────────────────────────────────────────────────
+function setFilter(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  render();
+}
+
+// ── render ────────────────────────────────────────────────────────────
+function render() {
+  const tasks = load();
+  const today = todayStr();
+
+  // Stats
+  const active = tasks.filter(t => !t.done);
+  document.getElementById('st-total').textContent    = active.length;
+  document.getElementById('st-today').textContent    = active.filter(t => t.today).length;
+  document.getElementById('st-deadline').textContent = active.filter(t => t.deadline).length;
+  document.getElementById('st-done').textContent     = tasks.filter(t => t.done).length;
+  document.getElementById('statsLine').textContent   =
+    active.length + ' активных · ' + tasks.filter(t=>t.done).length + ' выполнено';
+
+  // Filter
+  let filtered = tasks;
+  if (currentFilter === 'today')    filtered = tasks.filter(t => !t.done && t.today);
+  else if (currentFilter === 'deadline') filtered = tasks.filter(t => !t.done && t.deadline);
+  else if (currentFilter !== 'all') filtered = tasks.filter(t => !t.done && t.project === currentFilter);
+  else filtered = tasks.filter(t => !t.done);
+
+  // Sort: today first, then by deadline, then by project
+  filtered.sort((a,b) => {
+    if (a.today && !b.today) return -1;
+    if (!a.today && b.today) return 1;
+    if (a.deadline && b.deadline) return a.deadline.localeCompare(b.deadline);
+    if (a.deadline && !b.deadline) return -1;
+    if (!a.deadline && b.deadline) return 1;
+    return 0;
+  });
+
+  // Add done tasks at bottom when showing all
+  const done = currentFilter === 'all' ? tasks.filter(t => t.done) : [];
+
+  const el = document.getElementById('taskList');
+  el.innerHTML = '';
+
+  if (!filtered.length && !done.length) {
+    el.innerHTML = `<div class="empty">
+      <div class="empty-title">Всё чисто</div>
+      <div class="empty-sub">Нет задач по этому фильтру.<br>Нажми + чтобы добавить.</div>
+    </div>`;
+    return;
+  }
+
+  // Group active by project when showing all
+  if (currentFilter === 'all') {
+    const groups = {};
+    filtered.forEach(t => {
+      const g = t.project || 'default';
+      if (!groups[g]) groups[g] = [];
+      groups[g].push(t);
+    });
+    Object.entries(groups).forEach(([proj, pts]) => {
+      const gl = document.createElement('div');
+      gl.className = 'group-label';
+      gl.textContent = PROJECTS[proj]?.name || proj;
+      el.appendChild(gl);
+      pts.forEach(t => el.appendChild(makeCard(t)));
+    });
+  } else {
+    filtered.forEach(t => el.appendChild(makeCard(t)));
+  }
+
+  // Done tasks
+  if (done.length) {
+    const gl = document.createElement('div');
+    gl.className = 'group-label';
+    gl.style.color = 'var(--muted)';
+    gl.textContent = 'Выполнено · ' + done.length;
+    el.appendChild(gl);
+    done.forEach(t => el.appendChild(makeCard(t)));
+  }
+}
+
+function makeCard(t) {
+  const p = PROJECTS[t.project] || PROJECTS.default;
+  const subs = t.subtasks || [];
+  const subsDone = subs.filter(s => s.done).length;
+  const dl = daysUntil(t.deadline);
+  const today = todayStr();
+
+  // Deadline tag
+  let dlTag = '';
+  if (t.deadline && !t.done) {
+    const d = new Date(t.deadline);
+    const label = dl === 0 ? 'сегодня' : dl === 1 ? 'завтра' : dl < 0 ? 'просрочено' :
+      d.getDate()+'.'+String(d.getMonth()+1).padStart(2,'0');
+    const cls = dl <= 1 ? 'deadline soon' : 'deadline';
+    dlTag = `<span class="tc-tag ${cls}">${label}</span>`;
+  }
+
+  const wrap = document.createElement('div');
+  wrap.innerHTML = `
+    <div class="tc">
+      <div class="tc-main">
+        <div class="tc-accent" style="background:${p.color};"></div>
+        <div class="tc-body">
+          <div class="tc-title ${t.done?'done':''}">${esc(t.text)}</div>
+          <div class="tc-meta">
+            <div class="tc-dot" style="background:${p.color};"></div>
+            <span class="tc-label">${p.name}</span>
+            ${t.dur ? `<span class="tc-tag">${t.dur} мин</span>` : ''}
+            ${dlTag}
+            ${t.today && !t.done ? '<span class="tc-tag today-tag">сегодня</span>' : ''}
+            ${subs.length ? `<span class="tc-tag">${subsDone}/${subs.length}</span>` : ''}
+            ${t.resources ? `<span class="tc-tag" title="${esc(t.resources)}">ресурсы</span>` : ''}
+          </div>
+          ${t.note ? `<div style="font-size:11px;color:var(--on3);margin-top:4px;font-style:italic;">${esc(t.note)}</div>` : ''}
+        </div>
+        <div class="tc-actions">
+          <button class="tc-ico-btn" onclick="toggleSubs('${t.id}')" title="Подзадачи">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+          </button>
+          <button class="tc-ico-btn" onclick="openEdit('${t.id}')" title="Редактировать">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          </button>
+          <div class="tc-check ${t.done?'done':''}" onclick="toggleDone('${t.id}')"></div>
+        </div>
+      </div>
+      <div class="tc-subs" id="subs-${t.id}" style="display:none;">
+        ${subs.map(s => `
+          <div class="sub-row" onclick="toggleSub('${t.id}','${s.id}')">
+            <div class="sub-check ${s.done?'done':''}"></div>
+            <div class="sub-text ${s.done?'done':''}">${esc(s.text)}</div>
+            <button class="sub-del" onclick="event.stopPropagation();delSub('${t.id}','${s.id}')">×</button>
+          </div>`).join('')}
+        <div class="sub-add-row">
+          <input class="sub-inp" id="si-${t.id}" placeholder="Добавить подзадачу..." onkeydown="if(event.key==='Enter')addSub('${t.id}')">
+          <button class="sub-add-btn" onclick="addSub('${t.id}')">+</button>
+        </div>
+      </div>
+    </div>`;
+  return wrap;
+}
+
+// ── task actions ──────────────────────────────────────────────────────
+function toggleDone(id) {
+  const tasks = load();
+  const t = tasks.find(x => x.id === id);
+  if (t) { t.done = !t.done; if(t.done) t.today=false; save(tasks); render(); }
+}
+
+function toggleSubs(id) {
+  const el = document.getElementById('subs-'+id);
+  if (el) el.style.display = el.style.display === 'none' ? '' : 'none';
+}
+
+function addSub(taskId) {
+  const inp = document.getElementById('si-'+taskId);
+  if (!inp) return;
+  const text = inp.value.trim();
+  if (!text) return;
+  const tasks = load();
+  const t = tasks.find(x => x.id === taskId);
+  if (!t) return;
+  if (!t.subtasks) t.subtasks = [];
+  t.subtasks.push({ id:'s'+Date.now(), text, done:false });
+  inp.value = '';
+  save(tasks); render();
+  setTimeout(() => {
+    const el = document.getElementById('subs-'+taskId);
+    if (el) el.style.display = '';
+  }, 50);
+}
+
+function toggleSub(taskId, subId) {
+  const tasks = load();
+  const t = tasks.find(x => x.id === taskId);
+  if (!t || !t.subtasks) return;
+  const s = t.subtasks.find(x => x.id === subId);
+  if (s) { s.done = !s.done; save(tasks); render(); }
+  setTimeout(() => {
+    const el = document.getElementById('subs-'+taskId);
+    if (el) el.style.display = '';
+  }, 50);
+}
+
+function delSub(taskId, subId) {
+  const tasks = load();
+  const t = tasks.find(x => x.id === taskId);
+  if (!t) return;
+  t.subtasks = (t.subtasks||[]).filter(x => x.id !== subId);
+  save(tasks); render();
+  setTimeout(() => {
+    const el = document.getElementById('subs-'+taskId);
+    if (el) el.style.display = '';
+  }, 50);
+}
+
+// ── modal ─────────────────────────────────────────────────────────────
+function openAdd() {
+  editId = null;
+  document.getElementById('modalTitle').textContent = 'Новая задача';
+  document.getElementById('m-text').value = '';
+  document.getElementById('m-project').value = 'default';
+  document.getElementById('m-deadline').value = '';
+  document.getElementById('m-dur').value = '30';
+  document.getElementById('m-resources').value = '';
+  document.getElementById('m-note').value = '';
+  document.getElementById('m-today').checked = false;
+  document.getElementById('m-del').style.display = 'none';
+  document.getElementById('modal').classList.add('open');
+  setTimeout(() => document.getElementById('m-text').focus(), 100);
+}
+
+function openEdit(id) {
+  const t = load().find(x => x.id === id);
+  if (!t) return;
+  editId = id;
+  document.getElementById('modalTitle').textContent = 'Редактировать';
+  document.getElementById('m-text').value = t.text;
+  document.getElementById('m-project').value = t.project || 'default';
+  document.getElementById('m-deadline').value = t.deadline || '';
+  document.getElementById('m-dur').value = t.dur || 30;
+  document.getElementById('m-resources').value = t.resources || '';
+  document.getElementById('m-note').value = t.note || '';
+  document.getElementById('m-today').checked = !!t.today;
+  document.getElementById('m-del').style.display = '';
+  document.getElementById('modal').classList.add('open');
+}
+
+function closeModal() { document.getElementById('modal').classList.remove('open'); }
+
+function saveTask() {
+  const text = document.getElementById('m-text').value.trim();
+  if (!text) { toast('Введи название задачи'); return; }
+  const tasks = load();
+  const task = {
+    id: editId || uid(),
+    text,
+    project:   document.getElementById('m-project').value,
+    deadline:  document.getElementById('m-deadline').value,
+    dur:       parseInt(document.getElementById('m-dur').value) || 30,
+    resources: document.getElementById('m-resources').value.trim(),
+    note:      document.getElementById('m-note').value.trim(),
+    today:     document.getElementById('m-today').checked,
+    done:      false,
+    subtasks:  editId ? (tasks.find(x=>x.id===editId)||{}).subtasks||[] : [],
+  };
+  if (editId) {
+    const i = tasks.findIndex(x => x.id === editId);
+    if (i >= 0) { task.done = tasks[i].done; tasks[i] = task; }
+  } else {
+    tasks.push(task);
+  }
+  save(tasks);
+  closeModal(); render();
+  toast(editId ? 'Задача обновлена' : 'Задача добавлена');
+}
+
+function deleteTask() {
+  if (!editId) return;
+  if (!confirm('Удалить задачу?')) return;
+  save(load().filter(x => x.id !== editId));
+  closeModal(); render();
+  toast('Удалено');
+}
+
+// ── utils ─────────────────────────────────────────────────────────────
+function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+// ── init ──────────────────────────────────────────────────────────────
+render();
+</script>
+</body>
+</html>
